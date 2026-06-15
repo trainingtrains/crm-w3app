@@ -1,5 +1,5 @@
 {
-  "name": "crm-w3app",
+  "name": "crm",
   "private": true,
   "version": "0.0.0",
   "type": "module",
@@ -10,8 +10,14 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@emotion/react": "^11.14.0",
+    "@emotion/styled": "^11.14.1",
+    "@mui/icons-material": "^9.1.0",
+    "@mui/material": "^9.1.0",
+    "@mui/x-data-grid": "^9.4.0",
     "react": "^19.2.6",
-    "react-dom": "^19.2.6"
+    "react-dom": "^19.2.6",
+    "react-hook-form": "^7.78.0"
   },
   "devDependencies": {
     "@babel/core": "^7.29.0",

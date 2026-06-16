@@ -5,49 +5,69 @@ import type { Field } from "../../../components/types/form";
 export const customerSearchConfig: Field[] = [
   {
     type: "text",
-    name: "customerName",
-    label: "Customer Name",
+    name: "custId",
+    label: "Name / Mobile / Client ID",
     placeholder: "Enter customer name",
-    grid: 6,
-  },
-  {
-    type: "email",
-    name: "email",
-    label: "Email",
-    placeholder: "Enter email",
-    grid: 6,
-  },
-  {
-    type: "number",
-    name: "mobile",
-    label: "Mobile Number",
-    placeholder: "Enter mobile number",
-    grid: 6,
+    grid: 3,
   },
   {
     type: "select",
     name: "status",
     label: "Status",
-    grid: 6,
     options: [
       {
-        label: "Active",
-        value: "ACTIVE",
+        label: "All",
+        value: "all",
       },
       {
-        label: "Inactive",
-        value: "INACTIVE",
+        label: "Not Started",
+        value: "0",
+      },
+      {
+        label: "In Progress",
+        value: "1",
+      },
+      {
+        label: "Completed",
+        value: "2",
+      },
+      {
+        label: "Rejected",
+        value: "3",
+      },
+    ],
+  },
+    {
+    type: "select",
+    name: "payment",
+    label: "Payment Status",
+    options: [
+      {
+        label: "All",
+        value: "all",
       },
       {
         label: "Pending",
-        value: "PENDING",
+        value: "0",
+      },
+      {
+        label: "Partial",
+        value: "1",
+      },
+      {
+        label: "Paid",
+        value: "2",
+      },
+      {
+        label: "Excess",
+        value: "3",
       },
     ],
   },
   {
     type: "checkbox",
-    name: "verified",
-    label: "Verified Customer",
+    name: "newCustomer",
+    label: "New Customer",
     grid: 12,
   },
 ];

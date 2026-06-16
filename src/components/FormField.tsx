@@ -6,13 +6,11 @@ import type {
 } from "react-hook-form";
 
 import type { Field } from "./types/form";
+import { StyledTextField } from "../atoms/StyledTextField";
+import { StyledFormControlLabel } from "../atoms/StyledFormControlLabel";
+import { StyledCheckbox } from "../atoms/StyledCheckbox";
+import { StyledSwitch } from "../atoms/StyledSwitch";
 
-import {
-  StyledTextField,
-  StyledCheckbox,
-  StyledSwitch,
-  StyledFormControlLabel,
-} from "../atoms/form.components";
 
 type FormFieldProps = {
   field: Field;
@@ -111,7 +109,7 @@ export const FormField = ({
           label={field.label}
         />
       );
-
+    
     default:
       return null;
   }

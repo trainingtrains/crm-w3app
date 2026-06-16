@@ -19,8 +19,9 @@ import {
   customerSearchConfig,
 } from "./config/customerSrchConfig";
 
-import { customers } from "./__mocks/dummyData";
-import { PrimaryButton } from "../../atoms/button.components";
+import { customers, stats } from "./__mocks/dummyData";
+import { PrimaryButton } from "../../atoms/PrimaryButton";
+import StatsSection from "../../components/StatsSection";
 
 // import { useNavigate } from "react-router-dom";
 
@@ -44,281 +45,71 @@ export const CustomerSrchPage = () => {
   };
 
   return (
-    <Box
+    <Paper
+      elevation={1}
       sx={{
-        width: "100%",
-        maxWidth: "1800px",
-        mx: "auto",
-        p: {
-          xs: 2,
-          sm: 3,
-          md: 4,
-        },
+        p: 2,
+        borderRadius: 3,
       }}
     >
-      {/* =======================================================
-          HEADER
-      ======================================================= */}
-
       <Box
         sx={{
-          mb: 4,
+          mb: 2,
 
           display: "flex",
 
           justifyContent:
             "space-between",
 
-          alignItems: {
-            xs: "flex-start",
-            md: "center",
-          },
+          // alignItems:
+          //   "center",
 
           flexDirection: {
             xs: "column",
-            md: "row",
+            sm: "row",
           },
 
           gap: 2,
-        }}
-      >
-        <Box>
-          <Typography
-            component="h1"
-            variant="h4"
-            sx={{
-              fontWeight: 700,
-            }}
-          >
-            Customer Relationship Data
-            Management
-          </Typography>
-
-          <Typography
-            component="p"
-            color="text.secondary"
-            sx={{
-              mt: 1,
-            }}
-          >
-            Search, manage and maintain
-            customer relationships
-            efficiently.
-          </Typography>
-        </Box>
-      </Box>
-
-      {/* =======================================================
-          DASHBOARD CARDS
-      ======================================================= */}
-
-      <Grid
-        container
-        spacing={2}
-      >
-        <Grid
-          size={{
-            xs: 12,
-            sm: 6,
-            md: 4,
-          }}
-        >
-          <Paper
-            elevation={1}
-            sx={{
-              p: 3,
-              borderRadius: 3,
-              height: "100%",
-            }}
-          >
-            <PeopleAltOutlinedIcon
-              color="primary"
-              fontSize="large"
-            />
-
-            <Typography
-              component="div"
-              variant="h4"
-              sx={{
-                fontWeight: 700,
-                mt: 1,
-              }}
-            >
-              250
-            </Typography>
-
-            <Typography
-              component="p"
-              color="text.secondary"
-            >
-              Total Customers
-            </Typography>
-          </Paper>
-        </Grid>
-
-        <Grid
-          size={{
-            xs: 12,
-            sm: 6,
-            md: 4,
-          }}
-        >
-          <Paper
-            elevation={1}
-            sx={{
-              p: 3,
-              borderRadius: 3,
-              height: "100%",
-            }}
-          >
-            <PersonAddAltOutlinedIcon
-              color="success"
-              fontSize="large"
-            />
-
-            <Typography
-              component="div"
-              variant="h4"
-              sx={{
-                fontWeight: 700,
-                mt: 1,
-              }}
-            >
-              32
-            </Typography>
-
-            <Typography
-              component="p"
-              color="text.secondary"
-            >
-              New Customers
-            </Typography>
-          </Paper>
-        </Grid>
-
-        <Grid
-          size={{
-            xs: 12,
-            sm: 6,
-            md: 4,
-          }}
-        >
-          <Paper
-            elevation={1}
-            sx={{
-              p: 3,
-              borderRadius: 3,
-              height: "100%",
-            }}
-          >
-            <CheckCircleOutlineOutlinedIcon
-              color="info"
-              fontSize="large"
-            />
-
-            <Typography
-              component="div"
-              variant="h4"
-              sx={{
-                fontWeight: 700,
-                mt: 1,
-              }}
-            >
-              180
-            </Typography>
-
-            <Typography
-              component="p"
-              color="text.secondary"
-            >
-              Active Customers
-            </Typography>
-          </Paper>
-        </Grid>
-      </Grid>
-
-      {/* =======================================================
-          RESULTS
-      ======================================================= */}
-
-      <Paper
-        elevation={1}
-        sx={{
-          p: 3,
-          mt: 3,
-          borderRadius: 3,
-        }}
-      >
-        <Box
-          sx={{
-            mb: 2,
-
-            display: "flex",
-
-            justifyContent:
-              "space-between",
-
-            alignItems:
-              "center",
-
-            flexDirection: {
-              xs: "column",
-              sm: "row",
-            },
-
-            gap: 2,
-          }}
-        >
-          <Typography
-            component="h2"
-            variant="h6"
-            sx={{
-              fontWeight: 600,
-            }}
-          >
-            Customer Records
-          </Typography>
-
-          <Stack
-            direction="row"
-            spacing={2}
-          >
-            <PrimaryButton
-              startIcon={
-                <PersonAddAlt1Icon />
-              }
-              onClick={
-                handleAddCustomer
-              }
-            >
-              Add Customer
-            </PrimaryButton>
-          </Stack>
-        </Box>
-
-        {/* =======================================================
-          SEARCH FORM
-      ======================================================= */}
-
-      <Paper
-        elevation={1}
-        sx={{
-          p: 3,
-          mt: 3,
-          borderRadius: 3,
         }}
       >
         <Typography
           component="h2"
           variant="h6"
           sx={{
-            mb: 2,
             fontWeight: 600,
           }}
         >
-          Search Filters
+          Customer Relationship Data Management
         </Typography>
 
+        <Stack
+          direction="row"
+          spacing={2}
+        >
+          <PrimaryButton
+            startIcon={
+              <PersonAddAlt1Icon />
+            }
+            onClick={
+              handleAddCustomer
+            }
+          >
+            Add Customer
+          </PrimaryButton>
+        </Stack>
+      </Box>
+
+      {/* =======================================================
+          SEARCH FORM
+      ======================================================= */}
+
+      <Paper
+        elevation={1}
+        sx={{
+          p: 2,
+          borderRadius: 3,
+        }}
+      >
         <Form
           config={
             customerSearchConfig
@@ -329,44 +120,43 @@ export const CustomerSrchPage = () => {
         />
       </Paper>
 
-        <CustomDataGrid
-          rows={rows}
-          columns={
-            customeDetailsCoulmn
-          }
-          onView={(
+      <CustomDataGrid
+        rows={rows}
+        columns={
+          customeDetailsCoulmn
+        }
+        onView={(
+          id,
+          row
+        ) => {
+          console.log(
+            "VIEW",
             id,
             row
-          ) => {
-            console.log(
-              "VIEW",
-              id,
-              row
-            );
-          }}
-          onEdit={(
+          );
+        }}
+        onEdit={(
+          id,
+          row
+        ) => {
+          console.log(
+            "EDIT",
             id,
             row
-          ) => {
-            console.log(
-              "EDIT",
-              id,
-              row
-            );
-          }}
-          onDelete={(
+          );
+        }}
+        onDelete={(
+          id,
+          row
+        ) => {
+          console.log(
+            "DELETE",
             id,
             row
-          ) => {
-            console.log(
-              "DELETE",
-              id,
-              row
-            );
-          }}
-        />
-      </Paper>
-    </Box>
+          );
+        }}
+      />
+    </Paper>
   );
 };
 

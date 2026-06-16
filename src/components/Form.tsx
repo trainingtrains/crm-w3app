@@ -7,12 +7,10 @@ import Grid from "@mui/material/Grid";
 
 import { FormField } from "./FormField";
 import type { Field } from "./types/form";
+import { ActionContainer } from "../atoms/ActionContainer";
+import { ResetButton } from "../atoms/ResetButton";
+import { SearchButton } from "../atoms/SearchButton";
 
-import {
-  ActionContainer,
-  SearchButton,
-  ResetButton,
-} from "../atoms/form.components";
 
 type FormValues = Record<
   string,
@@ -50,8 +48,8 @@ export const Form = ({
               xs: 6,
               sm: 6,
               md: 3,
-              lg: 3,
-              xl: 3,
+              lg: field.grid ?? 2,
+              xl: field.grid ?? 2,
             }}
           >
             <FormField

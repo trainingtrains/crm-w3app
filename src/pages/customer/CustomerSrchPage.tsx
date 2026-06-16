@@ -17,11 +17,13 @@ import {
 
 import { customers } from "./__mocks/dummyData";
 import { PrimaryButton } from "../../atoms/PrimaryButton";
+import { useNavigate } from "react-router-dom";
 
 
 // import { useNavigate } from "react-router-dom";
 
 export const CustomerSrchPage = () => {
+  const navigate = useNavigate();
   const [rows] = useState(customers);
 
   // const navigate = useNavigate();
@@ -35,7 +37,7 @@ export const CustomerSrchPage = () => {
   };
 
   const handleAddCustomer = () => {
-    console.log("Navigate to Add Customer");
+    navigate("/newCust")
 
     // navigate("/customer/add");
   };

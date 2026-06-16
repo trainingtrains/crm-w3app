@@ -1,15 +1,11 @@
 import { useState } from "react";
 
 import Box from "@mui/material/Box";
-import Grid from "@mui/material/Grid";
 import Paper from "@mui/material/Paper";
 import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
-
-import PeopleAltOutlinedIcon from "@mui/icons-material/PeopleAltOutlined";
-import PersonAddAltOutlinedIcon from "@mui/icons-material/PersonAddAltOutlined";
 import PersonAddAlt1Icon from "@mui/icons-material/PersonAddAlt1";
-import CheckCircleOutlineOutlinedIcon from "@mui/icons-material/CheckCircleOutlineOutlined";
+
 
 import { Form } from "../../components/Form";
 import CustomDataGrid from "../../components/CustomDataGrid";
@@ -19,9 +15,9 @@ import {
   customerSearchConfig,
 } from "./config/customerSrchConfig";
 
-import { customers, stats } from "./__mocks/dummyData";
+import { customers } from "./__mocks/dummyData";
 import { PrimaryButton } from "../../atoms/PrimaryButton";
-import StatsSection from "../../components/StatsSection";
+
 
 // import { useNavigate } from "react-router-dom";
 

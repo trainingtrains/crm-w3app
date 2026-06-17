@@ -1,115 +1,140 @@
-import MenuItem from "@mui/material/MenuItem";
-
+import MenuItem from '@mui/material/MenuItem';
 import type {
-  UseFormRegister,
+  FieldErrors,
   FieldValues,
-} from "react-hook-form";
+  UseFormRegister,
+} from 'react-hook-form';
 
-import type { Field } from "./types/form";
-import { StyledTextField } from "../atoms/StyledTextField";
-import { StyledFormControlLabel } from "../atoms/StyledFormControlLabel";
-import { StyledCheckbox } from "../atoms/StyledCheckbox";
-import { StyledSwitch } from "../atoms/StyledSwitch";
-
+import type { Field } from './types/form';
+import { StyledCheckbox } from '../atoms/StyledCheckbox';
+import { StyledFormControlLabel } from '../atoms/StyledFormControlLabel';
+import { StyledSwitch } from '../atoms/StyledSwitch';
+import { StyledTextField } from '../atoms/StyledTextField';
 
 type FormFieldProps = {
   field: Field;
   register: UseFormRegister<FieldValues>;
+  errors?: FieldErrors<FieldValues>;
 };
 
 export const FormField = ({
   field,
   register,
+  errors,
 }: FormFieldProps) => {
-  switch (field.type) {
-    case "text":
-    case "email":
-    case "number":
-    case "password":
+  const {
+    type,
+    label,
+    name,
+    ...rest
+  } = field;
+
+  const error = errors?.[name];
+
+  const registerOptions = {
+    required: field.required ? `${label} is required` : false,
+  };
+
+  switch (type) {
+    case 'text':
+    case 'email':
+    case 'number':
+    case 'password':
       return (
         <StyledTextField
           fullWidth
           margin="normal"
-          label={field.label}
-          type={field.type}
+          label={label}
+          type={type}
           placeholder={field.placeholder}
           variant="outlined"
-          {...register(field.name)}
+          autoComplete="new-password"
+          error={Boolean(error)}
+          helperText={error?.message?.toString()}
+          {...register(name, registerOptions)}
+          {...rest}
         />
       );
 
-    case "textarea":
+    case 'textarea':
       return (
         <StyledTextField
           fullWidth
           multiline
           rows={field.rows ?? 4}
           margin="normal"
-          label={field.label}
+          label={label}
           placeholder={field.placeholder}
           variant="outlined"
-          {...register(field.name)}
+          autoComplete="new-password"
+          error={Boolean(error)}
+          helperText={error?.message?.toString()}
+          {...register(name, registerOptions)}
+          {...rest}
         />
       );
 
-    case "select":
+    case 'select':
       return (
         <StyledTextField
           select
           fullWidth
           margin="normal"
-          label={field.label}
+          label={label}
           defaultValue=""
           variant="outlined"
-          {...register(field.name)}
+          error={Boolean(error)}
+          helperText={error?.message?.toString()}
+          {...register(name, registerOptions)}
+          {...rest}
         >
-          {(field.options ?? []).map(
-            (option) => (
-              <MenuItem
-                key={option.value}
-                value={option.value}
-              >
-                {option.label}
-              </MenuItem>
-            )
-          )}
+          {(field.options ?? []).map((option) => (
+            <MenuItem
+              key={option.value}
+              value={option.value}
+            >
+              {option.label}
+            </MenuItem>
+          ))}
         </StyledTextField>
       );
 
-    case "checkbox":
+    case 'checkbox':
       return (
         <StyledFormControlLabel
           sx={{
             mt: 1,
             mb: 1,
-            width: "100%",
+            width: '100%',
           }}
           control={
             <StyledCheckbox
-              {...register(field.name)}
+              {...register(name, registerOptions)}
+              {...rest}
             />
           }
-          label={field.label}
+          label={label}
         />
       );
 
-    case "switch":
+    case 'switch':
       return (
         <StyledFormControlLabel
           sx={{
             mt: 1,
             mb: 1,
-            width: "100%",
+            width: '100%',
           }}
           control={
             <StyledSwitch
-              {...register(field.name)}
+              {...register(name, registerOptions)}
+              {...rest}
             />
           }
-          label={field.label}
+          label={label}
         />
       );
-    
+
     default:
       return null;
   }

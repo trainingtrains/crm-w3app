@@ -1,5 +1,5 @@
-import Button from "@mui/material/Button";
-import { styled } from "@mui/material/styles";
+import Button from '@mui/material/Button';
+import { styled } from '@mui/material/styles';
 
 export const BaseButton = styled(Button)(({ theme }) => ({
   minHeight: 44,
@@ -11,19 +11,19 @@ export const BaseButton = styled(Button)(({ theme }) => ({
 
   fontWeight: 600,
 
-  fontSize: "0.875rem",
+  fontSize: '0.875rem',
 
-  textTransform: "none",
+  textTransform: 'none',
 
-  transition: "all 0.2s ease",
+  transition: 'all 0.2s ease',
 
-  boxShadow: "none",
+  boxShadow: 'none',
 
-  "&:hover": {
-    transform: "translateY(-2px)",
+  '&:hover': {
+    transform: 'translateY(-2px)',
   },
 
-  [theme.breakpoints.down("sm")]: {
-    width: "100%",
+  [theme.breakpoints.down('sm')]: {
+    width: '100%',
   },
 }));

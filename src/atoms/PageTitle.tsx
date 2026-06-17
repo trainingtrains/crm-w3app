@@ -1,22 +1,13 @@
-import {
-    styled,
-} from "@mui/material/styles";
+import { styled } from '@mui/material/styles';
 
-import {
-    Typography,
+import { Typography } from '@mui/material';
 
-} from "@mui/material";
+export const PageTitle = styled(Typography)(({ theme }) => ({
+  fontWeight: 700,
 
+  color: theme.palette.text.primary,
 
-export const PageTitle = styled(
-    Typography
-)(({ theme }) => ({
-    fontWeight: 700,
+  fontSize: 'clamp(1.6rem,2vw,2.5rem)',
 
-    color: theme.palette.text.primary,
-
-    fontSize:
-        "clamp(1.6rem,2vw,2.5rem)",
-
-    lineHeight: 1.2,
+  lineHeight: 1.2,
 }));

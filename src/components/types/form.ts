@@ -5,30 +5,34 @@ export type SelectOption = {
 
 export type Field =
   | {
-      type: "text" | "email" | "number" | "password";
+      type: 'text' | 'email' | 'number' | 'password';
       name: string;
       label: string;
       placeholder?: string;
-      grid?:number;
+      grid?: number;
+      required?:boolean;
     }
   | {
-      type: "textarea";
+      type: 'textarea';
       name: string;
       label: string;
       placeholder?: string;
       rows?: number;
-      grid?:number;
+      grid?: number;
+      required?:boolean;
     }
   | {
-      type: "select";
+      type: 'select';
       name: string;
       label: string;
       options: SelectOption[];
-      grid?:number;
+      grid?: number;
+      required?:boolean;
     }
   | {
-      type: "checkbox" | "switch";
+      type: 'checkbox' | 'switch';
       name: string;
       label: string;
-      grid?:number;
+      grid?: number;
+      required?:boolean;
     };

@@ -1,24 +1,20 @@
-import Paper from "@mui/material/Paper";
-import Stack from "@mui/material/Stack";
-import Tooltip from "@mui/material/Tooltip";
-import IconButton from "@mui/material/IconButton";
+import Paper from '@mui/material/Paper';
+import Stack from '@mui/material/Stack';
+import Tooltip from '@mui/material/Tooltip';
+import IconButton from '@mui/material/IconButton';
 
-import VisibilityOutlinedIcon from "@mui/icons-material/VisibilityOutlined";
-import EditOutlinedIcon from "@mui/icons-material/EditOutlined";
-import DeleteOutlineOutlinedIcon from "@mui/icons-material/DeleteOutlineOutlined";
+import VisibilityOutlinedIcon from '@mui/icons-material/VisibilityOutlined';
+import EditOutlinedIcon from '@mui/icons-material/EditOutlined';
+import DeleteOutlineOutlinedIcon from '@mui/icons-material/DeleteOutlineOutlined';
 
-import {
-  DataGrid,
-  Toolbar,
-  QuickFilter,
-} from "@mui/x-data-grid";
+import { DataGrid, Toolbar, QuickFilter } from '@mui/x-data-grid';
 
 import type {
   GridColDef,
   GridRenderCellParams,
   GridRowId,
   GridValidRowModel,
-} from "@mui/x-data-grid";
+} from '@mui/x-data-grid';
 
 function CustomToolbar() {
   return (
@@ -28,9 +24,7 @@ function CustomToolbar() {
   );
 }
 
-export interface CustomDataGridProps<
-  T extends GridValidRowModel
-> {
+export interface CustomDataGridProps<T extends GridValidRowModel> {
   rows: T[];
   columns: GridColDef[];
 
@@ -39,25 +33,14 @@ export interface CustomDataGridProps<
 
   showActions?: boolean;
 
-  onView?: (
-    id: GridRowId,
-    row: T
-  ) => void;
+  onView?: (id: GridRowId, row: T) => void;
 
-  onEdit?: (
-    id: GridRowId,
-    row: T
-  ) => void;
+  onEdit?: (id: GridRowId, row: T) => void;
 
-  onDelete?: (
-    id: GridRowId,
-    row: T
-  ) => void;
+  onDelete?: (id: GridRowId, row: T) => void;
 }
 
-export function CustomDataGrid<
-  T extends GridValidRowModel
->({
+export function CustomDataGrid<T extends GridValidRowModel>({
   rows,
   columns,
 
@@ -71,9 +54,9 @@ export function CustomDataGrid<
   onDelete,
 }: CustomDataGridProps<T>) {
   const actionColumn: GridColDef = {
-    field: "actions",
+    field: 'actions',
 
-    headerName: "Actions",
+    headerName: 'Actions',
 
     width: 150,
 
@@ -83,28 +66,18 @@ export function CustomDataGrid<
 
     disableColumnMenu: true,
 
-    align: "center",
+    align: 'center',
 
-    headerAlign: "center",
+    headerAlign: 'center',
 
-    renderCell: (
-      params: GridRenderCellParams
-    ) => (
-      <Stack
-        direction="row"
-        spacing={0.5}
-      >
+    renderCell: (params: GridRenderCellParams) => (
+      <Stack direction="row" spacing={0.5}>
         {onView && (
           <Tooltip title="View">
             <IconButton
               color="info"
               size="small"
-              onClick={() =>
-                onView(
-                  params.id,
-                  params.row as T
-                )
-              }
+              onClick={() => onView(params.id, params.row as T)}
             >
               <VisibilityOutlinedIcon fontSize="small" />
             </IconButton>
@@ -116,12 +89,7 @@ export function CustomDataGrid<
             <IconButton
               color="primary"
               size="small"
-              onClick={() =>
-                onEdit(
-                  params.id,
-                  params.row as T
-                )
-              }
+              onClick={() => onEdit(params.id, params.row as T)}
             >
               <EditOutlinedIcon fontSize="small" />
             </IconButton>
@@ -133,12 +101,7 @@ export function CustomDataGrid<
             <IconButton
               color="error"
               size="small"
-              onClick={() =>
-                onDelete(
-                  params.id,
-                  params.row as T
-                )
-              }
+              onClick={() => onDelete(params.id, params.row as T)}
             >
               <DeleteOutlineOutlinedIcon fontSize="small" />
             </IconButton>
@@ -148,34 +111,27 @@ export function CustomDataGrid<
     ),
   };
 
-  const finalColumns = showActions
-    ? [...columns, actionColumn]
-    : columns;
+  const finalColumns = showActions ? [...columns, actionColumn] : columns;
 
   return (
     <Paper
       elevation={0}
       sx={{
-        width: "100%",
+        width: '100%',
         mt: 3,
         borderRadius: 3,
-        overflow: "hidden",
-        border: "1px solid",
-        borderColor: "divider",
+        overflow: 'hidden',
+        border: '1px solid',
+        borderColor: 'divider',
       }}
     >
       <DataGrid
         rows={rows}
         columns={finalColumns}
         loading={loading}
-        checkboxSelection
         disableRowSelectionOnClick
-        pageSizeOptions={[
-          10,
-          25,
-          50,
-          100,
-        ]}
+        pageSizeOptions={[10, 25, 50, 100]}
+        disableColumnMenu
         initialState={{
           pagination: {
             paginationModel: {
@@ -184,49 +140,37 @@ export function CustomDataGrid<
             },
           },
         }}
-        slots={{
-          toolbar: CustomToolbar,
-        }}
-        showToolbar
         sx={{
           height,
 
           border: 0,
 
-          "& .MuiDataGrid-columnHeaders":
-            {
-              backgroundColor:
-                "#f8fafc",
-              borderBottom:
-                "2px solid #e2e8f0",
-            },
-
-          "& .MuiDataGrid-columnHeaderTitle":
-            {
-              fontWeight: 700,
-            },
-
-          "& .MuiDataGrid-row:nth-of-type(even)":
-            {
-              backgroundColor:
-                "#fafafa",
-            },
-
-          "& .MuiDataGrid-row:hover": {
-            backgroundColor:
-              "#e3f2fd",
-            cursor: "pointer",
+          '& .MuiDataGrid-columnHeaders .MuiDataGrid-columnHeader': {
+            backgroundColor: '#000000 !important',
+            borderBottom: '2px solid #e2e8f0',
           },
 
-          "& .MuiDataGrid-cell": {
-            borderColor: "#f1f5f9",
+          '& .MuiDataGrid-columnHeaderTitle': {
+            fontWeight: 700,
+            color:"#ffffff"
           },
 
-          "& .MuiDataGrid-footerContainer":
-            {
-              borderTop:
-                "1px solid #e2e8f0",
-            },
+          '& .MuiDataGrid-row:nth-of-type(even)': {
+            backgroundColor: '#fafafa',
+          },
+
+          '& .MuiDataGrid-row:hover': {
+            backgroundColor: '#e3f2fd',
+            cursor: 'pointer',
+          },
+
+          '& .MuiDataGrid-cell': {
+            borderColor: '#f1f5f9',
+          },
+
+          '& .MuiDataGrid-footerContainer': {
+            borderTop: '1px solid #e2e8f0',
+          },
         }}
       />
     </Paper>

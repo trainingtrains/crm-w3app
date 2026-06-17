@@ -1,8 +1,8 @@
-import Grid from "@mui/material/Grid";
-import Paper from "@mui/material/Paper";
-import Typography from "@mui/material/Typography";
+import Grid from '@mui/material/Grid';
+import Paper from '@mui/material/Paper';
+import Typography from '@mui/material/Typography';
 
-import type { ReactNode } from "react";
+import type { ReactNode } from 'react';
 
 export interface StatItem {
   label: string;
@@ -14,9 +14,7 @@ interface StatsSectionProps {
   items: StatItem[];
 }
 
-const StatsSection = ({
-  items,
-}: StatsSectionProps) => {
+const StatsSection = ({ items }: StatsSectionProps) => {
   return (
     <Grid container spacing={2}>
       {items.map((item) => (
@@ -33,7 +31,7 @@ const StatsSection = ({
             sx={{
               p: 3,
               borderRadius: 3,
-              height: "100%",
+              height: '100%',
             }}
           >
             {item.icon}
@@ -49,10 +47,7 @@ const StatsSection = ({
               {item.value}
             </Typography>
 
-            <Typography
-              component="p"
-              color="text.secondary"
-            >
+            <Typography component="p" color="text.secondary">
               {item.label}
             </Typography>
           </Paper>

@@ -7,7 +7,7 @@ import VisibilityOutlinedIcon from '@mui/icons-material/VisibilityOutlined';
 import EditOutlinedIcon from '@mui/icons-material/EditOutlined';
 import DeleteOutlineOutlinedIcon from '@mui/icons-material/DeleteOutlineOutlined';
 
-import { DataGrid, Toolbar, QuickFilter } from '@mui/x-data-grid';
+import { DataGrid } from '@mui/x-data-grid';
 
 import type {
   GridColDef,
@@ -15,14 +15,6 @@ import type {
   GridRowId,
   GridValidRowModel,
 } from '@mui/x-data-grid';
-
-function CustomToolbar() {
-  return (
-    <Toolbar>
-      <QuickFilter />
-    </Toolbar>
-  );
-}
 
 export interface CustomDataGridProps<T extends GridValidRowModel> {
   rows: T[];

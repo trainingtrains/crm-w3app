@@ -1,3 +1,4 @@
+import { Card } from '@mui/material';
 import Box from '@mui/material/Box';
 import type { ReactNode } from 'react';
 
@@ -10,16 +11,13 @@ const PageContainer = ({ children }: PageContainerProps) => {
     <Box
       sx={{
         width: '100%',
-        maxWidth: '1800px',
         mx: 'auto',
-        m: {
-          xs: 2,
-          sm: 3,
-          md: 4,
-        },
+        my: 2
       }}
     >
-      {children}
+      <Card sx={{ p: 2 }}>
+        {children}
+      </Card>
     </Box>
   );
 };

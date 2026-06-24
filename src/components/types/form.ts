@@ -35,4 +35,13 @@ export type Field =
       label: string;
       grid?: number;
       required?:boolean;
-    };
+    }
+  | {
+      type: 'autocomplete';
+      name: string;
+      label: string;
+      options: SelectOption[];
+      grid?: number;
+      placeholder?: string;
+      required?:boolean;
+    }; 

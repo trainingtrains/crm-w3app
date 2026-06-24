@@ -10,16 +10,23 @@ import { ActionContainer } from '../atoms/ActionContainer';
 import { ResetButton } from '../atoms/ResetButton';
 import { SearchButton } from '../atoms/SearchButton';
 
-type FormValues = Record<string, unknown>;
+export type FormValues = Record<string, unknown>;
 
-type FormProps = {
+export type FormProps = {
   config: Field[];
   onSubmit: SubmitHandler<FormValues>;
   submitLabel?: string
 };
 
 export const Form = ({ config, onSubmit, submitLabel }: FormProps) => {
-  const { register, handleSubmit, reset } = useForm<FormValues>();
+  const {
+    register,
+    control,
+    handleSubmit,
+    reset,
+    formState: { errors },
+  } = useForm<FormValues>();
+
   const navigate = useNavigate();
 
   const onCancel = () => {
@@ -41,7 +48,13 @@ export const Form = ({ config, onSubmit, submitLabel }: FormProps) => {
               xl: field.grid ?? 3,
             }}
           >
-            <FormField field={field} register={register} />
+            <FormField
+              key={field.name}
+              field={field}
+              register={register}
+              control={control}
+              errors={errors}
+            />
           </Grid>
         ))}
       </Grid>

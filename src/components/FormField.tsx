@@ -1,8 +1,10 @@
 import MenuItem from '@mui/material/MenuItem';
-import type {
-  FieldErrors,
-  FieldValues,
-  UseFormRegister,
+import {
+  Controller,
+  type Control,
+  type FieldErrors,
+  type FieldValues,
+  type UseFormRegister,
 } from 'react-hook-form';
 
 import type { Field } from './types/form';
@@ -10,16 +12,19 @@ import { StyledCheckbox } from '../atoms/StyledCheckbox';
 import { StyledFormControlLabel } from '../atoms/StyledFormControlLabel';
 import { StyledSwitch } from '../atoms/StyledSwitch';
 import { StyledTextField } from '../atoms/StyledTextField';
+import { StyledAutocomplete } from '../atoms/StyledAutoComplete';
 
 type FormFieldProps = {
   field: Field;
   register: UseFormRegister<FieldValues>;
+  control: Control<FieldValues>;
   errors?: FieldErrors<FieldValues>;
 };
 
 export const FormField = ({
   field,
   register,
+  control,
   errors,
 }: FormFieldProps) => {
   const {
@@ -48,7 +53,7 @@ export const FormField = ({
           type={type}
           placeholder={field.placeholder}
           variant="outlined"
-          autoComplete="new-password"
+          autoComplete="off"
           error={Boolean(error)}
           helperText={error?.message?.toString()}
           {...register(name, registerOptions)}
@@ -66,7 +71,7 @@ export const FormField = ({
           label={label}
           placeholder={field.placeholder}
           variant="outlined"
-          autoComplete="new-password"
+          autoComplete="off"
           error={Boolean(error)}
           helperText={error?.message?.toString()}
           {...register(name, registerOptions)}
@@ -97,6 +102,51 @@ export const FormField = ({
             </MenuItem>
           ))}
         </StyledTextField>
+      );
+
+    case 'autocomplete':
+      return (
+        <Controller
+          name={name}
+          control={control}
+          rules={registerOptions}
+          defaultValue=""
+          render={({ field: rhfField }) => (
+            <StyledAutocomplete
+              freeSolo
+              options={field.options || []}
+              value={rhfField.value || ''}
+              getOptionLabel={(option: any) =>
+                typeof option === 'string'
+                  ? option
+                  : option?.label || ''
+              }
+              isOptionEqualToValue={(option: any, value: any) =>
+                option?.value === value?.value
+              }
+              onInputChange={(_, value) => {
+                rhfField.onChange(value);
+              }}
+              onChange={(_, value:any) => {
+                rhfField.onChange(
+                  typeof value === 'string'
+                    ? value
+                    : value?.label || ''
+                );
+              }}
+              renderInput={(params) => (
+                <StyledTextField
+                  {...params}
+                  label={label}
+                  placeholder={field.placeholder}
+                  error={Boolean(error)}
+                  helperText={error?.message?.toString()}
+                />
+              )}
+              {...rest}
+            />
+          )}
+        />
       );
 
     case 'checkbox':

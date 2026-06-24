@@ -1,5 +1,4 @@
 import Grid from '@mui/material/Grid';
-import Paper from '@mui/material/Paper';
 import Typography from '@mui/material/Typography';
 
 import type { ReactNode } from 'react';
@@ -26,14 +25,6 @@ const StatsSection = ({ items }: StatsSectionProps) => {
             md: 4,
           }}
         >
-          <Paper
-            elevation={1}
-            sx={{
-              p: 3,
-              borderRadius: 3,
-              height: '100%',
-            }}
-          >
             {item.icon}
 
             <Typography
@@ -50,7 +41,6 @@ const StatsSection = ({ items }: StatsSectionProps) => {
             <Typography component="p" color="text.secondary">
               {item.label}
             </Typography>
-          </Paper>
         </Grid>
       ))}
     </Grid>

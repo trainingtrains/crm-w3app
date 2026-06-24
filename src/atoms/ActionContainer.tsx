@@ -15,8 +15,7 @@ export const ActionContainer = styled(Box)(({ theme }) => ({
   marginTop: theme.spacing(3),
 
   [theme.breakpoints.down('sm')]: {
-    flexDirection: 'column',
-
+    flexDirection: 'column-reverse',
     justifyContent: 'stretch',
   },
 }));

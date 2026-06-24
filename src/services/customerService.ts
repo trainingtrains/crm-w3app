@@ -130,37 +130,44 @@ export const customerService = {
       })
     );
 
-    return customers.filter((customer: any) => {
-      const matchCustId =
-        !filters.custId ||
-        customer.customerId
-          ?.toLowerCase()
-          .includes(filters.custId.toLowerCase());
+    const filteredCustomers = customers.filter(
+      (customer: any) => {
+        const matchCustId =
+          !filters.custId ||
+          customer.customerId
+            ?.toLowerCase()
+            .includes(filters.custId.toLowerCase());
 
-      const matchCustName =
-        !filters.custName ||
-        customer.companyName
-          ?.toLowerCase()
-          .includes(filters.custName.toLowerCase()) ||
-        customer.contactPerson
-          ?.toLowerCase()
-          .includes(filters.custName.toLowerCase());
+        const matchCustName =
+          !filters.custName ||
+          customer.companyName
+            ?.toLowerCase()
+            .includes(filters.custName.toLowerCase()) ||
+          customer.contactPerson
+            ?.toLowerCase()
+            .includes(filters.custName.toLowerCase());
 
-      const matchMobile =
-        !filters.mobile ||
-        customer.mobile?.includes(filters.mobile);
+        const matchMobile =
+          !filters.mobile ||
+          customer.mobile?.includes(filters.mobile);
 
-      const matchCity =
-        !filters.city ||
-        customer.cityId === filters.city;
+        const matchCity =
+          !filters.city ||
+          customer.cityId === filters.city;
 
-      return (
-        matchCustId &&
-        matchCustName &&
-        matchMobile &&
-        matchCity
-      );
-    });
+        return (
+          matchCustId &&
+          matchCustName &&
+          matchMobile &&
+          matchCity
+        );
+      }
+    );
+
+    return filteredCustomers.sort(
+      (a: any, b: any) =>
+        (b.createdAt || 0) - (a.createdAt || 0)
+    );
   },
 
   async update(id: string, customer: any) {

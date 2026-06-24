@@ -22,7 +22,20 @@ export const CustomerSrchPage = () => {
   const [cities, setCities] = useState<any[]>([]);
 
   useEffect(() => {
+
+    const loadData = async () => {
+      const response =
+        await customerService.searchCustomers({
+          "custId": "",
+          "custName": "",
+          "mobile": "",
+          "city": ""
+        });
+
+      setCustomers(response);
+    }
     loadCities();
+    loadData()
   }, []);
 
   const loadCities = async () => {
@@ -43,18 +56,6 @@ export const CustomerSrchPage = () => {
             options: cities,
           };
 
-        // case CONSTANTS.KEY_PROJECT_TYPE:
-        //     return {
-        //         ...field,
-        //         options: projectTypes,
-        //     };
-
-        // case CONSTANTS.KEY_STATUS:
-        //     return {
-        //         ...field,
-        //         options: statuses,
-        //     };
-
         default:
           return field;
       }
@@ -62,25 +63,24 @@ export const CustomerSrchPage = () => {
   }, [cities]);
   // const navigate = useNavigate();
 
-const handleSearch = async (
-  data: Record<string, unknown>
-) => {
-  try {
-    console.log('Search Data:', data);
+  const handleSearch = async (
+    data: Record<string, unknown>
+  ) => {
+    try {
+      console.log(data)
+      const response =
+        await customerService.searchCustomers({
+          custId: data.custId as string,
+          custName: data.custName as string,
+          mobile: data.mobile as string,
+          city: data.city as string,
+        });
 
-    const response =
-      await customerService.searchCustomers({
-        custId: data.custId as string,
-        custName: data.custName as string,
-        mobile: data.mobile as string,
-        city: data.city as string,
-      });
-
-    setCustomers(response);
-  } catch (error) {
-    console.error('Search Error:', error);
-  }
-};
+      setCustomers(response);
+    } catch (error) {
+      console.error('Search Error:', error);
+    }
+  };
   const handleAddCustomer = () => {
     navigate('/newCust');
   };
@@ -92,6 +92,7 @@ const handleSearch = async (
   const onEditClick = (id, row) => {
     console.log('EDIT', id, row);
   }
+
   const onDeleteClick = (id, row) => {
     console.log('DELETE', id, row);
   }

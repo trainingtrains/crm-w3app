@@ -18,10 +18,7 @@ export const StyledAutocomplete = styled(Autocomplete)(({ theme }) => ({
     },
 
     '&.Mui-focused': {
-      boxShadow: `0 0 0 4px ${alpha(
-        theme.palette.primary.main,
-        0.12
-      )}`,
+      boxShadow: `0 0 0 4px ${alpha(theme.palette.primary.main, 0.12)}`,
     },
   },
 

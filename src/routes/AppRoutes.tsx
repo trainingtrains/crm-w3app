@@ -4,7 +4,6 @@ import NewCustomer from '../pages/customer/NewCustomer';
 import CustomerDetailsPage from '../pages/customer/CustomerDetailsPage';
 import EditCustomerPage from '../pages/customer/CustomerEditPage';
 
-
 export default function AppRoutes() {
   return (
     <Routes>

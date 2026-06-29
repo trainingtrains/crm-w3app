@@ -1,4 +1,4 @@
-import { Box, styled } from '@mui/material'
+import { Box, styled } from '@mui/material';
 
 export const StyledSection = styled(Box)(({ theme }) => ({
   marginBottom: theme.spacing(2),
@@ -13,4 +13,4 @@ export const StyledSection = styled(Box)(({ theme }) => ({
   [theme.breakpoints.up('sm')]: {
     flexDirection: 'row',
   },
-}))
+}));

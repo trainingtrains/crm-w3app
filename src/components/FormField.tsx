@@ -1,17 +1,17 @@
-import MenuItem from "@mui/material/MenuItem";
+import MenuItem from '@mui/material/MenuItem';
 import {
   Controller,
   type Control,
   type FieldErrors,
   type FieldValues,
   type UseFormRegister,
-} from "react-hook-form";
-import type { Field } from "./types/form";
-import { StyledAutocomplete } from "../atoms/StyledAutoComplete";
-import { StyledCheckbox } from "../atoms/StyledCheckbox";
-import { StyledFormControlLabel } from "../atoms/StyledFormControlLabel";
-import { StyledSwitch } from "../atoms/StyledSwitch";
-import { StyledTextField } from "../atoms/StyledTextField";
+} from 'react-hook-form';
+import type { Field } from './types/form';
+import { StyledAutocomplete } from '../atoms/StyledAutoComplete';
+import { StyledCheckbox } from '../atoms/StyledCheckbox';
+import { StyledFormControlLabel } from '../atoms/StyledFormControlLabel';
+import { StyledSwitch } from '../atoms/StyledSwitch';
+import { StyledTextField } from '../atoms/StyledTextField';
 
 type FormFieldProps = {
   field: Field;
@@ -20,12 +20,7 @@ type FormFieldProps = {
   errors?: FieldErrors<FieldValues>;
 };
 
-export const FormField = ({
-  field,
-  register,
-  control,
-  errors,
-}: FormFieldProps) => {
+export const FormField = ({ field, register, control, errors }: FormFieldProps) => {
   const { type, label, name } = field;
   const error = errors?.[name];
   const rules = {
@@ -36,11 +31,11 @@ export const FormField = ({
     //====================================================
     // TEXT
     //====================================================
-    case "text":
-    case "email":
-    case "number":
-    case "password":
-    case "textarea":
+    case 'text':
+    case 'email':
+    case 'number':
+    case 'password':
+    case 'textarea':
       return (
         <Controller
           name={name}
@@ -53,15 +48,16 @@ export const FormField = ({
               margin="normal"
               label={label}
               placeholder={field.placeholder}
-              multiline={type === "textarea"}
-              rows={type === "textarea" ? field.rows ?? 4 : undefined}
-              type={type === "textarea" ? "text" : type}
+              multiline={type === 'textarea'}
+              rows={type === 'textarea' ? (field.rows ?? 4) : undefined}
+              type={type === 'textarea' ? 'text' : type}
               autoComplete="off"
               error={Boolean(error)}
               helperText={error?.message?.toString()}
               slotProps={{
                 inputLabel: {
-                  shrink: (rhfField.value !== undefined && rhfField.value !== "") || !!field.placeholder,
+                  shrink:
+                    (rhfField.value !== undefined && rhfField.value !== '') || !!field.placeholder,
                 },
               }}
             />
@@ -72,7 +68,7 @@ export const FormField = ({
     //====================================================
     // SELECT
     //====================================================
-    case "select":
+    case 'select':
       return (
         <Controller
           name={name}
@@ -84,7 +80,7 @@ export const FormField = ({
               fullWidth
               margin="normal"
               label={label}
-              value={rhfField.value ?? ""}
+              value={rhfField.value ?? ''}
               onChange={rhfField.onChange}
               error={Boolean(error)}
               helperText={error?.message?.toString()}
@@ -107,7 +103,7 @@ export const FormField = ({
     //====================================================
     // AUTOCOMPLETE
     //====================================================
-    case "autocomplete":
+    case 'autocomplete':
       return (
         <Controller
           name={name}
@@ -118,17 +114,19 @@ export const FormField = ({
               options={field.options || []}
               value={rhfField.value ?? null}
               onChange={(_, value) => rhfField.onChange(value)}
-              getOptionLabel={(option: any) => (option?.label ? option.label : "")}
-              isOptionEqualToValue={(option: any, value: any) =>
-                option?.value === value?.value
-              }
+              getOptionLabel={(option: any) => (option?.label ? option.label : '')}
+              isOptionEqualToValue={(option: any, value: any) => option?.value === value?.value}
               renderInput={(params) => {
                 // FIX: Fallback to empty object if InputLabelProps is undefined to prevent type errors
                 const baseInputLabelProps = {};
-                
+
                 const updatedInputLabelProps = {
                   ...baseInputLabelProps,
-                  shrink: (rhfField.value !== null && rhfField.value !== undefined && rhfField.value !== "") || !!field.placeholder,
+                  shrink:
+                    (rhfField.value !== null &&
+                      rhfField.value !== undefined &&
+                      rhfField.value !== '') ||
+                    !!field.placeholder,
                 };
 
                 return (
@@ -150,13 +148,13 @@ export const FormField = ({
     //====================================================
     // CHECKBOX
     //====================================================
-    case "checkbox":
+    case 'checkbox':
       return (
         <StyledFormControlLabel
           sx={{
             mt: 1,
             mb: 1,
-            width: "100%",
+            width: '100%',
           }}
           control={<StyledCheckbox {...register(name, rules)} />}
           label={label}
@@ -166,13 +164,13 @@ export const FormField = ({
     //====================================================
     // SWITCH
     //====================================================
-    case "switch":
+    case 'switch':
       return (
         <StyledFormControlLabel
           sx={{
             mt: 1,
             mb: 1,
-            width: "100%",
+            width: '100%',
           }}
           control={<StyledSwitch {...register(name, rules)} />}
           label={label}

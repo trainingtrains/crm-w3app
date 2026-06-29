@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import PersonAddAlt1Icon from '@mui/icons-material/PersonAddAlt1';
 
-import  Form  from '../../components/CustomForm';
+import Form from '../../components/CustomForm';
 import CustomDataGrid from '../../components/CustomDataGrid';
 
 import { customeDetailsCoulmn, customerSearchConfig } from './config/customerConfig';
@@ -22,20 +22,18 @@ export const CustomerSrchPage = () => {
   const [cities, setCities] = useState<any[]>([]);
 
   useEffect(() => {
-
     const loadData = async () => {
-      const response =
-        await customerService.searchCustomers({
-          "custId": "",
-          "custName": "",
-          "mobile": "",
-          "city": ""
-        });
+      const response = await customerService.searchCustomers({
+        custId: '',
+        custName: '',
+        mobile: '',
+        city: '',
+      });
 
       setCustomers(response);
-    }
+    };
     loadCities();
-    loadData()
+    loadData();
   }, []);
 
   const loadCities = async () => {
@@ -45,7 +43,7 @@ export const CustomerSrchPage = () => {
 
   const loadSrchFormFields = useMemo(() => {
     return customerSearchConfig.map((field) => {
-      if (field.type !== "select" && field.type !== "autocomplete") {
+      if (field.type !== 'select' && field.type !== 'autocomplete') {
         return field;
       }
 
@@ -63,17 +61,14 @@ export const CustomerSrchPage = () => {
   }, [cities]);
   // const navigate = useNavigate();
 
-  const handleSearch = async (
-    data: Record<string, unknown>
-  ) => {
+  const handleSearch = async (data: Record<string, unknown>) => {
     try {
-      const response =
-        await customerService.searchCustomers({
-          custId: data.custId as string,
-          custName: data.custName as string,
-          mobile: data.mobile as string,
-          city: data.city as string,
-        });
+      const response = await customerService.searchCustomers({
+        custId: data.custId as string,
+        custName: data.custName as string,
+        mobile: data.mobile as string,
+        city: data.city as string,
+      });
 
       setCustomers(response);
     } catch (error) {
@@ -86,19 +81,24 @@ export const CustomerSrchPage = () => {
 
   const onViewClick = (id) => {
     navigate(`/custDetails/${id}`);
-  }
+  };
 
   const onEditClick = (id) => {
-        navigate(`/custEdit/${id}`);
-  }
+    navigate(`/custEdit/${id}`);
+  };
 
   return (
-    <><StyledSection>
-      <PageTitle>{CONSTANTS.LBL_CRM_SRCH_PAGE}</PageTitle>
-      <PrimaryButton variant="outlined" startIcon={<PersonAddAlt1Icon />} onClick={handleAddCustomer}>
-        Add Customer
-      </PrimaryButton>
-    </StyledSection>
+    <>
+      <StyledSection>
+        <PageTitle>{CONSTANTS.LBL_CRM_SRCH_PAGE}</PageTitle>
+        <PrimaryButton
+          variant="outlined"
+          startIcon={<PersonAddAlt1Icon />}
+          onClick={handleAddCustomer}
+        >
+          Add Customer
+        </PrimaryButton>
+      </StyledSection>
       <Form config={loadSrchFormFields} onSubmit={handleSearch} />
       <CustomDataGrid
         rows={customers}

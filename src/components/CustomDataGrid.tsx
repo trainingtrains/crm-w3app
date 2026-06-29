@@ -103,20 +103,11 @@ interface ActionCellProps<T extends GridValidRowModel> {
 }
 
 const ActionCell = memo(
-  <T extends GridValidRowModel>({
-    params,
-    onView,
-    onEdit,
-    onDelete,
-  }: ActionCellProps<T>) => (
+  <T extends GridValidRowModel>({ params, onView, onEdit, onDelete }: ActionCellProps<T>) => (
     <Stack direction="row" spacing={0.5} sx={ACTION_STACK_SX}>
       {onView && (
         <Tooltip title="View">
-          <IconButton
-            color="info"
-            size="small"
-            onClick={() => onView(params.id, params.row as T)}
-          >
+          <IconButton color="info" size="small" onClick={() => onView(params.id, params.row as T)}>
             <VisibilityOutlinedIcon fontSize="small" />
           </IconButton>
         </Tooltip>
@@ -174,12 +165,7 @@ export function CustomDataGrid<T extends GridValidRowModel>({
       align: 'center',
       headerAlign: 'center',
       renderCell: (params: GridRenderCellParams<T>) => (
-        <ActionCell
-          params={params}
-          onView={onView}
-          onEdit={onEdit}
-          onDelete={onDelete}
-        />
+        <ActionCell params={params} onView={onView} onEdit={onEdit} onDelete={onDelete} />
       ),
     };
 

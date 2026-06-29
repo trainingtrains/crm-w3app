@@ -10,12 +10,10 @@ import { useForm } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
 
 export default function Register() {
+  const navigate = useNavigate();
 
-  const navigate = useNavigate()
-
- 
-    const { reset } = useForm<FormValues>();
-     const [cities, setCities] = useState<any[]>([]);
+  const { reset } = useForm<FormValues>();
+  const [cities, setCities] = useState<any[]>([]);
 
   useEffect(() => {
     loadCities();
@@ -28,7 +26,7 @@ export default function Register() {
 
   const loadFormFields = useMemo(() => {
     return clientRequirementColumns.map((field) => {
-      if (field.type !== "select" && field.type !== "autocomplete") {
+      if (field.type !== 'select' && field.type !== 'autocomplete') {
         return field;
       }
 
@@ -59,25 +57,23 @@ export default function Register() {
 
   const onHandleSubmit = async (data: any) => {
     try {
-
       await customerService.create(data);
 
-      alert("Customer created successfully");
+      alert('Customer created successfully');
 
-       reset(); // react-hook-form reset if needed
-       navigate(-1); // if using react-router
+      reset(); // react-hook-form reset if needed
+      navigate(-1); // if using react-router
     } catch (error: any) {
       console.error(error);
-      alert(error.message || "Failed to create customer");
+      alert(error.message || 'Failed to create customer');
     }
   };
 
   return (
-    <><StyledSection>
-      <PageTitle>
-        {CONSTANTS.LBL_CRM_NEW_ENTRY}
-      </PageTitle>
-    </StyledSection>
+    <>
+      <StyledSection>
+        <PageTitle>{CONSTANTS.LBL_CRM_NEW_ENTRY}</PageTitle>
+      </StyledSection>
 
       <Form config={loadFormFields} onSubmit={onHandleSubmit} submitLabel="Save" />
     </>

@@ -12,12 +12,10 @@ const PageContainer = ({ children }: PageContainerProps) => {
       sx={{
         width: '100%',
         mx: 'auto',
-        my: 2
+        my: 2,
       }}
     >
-      <Card sx={{ p: 2 }}>
-        {children}
-      </Card>
+      <Card sx={{ p: 2 }}>{children}</Card>
     </Box>
   );
 };

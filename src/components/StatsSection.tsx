@@ -25,22 +25,22 @@ const StatsSection = ({ items }: StatsSectionProps) => {
             md: 4,
           }}
         >
-            {item.icon}
+          {item.icon}
 
-            <Typography
-              component="div"
-              variant="h4"
-              sx={{
-                fontWeight: 700,
-                mt: 1,
-              }}
-            >
-              {item.value}
-            </Typography>
+          <Typography
+            component="div"
+            variant="h4"
+            sx={{
+              fontWeight: 700,
+              mt: 1,
+            }}
+          >
+            {item.value}
+          </Typography>
 
-            <Typography component="p" color="text.secondary">
-              {item.label}
-            </Typography>
+          <Typography component="p" color="text.secondary">
+            {item.label}
+          </Typography>
         </Grid>
       ))}
     </Grid>

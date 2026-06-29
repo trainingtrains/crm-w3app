@@ -1,16 +1,16 @@
-import { useEffect } from "react";
-import { useForm, type SubmitHandler } from "react-hook-form";
-import { useNavigate } from "react-router-dom";
+import { useEffect } from 'react';
+import { useForm, type SubmitHandler } from 'react-hook-form';
+import { useNavigate } from 'react-router-dom';
 
-import Grid from "@mui/material/Grid";
+import Grid from '@mui/material/Grid';
 
-import { FormField } from "./FormField";
-import type { Field } from "./types/form";
+import { FormField } from './FormField';
+import type { Field } from './types/form';
 
-import { ActionContainer } from "../atoms/ActionContainer";
-import { NegativeButton } from "../atoms/NegativeButton";
-import { ResetButton } from "../atoms/ResetButton";
-import { SearchButton } from "../atoms/SearchButton";
+import { ActionContainer } from '../atoms/ActionContainer';
+import { NegativeButton } from '../atoms/NegativeButton';
+import { ResetButton } from '../atoms/ResetButton';
+import { SearchButton } from '../atoms/SearchButton';
 
 export type FormValues = Record<string, any>;
 
@@ -21,12 +21,7 @@ export type FormProps = {
   defaultValues?: FormValues;
 };
 
-const Form = ({
-  config,
-  onSubmit,
-  submitLabel,
-  defaultValues,
-}: FormProps) => {
+const Form = ({ config, onSubmit, submitLabel, defaultValues }: FormProps) => {
   const navigate = useNavigate();
   const {
     register,
@@ -68,12 +63,7 @@ const Form = ({
               xl: field.grid ?? 3,
             }}
           >
-            <FormField
-              field={field}
-              register={register}
-              control={control}
-              errors={errors}
-            />
+            <FormField field={field} register={register} control={control} errors={errors} />
           </Grid>
         ))}
       </Grid>
@@ -90,7 +80,7 @@ const Form = ({
         </ResetButton>
 
         <SearchButton variant="contained" type="submit">
-          {submitLabel ?? "Search"}
+          {submitLabel ?? 'Search'}
         </SearchButton>
       </ActionContainer>
     </form>

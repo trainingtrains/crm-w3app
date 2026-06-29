@@ -252,39 +252,16 @@ export const clientEditConfig: Field[] = [
     label: 'Project Type',
     required: true,
     grid: 6,
-    options: [
-      {
-        label: 'Web Application',
-        value: 'Web Application',
-      },
-      {
-        label: 'Mobile Application',
-        value: 'Mobile Application',
-      },
-      {
-        label: 'Desktop Application',
-        value: 'Desktop Application',
-      },
-      {
-        label: 'ERP / CRM',
-        value: 'ERP / CRM',
-      },
-      {
-        label: 'E-Commerce',
-        value: 'E-Commerce',
-      },
-      {
-        label: 'API Development',
-        value: 'API Development',
-      },
-      {
-        label: 'Enhancement',
-        value: 'Enhancement',
-      },
-      {
-        label: 'Other',
-        value: 'Other',
-      },
+      options: [
+      { label: 'All', value: 'all' },
+      { label: 'Web Application', value: 'web' },
+      { label: 'Mobile Application', value: 'mobile' },
+      { label: 'Desktop Application', value: 'desktop' },
+      { label: 'ERP / CRM', value: 'erp' },
+      { label: 'E-Commerce', value: 'ecommerce' },
+      { label: 'API Development', value: 'api' },
+      { label: 'Enhancement', value: 'enhancement' },
+      { label: 'Other', value: 'other' },
     ],
   },
   {
@@ -293,39 +270,16 @@ export const clientEditConfig: Field[] = [
     label: 'Enquiry Status',
     required: true,
     grid: 6,
-    options: [
-      {
-        label: 'New',
-        value: 'New',
-      },
-      {
-        label: 'Requirement Gathering',
-        value: 'Requirement Gathering',
-      },
-      {
-        label: 'Proposal Sent',
-        value: 'Proposal Sent',
-      },
-      {
-        label: 'Negotiation',
-        value: 'Negotiation',
-      },
-      {
-        label: 'Approved',
-        value: 'Approved',
-      },
-      {
-        label: 'Development',
-        value: 'Development',
-      },
-      {
-        label: 'On Hold',
-        value: 'On Hold',
-      },
-      {
-        label: 'Rejected',
-        value: 'Rejected',
-      },
+     options: [
+      { label: 'All', value: 'all' },
+      { label: 'New', value: 'new' },
+      { label: 'Requirement Gathering', value: 'requirement' },
+      { label: 'Proposal Sent', value: 'proposal' },
+      { label: 'Negotiation', value: 'negotiation' },
+      { label: 'Approved', value: 'approved' },
+      { label: 'Development', value: 'development' },
+      { label: 'On Hold', value: 'onhold' },
+      { label: 'Rejected', value: 'rejected' },
     ],
   },
   {

@@ -1,38 +1,58 @@
-import { useForm, type SubmitHandler } from 'react-hook-form';
-import { NegativeButton } from '../atoms/NegativeButton';
-import { useNavigate } from 'react-router-dom';
+import { useEffect } from "react";
+import { useForm, type SubmitHandler } from "react-hook-form";
+import { useNavigate } from "react-router-dom";
 
-import Grid from '@mui/material/Grid';
+import Grid from "@mui/material/Grid";
 
-import { FormField } from './FormField';
-import type { Field } from './types/form';
-import { ActionContainer } from '../atoms/ActionContainer';
-import { ResetButton } from '../atoms/ResetButton';
-import { SearchButton } from '../atoms/SearchButton';
+import { FormField } from "./FormField";
+import type { Field } from "./types/form";
 
-export type FormValues = Record<string, unknown>;
+import { ActionContainer } from "../atoms/ActionContainer";
+import { NegativeButton } from "../atoms/NegativeButton";
+import { ResetButton } from "../atoms/ResetButton";
+import { SearchButton } from "../atoms/SearchButton";
+
+export type FormValues = Record<string, any>;
 
 export type FormProps = {
   config: Field[];
   onSubmit: SubmitHandler<FormValues>;
-  submitLabel?: string
+  submitLabel?: string;
+  defaultValues?: FormValues;
 };
 
-export const Form = ({ config, onSubmit, submitLabel }: FormProps) => {
+const Form = ({
+  config,
+  onSubmit,
+  submitLabel,
+  defaultValues,
+}: FormProps) => {
+  const navigate = useNavigate();
   const {
     register,
     control,
     handleSubmit,
     reset,
     formState: { errors },
-  } = useForm<FormValues>();
+  } = useForm<FormValues>({
+    defaultValues,
+  });
 
-  const navigate = useNavigate();
+  // Update form when default values change (e.g., after API/Firebase fetch)
+  useEffect(() => {
+    if (defaultValues) {
+      reset(defaultValues);
+    }
+  }, [defaultValues, reset]);
 
   const onCancel = () => {
-    reset();
+    reset(defaultValues);
     navigate(-1);
-  }
+  };
+
+  const onReset = () => {
+    reset(defaultValues);
+  };
 
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
@@ -49,7 +69,6 @@ export const Form = ({ config, onSubmit, submitLabel }: FormProps) => {
             }}
           >
             <FormField
-              key={field.name}
               field={field}
               register={register}
               control={control}
@@ -60,15 +79,17 @@ export const Form = ({ config, onSubmit, submitLabel }: FormProps) => {
       </Grid>
 
       <ActionContainer>
-        {submitLabel && <NegativeButton variant="outlined" onClick={onCancel}>
-          Cancel
-        </NegativeButton>}
+        {submitLabel && (
+          <NegativeButton variant="outlined" onClick={onCancel}>
+            Cancel
+          </NegativeButton>
+        )}
 
-        <ResetButton variant="outlined" onClick={() => reset()}>
+        <ResetButton variant="outlined" onClick={onReset}>
           Reset
         </ResetButton>
 
-        <SearchButton variant="outlined" type="submit">
+        <SearchButton variant="contained" type="submit">
           {submitLabel ?? "Search"}
         </SearchButton>
       </ActionContainer>

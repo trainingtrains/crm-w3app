@@ -1,6 +1,7 @@
 import type { GridColDef } from '@mui/x-data-grid';
 import type { Field } from '../../../components/types/form';
 import { CONSTANTS } from '../../../constants';
+import type { DetailsField } from '../../../components/DetailsView';
 
 export const customerSearchConfig: Field[] = [
   {
@@ -47,6 +48,18 @@ export const customeDetailsCoulmn: GridColDef[] = [
     minWidth: 220,
   },
   {
+    field: "projectType",
+    headerName: "Project Type",
+    flex: 1,
+    minWidth: 150,
+  },
+  {
+    field: "status",
+    headerName: "Status",
+    flex: 1,
+    minWidth: 120,
+  },
+  {
     field: "contactPerson",
     headerName: "Contact Person",
     flex: 1,
@@ -70,21 +83,10 @@ export const customeDetailsCoulmn: GridColDef[] = [
     flex: 1,
     minWidth: 150,
   },
-  {
-    field: "projectType",
-    headerName: "Project Type",
-    flex: 1,
-    minWidth: 150,
-  },
-  {
-    field: "status",
-    headerName: "Status",
-    flex: 1,
-    minWidth: 120,
-  },
+
 ];
 
-export const clientRequirementColumns: Field[] = [
+export const newClientRegistrFields: Field[] = [
   {
     type: 'text',
     name: 'companyName',
@@ -161,6 +163,190 @@ export const clientRequirementColumns: Field[] = [
     name: CONSTANTS.KEY_CITY,
     label: CONSTANTS.LBL_CITY,
     options: [],
+    grid: 6,
+  },
+];
+
+
+// customerDetails.config.ts
+
+export const customerDetailsConfig: DetailsField[] = [
+  {
+    name: "customerId",
+    label: "Customer ID",
+  },
+  {
+    name: "companyName",
+    label: "Company Name",
+  },
+  {
+    name: "contactPerson",
+    label: "Contact Person",
+  },
+  {
+    name: "mobile",
+    label: "Mobile",
+  },
+  {
+    name: "email",
+    label: "Email",
+  },
+  {
+    name: "address",
+    label: "Address",
+    grid: 6,
+  },
+  {
+    name: "projectType",
+    label: "Project Type",
+  },
+  {
+    name: "status",
+    label: "Status",
+  },
+  {
+    name: "createdAt",
+    label: "Created Date",
+    render: (value) =>
+      value ? new Date(value).toLocaleDateString() : "-",
+  },
+  {
+    name: "updatedAt",
+    label: "Updated Date",
+    render: (value) =>
+      value ? new Date(value).toLocaleDateString() : "-",
+  },
+];
+
+
+export const clientEditConfig: Field[] = [
+  {
+    type: "text",
+    name: "companyName",
+    label: "Company Name",
+    placeholder: "Enter company name",
+    required: true,
+    grid: 6,
+  },
+  {
+    type: "text",
+    name: "contactPerson",
+    label: "Contact Person",
+    placeholder: "Enter contact person",
+    required: true,
+    grid: 6,
+  },
+  {
+    type: "text",
+    name: "mobile",
+    label: "Mobile",
+    placeholder: "Enter mobile number",
+    required: true,
+    grid: 6,
+  },
+  {
+    type: "text",
+    name: "email",
+    label: "Email",
+    placeholder: "Enter email address",
+    grid: 6,
+  },
+  {
+    type: "select",
+    name: "projectType",
+    label: "Project Type",
+    required: true,
+    grid: 6,
+    options: [
+      {
+        label: "Web Application",
+        value: "Web Application",
+      },
+      {
+        label: "Mobile Application",
+        value: "Mobile Application",
+      },
+      {
+        label: "Desktop Application",
+        value: "Desktop Application",
+      },
+      {
+        label: "ERP / CRM",
+        value: "ERP / CRM",
+      },
+      {
+        label: "E-Commerce",
+        value: "E-Commerce",
+      },
+      {
+        label: "API Development",
+        value: "API Development",
+      },
+      {
+        label: "Enhancement",
+        value: "Enhancement",
+      },
+      {
+        label: "Other",
+        value: "Other",
+      },
+    ],
+  },
+  {
+    type: "select",
+    name: "status",
+    label: "Enquiry Status",
+    required: true,
+    grid: 6,
+    options: [
+      {
+        label: "New",
+        value: "New",
+      },
+      {
+        label: "Requirement Gathering",
+        value: "Requirement Gathering",
+      },
+      {
+        label: "Proposal Sent",
+        value: "Proposal Sent",
+      },
+      {
+        label: "Negotiation",
+        value: "Negotiation",
+      },
+      {
+        label: "Approved",
+        value: "Approved",
+      },
+      {
+        label: "Development",
+        value: "Development",
+      },
+      {
+        label: "On Hold",
+        value: "On Hold",
+      },
+      {
+        label: "Rejected",
+        value: "Rejected",
+      },
+    ],
+  },
+  {
+    type: "textarea",
+    name: CONSTANTS.KEY_ADDRESS,
+    label: CONSTANTS.LBL_ADDRESS,
+    placeholder: "Enter address",
+    grid: 6,
+  },
+  {
+    type: "autocomplete",
+    name: CONSTANTS.KEY_CITY,
+    label: CONSTANTS.LBL_CITY,
+    placeholder: "Select city",
+    options: [],
+    required: true,
     grid: 6,
   },
 ];

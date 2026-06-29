@@ -1,7 +1,7 @@
 import { StyledSection } from '../../atoms/StyledSection';
 import { PageTitle } from '../../atoms/PageTitle';
-import { Form, type FormValues } from '../../components/CustomForm';
-import { clientRequirementColumns } from './config/customerConfig';
+import Form, { type FormValues } from '../../components/CustomForm';
+import { newClientRegistrFields as clientRequirementColumns } from './config/customerConfig';
 import { useEffect, useMemo, useState } from 'react';
 import { masterService } from '../../services/masterService';
 import { CONSTANTS } from '../../constants';
@@ -59,7 +59,6 @@ export default function Register() {
 
   const onHandleSubmit = async (data: any) => {
     try {
-      console.log("Submitting Customer:", data);
 
       await customerService.create(data);
 

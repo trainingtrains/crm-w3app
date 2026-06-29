@@ -1,18 +1,17 @@
-import MenuItem from '@mui/material/MenuItem';
+import MenuItem from "@mui/material/MenuItem";
 import {
   Controller,
   type Control,
   type FieldErrors,
   type FieldValues,
   type UseFormRegister,
-} from 'react-hook-form';
-
-import type { Field } from './types/form';
-import { StyledCheckbox } from '../atoms/StyledCheckbox';
-import { StyledFormControlLabel } from '../atoms/StyledFormControlLabel';
-import { StyledSwitch } from '../atoms/StyledSwitch';
-import { StyledTextField } from '../atoms/StyledTextField';
-import { StyledAutocomplete } from '../atoms/StyledAutoComplete';
+} from "react-hook-form";
+import type { Field } from "./types/form";
+import { StyledAutocomplete } from "../atoms/StyledAutoComplete";
+import { StyledCheckbox } from "../atoms/StyledCheckbox";
+import { StyledFormControlLabel } from "../atoms/StyledFormControlLabel";
+import { StyledSwitch } from "../atoms/StyledSwitch";
+import { StyledTextField } from "../atoms/StyledTextField";
 
 type FormFieldProps = {
   field: Field;
@@ -27,160 +26,155 @@ export const FormField = ({
   control,
   errors,
 }: FormFieldProps) => {
-  const {
-    type,
-    label,
-    name,
-    ...rest
-  } = field;
-
+  const { type, label, name } = field;
   const error = errors?.[name];
-
-  const registerOptions = {
+  const rules = {
     required: field.required ? `${label} is required` : false,
   };
 
   switch (type) {
-    case 'text':
-    case 'email':
-    case 'number':
-    case 'password':
-      return (
-        <StyledTextField
-          fullWidth
-          margin="normal"
-          label={label}
-          type={type}
-          placeholder={field.placeholder}
-          variant="outlined"
-          autoComplete="off"
-          error={Boolean(error)}
-          helperText={error?.message?.toString()}
-          {...register(name, registerOptions)}
-          {...rest}
-        />
-      );
-
-    case 'textarea':
-      return (
-        <StyledTextField
-          fullWidth
-          multiline
-          rows={field.rows ?? 4}
-          margin="normal"
-          label={label}
-          placeholder={field.placeholder}
-          variant="outlined"
-          autoComplete="off"
-          error={Boolean(error)}
-          helperText={error?.message?.toString()}
-          {...register(name, registerOptions)}
-          {...rest}
-        />
-      );
-
-    case 'select':
-      return (
-        <StyledTextField
-          select
-          fullWidth
-          margin="normal"
-          label={label}
-          defaultValue=""
-          variant="outlined"
-          error={Boolean(error)}
-          helperText={error?.message?.toString()}
-          {...register(name, registerOptions)}
-          {...rest}
-        >
-          {(field.options ?? []).map((option) => (
-            <MenuItem
-              key={option.value}
-              value={option.value}
-            >
-              {option.label}
-            </MenuItem>
-          ))}
-        </StyledTextField>
-      );
-
-    case 'autocomplete':
+    //====================================================
+    // TEXT
+    //====================================================
+    case "text":
+    case "email":
+    case "number":
+    case "password":
+    case "textarea":
       return (
         <Controller
           name={name}
           control={control}
-          rules={registerOptions}
-          defaultValue=""
+          rules={rules}
           render={({ field: rhfField }) => (
-            <StyledAutocomplete
-              freeSolo
-              options={field.options || []}
-              value={rhfField.value || ''}
-              getOptionLabel={(option: any) =>
-                typeof option === 'string'
-                  ? option
-                  : option?.label || ''
-              }
-              isOptionEqualToValue={(option: any, value: any) =>
-                option?.value === value?.value
-              }
-              onInputChange={(_, value) => {
-                rhfField.onChange(value);
+            <StyledTextField
+              {...rhfField}
+              fullWidth
+              margin="normal"
+              label={label}
+              placeholder={field.placeholder}
+              multiline={type === "textarea"}
+              rows={type === "textarea" ? field.rows ?? 4 : undefined}
+              type={type === "textarea" ? "text" : type}
+              autoComplete="off"
+              error={Boolean(error)}
+              helperText={error?.message?.toString()}
+              slotProps={{
+                inputLabel: {
+                  shrink: (rhfField.value !== undefined && rhfField.value !== "") || !!field.placeholder,
+                },
               }}
-              onChange={(_, value:any) => {
-                rhfField.onChange(
-                  typeof value === 'string'
-                    ? value
-                    : value?.label || ''
-                );
-              }}
-              renderInput={(params) => (
-                <StyledTextField
-                  {...params}
-                  label={label}
-                  placeholder={field.placeholder}
-                  error={Boolean(error)}
-                  helperText={error?.message?.toString()}
-                />
-              )}
-              {...rest}
             />
           )}
         />
       );
 
-    case 'checkbox':
+    //====================================================
+    // SELECT
+    //====================================================
+    case "select":
+      return (
+        <Controller
+          name={name}
+          control={control}
+          rules={rules}
+          render={({ field: rhfField }) => (
+            <StyledTextField
+              select
+              fullWidth
+              margin="normal"
+              label={label}
+              value={rhfField.value ?? ""}
+              onChange={rhfField.onChange}
+              error={Boolean(error)}
+              helperText={error?.message?.toString()}
+              slotProps={{
+                inputLabel: {
+                  shrink: true,
+                },
+              }}
+            >
+              {(field.options ?? []).map((option) => (
+                <MenuItem key={option.value} value={option.value}>
+                  {option.label}
+                </MenuItem>
+              ))}
+            </StyledTextField>
+          )}
+        />
+      );
+
+    //====================================================
+    // AUTOCOMPLETE
+    //====================================================
+    case "autocomplete":
+      return (
+        <Controller
+          name={name}
+          control={control}
+          rules={rules}
+          render={({ field: rhfField }) => (
+            <StyledAutocomplete
+              options={field.options || []}
+              value={rhfField.value ?? null}
+              onChange={(_, value) => rhfField.onChange(value)}
+              getOptionLabel={(option: any) => (option?.label ? option.label : "")}
+              isOptionEqualToValue={(option: any, value: any) =>
+                option?.value === value?.value
+              }
+              renderInput={(params) => {
+                // FIX: Fallback to empty object if InputLabelProps is undefined to prevent type errors
+                const baseInputLabelProps = {};
+                
+                const updatedInputLabelProps = {
+                  ...baseInputLabelProps,
+                  shrink: (rhfField.value !== null && rhfField.value !== undefined && rhfField.value !== "") || !!field.placeholder,
+                };
+
+                return (
+                  <StyledTextField
+                    {...params}
+                    label={label}
+                    placeholder={field.placeholder}
+                    error={Boolean(error)}
+                    helperText={error?.message?.toString()}
+                    {...({ InputLabelProps: updatedInputLabelProps } as any)}
+                  />
+                );
+              }}
+            />
+          )}
+        />
+      );
+
+    //====================================================
+    // CHECKBOX
+    //====================================================
+    case "checkbox":
       return (
         <StyledFormControlLabel
           sx={{
             mt: 1,
             mb: 1,
-            width: '100%',
+            width: "100%",
           }}
-          control={
-            <StyledCheckbox
-              {...register(name, registerOptions)}
-              {...rest}
-            />
-          }
+          control={<StyledCheckbox {...register(name, rules)} />}
           label={label}
         />
       );
 
-    case 'switch':
+    //====================================================
+    // SWITCH
+    //====================================================
+    case "switch":
       return (
         <StyledFormControlLabel
           sx={{
             mt: 1,
             mb: 1,
-            width: '100%',
+            width: "100%",
           }}
-          control={
-            <StyledSwitch
-              {...register(name, registerOptions)}
-              {...rest}
-            />
-          }
+          control={<StyledSwitch {...register(name, rules)} />}
           label={label}
         />
       );

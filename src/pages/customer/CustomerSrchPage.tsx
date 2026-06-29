@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import PersonAddAlt1Icon from '@mui/icons-material/PersonAddAlt1';
 
-import { Form } from '../../components/CustomForm';
+import  Form  from '../../components/CustomForm';
 import CustomDataGrid from '../../components/CustomDataGrid';
 
 import { customeDetailsCoulmn, customerSearchConfig } from './config/customerConfig';
@@ -67,7 +67,6 @@ export const CustomerSrchPage = () => {
     data: Record<string, unknown>
   ) => {
     try {
-      console.log(data)
       const response =
         await customerService.searchCustomers({
           custId: data.custId as string,
@@ -85,16 +84,12 @@ export const CustomerSrchPage = () => {
     navigate('/newCust');
   };
 
-  const onViewClick = (id, row) => {
-    console.log('VIEW', id, row);
+  const onViewClick = (id) => {
+    navigate(`/custDetails/${id}`);
   }
 
-  const onEditClick = (id, row) => {
-    console.log('EDIT', id, row);
-  }
-
-  const onDeleteClick = (id, row) => {
-    console.log('DELETE', id, row);
+  const onEditClick = (id) => {
+        navigate(`/custEdit/${id}`);
   }
 
   return (
@@ -110,7 +105,7 @@ export const CustomerSrchPage = () => {
         columns={customeDetailsCoulmn}
         onView={onViewClick}
         onEdit={onEditClick}
-        onDelete={onDeleteClick}
+        // onDelete={onDeleteClick}
       />
     </>
   );

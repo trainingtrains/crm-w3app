@@ -14,101 +14,97 @@ export const customerService = {
 
   async create(customer: any) {
     try {
-      // Check existing customer
-      const customerSnapshot = await get(ref(db, "customers"));
+      const customersRef = ref(db, "customers");
+      const snapshot = await get(customersRef);
 
-      let customers: any = {};
+      const customers = snapshot.exists() ? snapshot.val() : {};
 
-      if (customerSnapshot.exists()) {
-        customers = customerSnapshot.val();
+      // Check duplicate customer
+      const exists = Object.values(customers).some((c: any) =>
+        c.companyName?.trim().toLowerCase() === customer.companyName?.trim().toLowerCase() &&
+        c.contactPerson?.trim().toLowerCase() === customer.contactPerson?.trim().toLowerCase() &&
+        c.mobile?.trim() === customer.mobile?.trim()
+      );
 
-        const existingCustomer = Object.values(customers).find(
-          (c: any) =>
-            c.companyName?.trim().toLowerCase() ===
-            customer.companyName?.trim().toLowerCase() &&
-            c.contactPerson?.trim().toLowerCase() ===
-            customer.contactPerson?.trim().toLowerCase() &&
-            c.mobile?.trim() === customer.mobile?.trim()
+      if (exists) {
+        throw new Error(
+          "Customer already exists with the same Company Name, Contact Person and Mobile Number."
         );
-
-        if (existingCustomer) {
-          throw new Error(
-            "Customer already exists with the same Company Name, Contact Person and Mobile Number."
-          );
-        }
       }
 
       // Generate Customer ID
       const prefix = "TTCL";
 
-      const maxNumber = Object.values(customers).reduce(
-        (max: number, c: any) => {
-          const id = c.customerId || "";
-
-          if (id.startsWith(prefix)) {
-            const num = parseInt(id.replace(prefix, ""), 10);
-            return Math.max(max, isNaN(num) ? 0 : num);
-          }
-
-          return max;
-        },
-        0
-      );
+      const maxNumber = Object.values(customers).reduce((max: number, c: any) => {
+        const num = Number((c.customerId || "").replace(prefix, ""));
+        return Number.isNaN(num) ? max : Math.max(max, num);
+      }, 0);
 
       const customerId = `${prefix}${String(maxNumber + 1).padStart(4, "0")}`;
 
-      // Find/Create City
-      let cityId = "";
+      // Get selected city id
+      const cityId =
+        typeof customer.city === "object"
+          ? customer.city?.value ?? ""
+          : customer.city ?? "";
 
-      if (customer.city?.trim()) {
-        const cityName = customer.city.trim();
-
-        const citySnapshot = await get(ref(db, "masters/cities"));
-
-        if (citySnapshot.exists()) {
-          const cities = citySnapshot.val();
-
-          const existingCity = Object.entries(cities).find(
-            ([_, city]: any) =>
-              city.name?.trim().toLowerCase() === cityName.toLowerCase()
-          );
-
-          if (existingCity) {
-            cityId = existingCity[0];
-          }
-        }
-
-        // Create city if not found
-        if (!cityId) {
-          const cityRef = await push(ref(db, "masters/cities"), {
-            name: cityName,
-            createdAt: Date.now(),
-            updatedAt: Date.now(),
-          });
-
-          cityId = cityRef.key || "";
-        }
-      }
-
-      // Remove city string
       const { city, ...customerData } = customer;
 
-      // Save customer
-      const customerRef = await push(ref(db, "customers"), {
+      const now = Date.now();
+
+      const customerRef = await push(customersRef, {
         customerId,
         ...customerData,
         cityId,
-        createdAt: Date.now(),
-        updatedAt: Date.now(),
+        createdAt: now,
+        updatedAt: now,
       });
 
       return {
         id: customerRef.key,
         customerId,
       };
-
     } catch (error) {
       console.error("Create Customer Error:", error);
+      throw error;
+    }
+  },
+  async getById(id: string) {
+    try {
+      const snapshot = await get(ref(db, `customers/${id}`));
+
+      if (!snapshot.exists()) {
+        throw new Error("Customer not found.");
+      }
+
+      return {
+        id,
+        ...snapshot.val(),
+      };
+    } catch (error) {
+      console.error("Get Customer Error:", error);
+      throw error;
+    }
+  },
+
+  async delete(id: string) {
+    try {
+      const customerRef = ref(db, `customers/${id}`);
+
+      const snapshot = await get(customerRef);
+
+      if (!snapshot.exists()) {
+        throw new Error("Customer not found.");
+      }
+
+      await remove(customerRef);
+
+      return {
+        success: true,
+        message: "Customer deleted successfully.",
+      };
+    } catch (error) {
+      console.error("Delete Customer Error:", error);
       throw error;
     }
   },
@@ -180,9 +176,4 @@ export const customerService = {
     );
   },
 
-  async delete(id: string) {
-    return remove(
-      ref(db, `customers/${id}`)
-    );
-  },
 };

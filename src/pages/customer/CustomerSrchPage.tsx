@@ -102,7 +102,7 @@ const CustomerSrchPage = () => {
         companyName: customer.companyName,
         contactPerson: customer.contactPerson,
         contactDetails: `${customer.mobile || '-'} / ${customer.email || '-'}`,
-        city: mappedCity ? (mappedCity.name || mappedCity.cityName) : (customer.city || '-'),
+        city: mappedCity ? mappedCity.name || mappedCity.cityName : customer.city || '-',
         enquiry: customer.enquiry ? String(customer.enquiry).toUpperCase() : '-',
         totalAmount: customer.totalAmount ?? 0,
         paidAmount: customer.paidAmount ?? 0,
@@ -119,19 +119,19 @@ const CustomerSrchPage = () => {
       headers
         .map((header) => {
           const value = customer[header];
-          if (value === null || value === undefined) return "";
+          if (value === null || value === undefined) return '';
           return `"${String(value).replace(/"/g, '""')}"`;
         })
-        .join(",")
+        .join(',')
     );
 
-    const csvContent = [headers.join(","), ...csvRows].join("\n");
-    const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+    const csvContent = [headers.join(','), ...csvRows].join('\n');
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
     const url = URL.createObjectURL(blob);
-    const link = document.createElement("a");
+    const link = document.createElement('a');
 
     link.href = url;
-    link.download = `customer_export_${new Date().toISOString().split("T")[0]}.csv`;
+    link.download = `customer_export_${new Date().toISOString().split('T')[0]}.csv`;
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
@@ -151,13 +151,17 @@ const CustomerSrchPage = () => {
         </PrimaryButton>
       </PageHeader>
 
-  <FormContainer>
-      <StyledSection>
-        <Form config={searchFields} onSubmit={handleSearch} />
-      </StyledSection>
+      <FormContainer>
+        <StyledSection>
+          <Form config={searchFields} onSubmit={handleSearch} />
+        </StyledSection>
 
-      <ReusableDataGrid data={customerDetails} onExportCSV={handleExportCSV} onView={handleView} />
-    </FormContainer>
+        <ReusableDataGrid
+          data={customerDetails}
+          onExportCSV={handleExportCSV}
+          onView={handleView}
+        />
+      </FormContainer>
     </>
   );
 };

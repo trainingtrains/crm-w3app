@@ -1,5 +1,5 @@
-import MenuItem from "@mui/material/MenuItem";
-import TextField from "@mui/material/TextField";
+import MenuItem from '@mui/material/MenuItem';
+import TextField from '@mui/material/TextField';
 
 import {
   Controller,
@@ -7,15 +7,15 @@ import {
   type FieldErrors,
   type FieldValues,
   type UseFormRegister,
-} from "react-hook-form";
+} from 'react-hook-form';
 
-import type { Field } from "./types/form";
+import type { Field } from './types/form';
 
-import { StyledAutocomplete } from "../atoms/StyledAutoComplete";
-import { StyledCheckbox } from "../atoms/StyledCheckbox";
-import { StyledFormControlLabel } from "../atoms/StyledFormControlLabel";
-import { StyledSwitch } from "../atoms/StyledSwitch";
-import { StyledTextField } from "../atoms/StyledTextField";
+import { StyledAutocomplete } from '../atoms/StyledAutoComplete';
+import { StyledCheckbox } from '../atoms/StyledCheckbox';
+import { StyledFormControlLabel } from '../atoms/StyledFormControlLabel';
+import { StyledSwitch } from '../atoms/StyledSwitch';
+import { StyledTextField } from '../atoms/StyledTextField';
 
 type FormFieldProps = {
   field: Field;
@@ -26,16 +26,11 @@ type FormFieldProps = {
 
 const COMMON_TEXTFIELD_PROPS = {
   fullWidth: true,
-  size: "small" as const,
-  autoComplete: "off",
+  size: 'small' as const,
+  autoComplete: 'off',
 };
 
-export const FormField = ({
-  field,
-  register,
-  control,
-  errors,
-}: FormFieldProps) => {
+export const FormField = ({ field, register, control, errors }: FormFieldProps) => {
   const { type, label, name } = field;
 
   const error = errors?.[name];
@@ -43,29 +38,26 @@ export const FormField = ({
   const helperText = error?.message?.toString();
 
   const rules = {
-    required: field.required
-      ? `${label} is required`
-      : false,
+    required: field.required ? `${label} is required` : false,
   };
 
   switch (type) {
-
     //====================================================
     // TEXT
     //====================================================
 
-    case "text":
-    case "email":
-    case "number":
-    case "password":
-    case "textarea":
+    case 'text':
+    case 'email':
+    case 'number':
+    case 'password':
+    case 'textarea':
       return (
         <Controller
           name={name}
           control={control}
           rules={rules}
           render={({ field: rhfField }) => {
-            const isTextarea = type === "textarea";
+            const isTextarea = type === 'textarea';
 
             return (
               <StyledTextField
@@ -73,11 +65,11 @@ export const FormField = ({
                 name={rhfField.name}
                 onBlur={rhfField.onBlur}
                 onChange={rhfField.onChange}
-                value={rhfField.value ?? ""}
+                value={rhfField.value ?? ''}
                 label={label}
                 placeholder={field.placeholder}
                 multiline={isTextarea}
-                rows={isTextarea ? field.rows ?? 4 : undefined}
+                rows={isTextarea ? (field.rows ?? 4) : undefined}
                 // Don't pass `type` at all when multiline — MUI renders a <textarea>
                 // and warns if `type` is set alongside `multiline`.
                 type={isTextarea ? undefined : type}
@@ -101,7 +93,7 @@ export const FormField = ({
     // SELECT
     //====================================================
 
-    case "select":
+    case 'select':
       return (
         <Controller
           name={name}
@@ -113,7 +105,7 @@ export const FormField = ({
               name={rhfField.name}
               onBlur={rhfField.onBlur}
               onChange={rhfField.onChange}
-              value={rhfField.value ?? ""}
+              value={rhfField.value ?? ''}
               select
               label={label}
               error={Boolean(error)}
@@ -121,11 +113,11 @@ export const FormField = ({
               slotProps={{
                 select: {
                   sx: {
-                    display: "flex",
-                    alignItems: "center",
-                    height: "100%",       // <-- makes the select box fill its parent, so centering has room to act
-                    boxSizing: "border-box",
-                    py: 0,                 // kill any vertical padding fighting the centering
+                    display: 'flex',
+                    alignItems: 'center',
+                    height: '100%', // <-- makes the select box fill its parent, so centering has room to act
+                    boxSizing: 'border-box',
+                    py: 0, // kill any vertical padding fighting the centering
                   },
                   ref: rhfField.ref,
                 },
@@ -147,7 +139,7 @@ export const FormField = ({
     // AUTOCOMPLETE
     //====================================================
 
-    case "autocomplete":
+    case 'autocomplete':
       return (
         <Controller
           name={name}
@@ -158,7 +150,7 @@ export const FormField = ({
               options={field.options ?? []}
               value={rhfField.value ?? null}
               onChange={(_, value) => rhfField.onChange(value)}
-              getOptionLabel={(option) => (option as any)?.label ?? ""}
+              getOptionLabel={(option) => (option as any)?.label ?? ''}
               isOptionEqualToValue={(option, value) =>
                 (option as any)?.value === (value as any)?.value
               }
@@ -186,10 +178,11 @@ export const FormField = ({
                         ref: (node: HTMLInputElement | null) => {
                           // 1. Preserve MUI's own ref on the native input (needed for the listbox anchor)
                           const muiRef = slotProps?.htmlInput?.ref;
-                          if (typeof muiRef === "function") {
+                          if (typeof muiRef === 'function') {
                             muiRef(node);
                           } else if (muiRef) {
-                            (muiRef as React.MutableRefObject<HTMLInputElement | null>).current = node;
+                            (muiRef as React.MutableRefObject<HTMLInputElement | null>).current =
+                              node;
                           }
                           // 2. Register the same node with React Hook Form
                           rhfField.ref(node);
@@ -211,14 +204,10 @@ export const FormField = ({
     // CHECKBOX
     //====================================================
 
-    case "checkbox":
+    case 'checkbox':
       return (
         <StyledFormControlLabel
-          control={
-            <StyledCheckbox
-              {...register(name, rules)}
-            />
-          }
+          control={<StyledCheckbox {...register(name, rules)} />}
           label={label}
         />
       );
@@ -227,14 +216,10 @@ export const FormField = ({
     // SWITCH
     //====================================================
 
-    case "switch":
+    case 'switch':
       return (
         <StyledFormControlLabel
-          control={
-            <StyledSwitch
-              {...register(name, rules)}
-            />
-          }
+          control={<StyledSwitch {...register(name, rules)} />}
           label={label}
         />
       );

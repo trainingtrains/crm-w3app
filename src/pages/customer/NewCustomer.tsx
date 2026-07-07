@@ -1,18 +1,18 @@
-import { useCallback, useEffect, useMemo, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
-import { StyledSection } from "../../atoms/StyledSection";
-import { PageTitle } from "../../atoms/PageTitle";
+import { StyledSection } from '../../atoms/StyledSection';
+import { PageTitle } from '../../atoms/PageTitle';
 
-import Form, { type FormValues } from "../../components/CustomForm";
+import Form, { type FormValues } from '../../components/CustomForm';
 
-import { CONSTANTS } from "../../constants";
+import { CONSTANTS } from '../../constants';
 
-import { newClientRegistrFields } from "./config/customerConfig";
+import { newClientRegistrFields } from './config/customerConfig';
 
-import { masterService } from "../../services/masterService";
-import { customerService } from "../../services/customerService";
-import { PageHeader } from "../../atoms/PageHeader";
+import { masterService } from '../../services/masterService';
+import { customerService } from '../../services/customerService';
+import { PageHeader } from '../../atoms/PageHeader';
 
 export default function Register() {
   const navigate = useNavigate();
@@ -31,7 +31,7 @@ export default function Register() {
   useEffect(() => {
     loadCities();
   }, [loadCities]);
- 
+
   const formFields = useMemo(
     () =>
       newClientRegistrFields.map((field) => {
@@ -46,27 +46,25 @@ export default function Register() {
       }),
     [cities]
   );
- console.log("--------------------",formFields);
+  console.log('--------------------', formFields);
   const handleSubmit = useCallback(
     async (form: FormValues) => {
       try {
         const payload = {
           ...form,
-          cityId:
-            (form.city as { value: string | number } | null)?.value ??
-            form.city,
+          cityId: (form.city as { value: string | number } | null)?.value ?? form.city,
         } as any;
 
         delete payload.city;
 
         await customerService.create(payload);
 
-        alert("Customer created successfully.");
+        alert('Customer created successfully.');
 
         navigate(-1);
       } catch (error) {
         console.error(error);
-        alert("Failed to create customer.");
+        alert('Failed to create customer.');
       }
     },
     [navigate]
@@ -75,16 +73,12 @@ export default function Register() {
   return (
     <>
       <StyledSection>
-        <PageHeader><PageTitle>
-          {CONSTANTS.LBL_CRM_NEW_ENTRY}
-        </PageTitle></PageHeader>
+        <PageHeader>
+          <PageTitle>{CONSTANTS.LBL_CRM_NEW_ENTRY}</PageTitle>
+        </PageHeader>
       </StyledSection>
 
-      <Form
-        config={formFields}
-        onSubmit={handleSubmit}
-        submitLabel="Save"
-      />
+      <Form config={formFields} onSubmit={handleSubmit} submitLabel="Save" />
     </>
   );
 }

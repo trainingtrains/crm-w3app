@@ -1,10 +1,10 @@
-import Box from "@mui/material/Box";
-import Tooltip from "@mui/material/Tooltip";
-import IconButton from "@mui/material/IconButton";
-import { DataGrid, type GridColDef, type GridRowId } from "@mui/x-data-grid";
-import VisibilityOutlinedIcon from "@mui/icons-material/VisibilityOutlined";
-import EditOutlinedIcon from "@mui/icons-material/EditOutlined";
-import DeleteOutlineOutlinedIcon from "@mui/icons-material/DeleteOutlineOutlined";
+import Box from '@mui/material/Box';
+import Tooltip from '@mui/material/Tooltip';
+import IconButton from '@mui/material/IconButton';
+import { DataGrid, type GridColDef, type GridRowId } from '@mui/x-data-grid';
+import VisibilityOutlinedIcon from '@mui/icons-material/VisibilityOutlined';
+import EditOutlinedIcon from '@mui/icons-material/EditOutlined';
+import DeleteOutlineOutlinedIcon from '@mui/icons-material/DeleteOutlineOutlined';
 
 interface CustomDataGridProps {
   rows: any[];
@@ -26,21 +26,21 @@ const CustomDataGrid = ({
   const finalColumns: GridColDef[] = [
     ...columns,
     {
-      field: "actions",
-      headerName: "Actions",
+      field: 'actions',
+      headerName: 'Actions',
       width: 140,
       sortable: false,
       filterable: false,
       disableColumnMenu: true,
-      align: "center",
-      headerAlign: "center",
+      align: 'center',
+      headerAlign: 'center',
       renderCell: (params) => (
         <Box
           sx={{
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            height: "100%",
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            height: '100%',
             gap: 0.5,
           }}
         >
@@ -75,7 +75,7 @@ const CustomDataGrid = ({
       rows={rows}
       columns={finalColumns}
       loading={loading}
-      getRowHeight={() => "auto"} // Core rule: dynamic auto-measurement hook
+      getRowHeight={() => 'auto'} // Core rule: dynamic auto-measurement hook
       pageSizeOptions={[10, 20, 50]}
       initialState={{
         pagination: {
@@ -88,29 +88,29 @@ const CustomDataGrid = ({
       disableRowSelectionOnClick
       sx={{
         border: 0,
-        "& .MuiDataGrid-columnHeaders": {
-          backgroundColor: "var(--primary)",
-          color: "#fff",
+        '& .MuiDataGrid-columnHeaders': {
+          backgroundColor: 'var(--primary)',
+          color: '#fff',
           fontWeight: 600,
         },
-        "& .MuiDataGrid-row:nth-of-type(even)": {
-          backgroundColor: "var(--surface-hover)",
+        '& .MuiDataGrid-row:nth-of-type(even)': {
+          backgroundColor: 'var(--surface-hover)',
         },
         // FIX OVERLAP: Forces grid layout wrappers to expand properly
-        "& .MuiDataGrid-cell": {
-          display: "flex !important",
-          alignItems: "center",      // Vertically centers your dynamic boxes
-          paddingTop: "12px !important", 
-          paddingBottom: "12px !important",
-          whiteSpace: "normal !important",
-          maxHeight: "none !important",
-          overflow: "visible !important",
+        '& .MuiDataGrid-cell': {
+          display: 'flex !important',
+          alignItems: 'center', // Vertically centers your dynamic boxes
+          paddingTop: '12px !important',
+          paddingBottom: '12px !important',
+          whiteSpace: 'normal !important',
+          maxHeight: 'none !important',
+          overflow: 'visible !important',
         },
         // Allows custom wrapper containers inside cells to grow naturally
-        "& .MuiDataGrid-cellContent": {
-          maxHeight: "none !important",
-          display: "block",
-          width: "100%",
+        '& .MuiDataGrid-cellContent': {
+          maxHeight: 'none !important',
+          display: 'block',
+          width: '100%',
         },
       }}
     />

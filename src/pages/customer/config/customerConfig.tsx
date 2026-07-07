@@ -33,7 +33,6 @@ export const customerSearchConfig: Field[] = [
   },
 ];
 
-
 export const newClientRegistrFields: Field[] = [
   {
     type: 'text',
@@ -66,7 +65,7 @@ export const newClientRegistrFields: Field[] = [
     placeholder: 'Enter email address',
     grid: 6,
   },
-   {
+  {
     type: 'text',
     name: CONSTANTS.KEY_ADDRESS,
     label: CONSTANTS.LBL_ADDRESS,
@@ -173,7 +172,7 @@ export const clientEditConfig: Field[] = [
     label: 'Project Type',
     required: true,
     grid: 6,
-      options: [
+    options: [
       { label: 'All', value: 'all' },
       { label: 'Web Application', value: 'web' },
       { label: 'Mobile Application', value: 'mobile' },
@@ -191,7 +190,7 @@ export const clientEditConfig: Field[] = [
     label: 'Enquiry Status',
     required: true,
     grid: 6,
-     options: [
+    options: [
       { label: 'All', value: 'all' },
       { label: 'New', value: 'new' },
       { label: 'Requirement Gathering', value: 'requirement' },

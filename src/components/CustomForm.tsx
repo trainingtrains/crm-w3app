@@ -1,16 +1,16 @@
-import { useCallback, useEffect } from "react";
-import { useForm, type SubmitHandler } from "react-hook-form";
-import { useNavigate } from "react-router-dom";
+import { useCallback, useEffect } from 'react';
+import { useForm, type SubmitHandler } from 'react-hook-form';
+import { useNavigate } from 'react-router-dom';
 
-import Grid from "@mui/material/Grid";
+import Grid from '@mui/material/Grid';
 
-import { FormField } from "./FormField";
-import type { Field } from "./types/form";
+import { FormField } from './FormField';
+import type { Field } from './types/form';
 
-import { ActionContainer } from "../atoms/ActionContainer";
-import { SecondaryButton } from "../atoms/SecondaryButton";
-import { ResetButton as WarningButton } from "../atoms/ResetButton";
-import { PrimaryButton } from "../atoms/PrimaryButton";
+import { ActionContainer } from '../atoms/ActionContainer';
+import { SecondaryButton } from '../atoms/SecondaryButton';
+import { ResetButton as WarningButton } from '../atoms/ResetButton';
+import { PrimaryButton } from '../atoms/PrimaryButton';
 
 export type FormValues = Record<string, unknown>;
 
@@ -21,12 +21,7 @@ export interface FormProps {
   defaultValues?: FormValues;
 }
 
-const Form = ({
-  config,
-  onSubmit,
-  submitLabel = "Search",
-  defaultValues,
-}: FormProps) => {
+const Form = ({ config, onSubmit, submitLabel = 'Search', defaultValues }: FormProps) => {
   const navigate = useNavigate();
 
   const {
@@ -66,37 +61,23 @@ const Form = ({
               xl: field.grid ?? 3,
             }}
           >
-            <FormField
-              field={field}
-              register={register}
-              control={control}
-              errors={errors}
-            />
+            <FormField field={field} register={register} control={control} errors={errors} />
           </Grid>
         ))}
       </Grid>
 
       <ActionContainer>
-       {submitLabel !=="Search" &&  <SecondaryButton
-          type="button"
-          variant="outlined"
-          onClick={handleCancel}
-        >
-          Cancel
-        </SecondaryButton>}
+        {submitLabel !== 'Search' && (
+          <SecondaryButton type="button" variant="outlined" onClick={handleCancel}>
+            Cancel
+          </SecondaryButton>
+        )}
 
-        <WarningButton
-          type="button"
-          variant="outlined"
-          onClick={handleReset}
-        >
+        <WarningButton type="button" variant="outlined" onClick={handleReset}>
           Reset
         </WarningButton>
 
-        <PrimaryButton
-          type="submit"
-          variant="contained"
-        >
+        <PrimaryButton type="submit" variant="contained">
           {submitLabel}
         </PrimaryButton>
       </ActionContainer>

@@ -1,16 +1,16 @@
-import { styled } from "@mui/material/styles";
-import { BaseButton } from "./BaseButton";
+import { styled } from '@mui/material/styles';
+import { BaseButton } from './BaseButton';
 
 export const DeleteButton = styled(BaseButton)({
-  color: "var(--error)",
+  color: 'var(--error)',
 
-  backgroundColor: "var(--surface)",
+  backgroundColor: 'var(--surface)',
 
-  border: "1px solid var(--error)",
+  border: '1px solid var(--error)',
 
-  "&:hover": {
-    backgroundColor: "var(--error)",
-    color: "#fff",
-    boxShadow: "var(--shadow-sm)",
+  '&:hover': {
+    backgroundColor: 'var(--error)',
+    color: '#fff',
+    boxShadow: 'var(--shadow-sm)',
   },
 });

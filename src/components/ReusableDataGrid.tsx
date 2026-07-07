@@ -21,12 +21,11 @@ const ReusableDataGrid: React.FC<ReusableDataGridProps> = ({
   onView,
   onExportCSV,
 }) => {
-
-  if(!data.length) return <>No record found</>
+  if (!data.length) return <>No record found</>;
   const columns: GridColDef[] = useMemo(() => {
     if (!data || data.length === 0) return [];
 
-   const generatedCols: GridColDef[] = Object.keys(data[0])
+    const generatedCols: GridColDef[] = Object.keys(data[0])
       .filter((key) => key.toLowerCase() !== 'id') // Filters out 'id', 'Id', 'ID', etc.
       .map((key) => {
         const formattedHeader = key
@@ -73,7 +72,7 @@ const ReusableDataGrid: React.FC<ReusableDataGridProps> = ({
   }, [data]);
 
   return (
-    <Box sx={{ width: '100%', mt:2 }}>
+    <Box sx={{ width: '100%', mt: 2 }}>
       {onExportCSV && (
         <Box sx={{ display: 'flex', justifyContent: 'flex-start', mb: 2 }}>
           <Button variant="outlined" onClick={onExportCSV}>
@@ -82,9 +81,9 @@ const ReusableDataGrid: React.FC<ReusableDataGridProps> = ({
         </Box>
       )}
 
-      <Box 
-        sx={{ 
-          width: '100%', 
+      <Box
+        sx={{
+          width: '100%',
           height: maxHeight,
           '& .MuiDataGrid-cell:focus, & .MuiDataGrid-cell:focus-within': {
             outline: 'none !important',
@@ -123,8 +122,8 @@ const ReusableDataGrid: React.FC<ReusableDataGridProps> = ({
             right: 0,
             zIndex: 2,
             boxShadow: '-2px 0px 4px rgba(0,0,0,0.05)',
-            backgroundColor: 'inherit', 
-          }
+            backgroundColor: 'inherit',
+          },
         }}
       >
         <DataGrid
@@ -133,7 +132,7 @@ const ReusableDataGrid: React.FC<ReusableDataGridProps> = ({
           loading={loading}
           disableRowSelectionOnClick
           pageSizeOptions={[5, 10, 25, 50]}
-          getRowClassName={(params) => 
+          getRowClassName={(params) =>
             params.indexRelativeToCurrentPage % 2 === 0 ? 'even-row' : 'odd-row'
           }
           initialState={{

@@ -1,5 +1,5 @@
-import Box from "@mui/material/Box";
-import TextField from "@mui/material/TextField";
+import Box from '@mui/material/Box';
+import TextField from '@mui/material/TextField';
 
 interface DateRangeFieldProps {
   from?: string;
@@ -15,16 +15,15 @@ export const DateRangeField = ({
   to,
   onFromChange,
   onToChange,
-  fromLabel = "From",
-  toLabel = "To",
+  fromLabel = 'From',
+  toLabel = 'To',
 }: DateRangeFieldProps) => (
   <Box
     sx={{
-      display: "grid",
-      gridTemplateColumns:
-        "repeat(auto-fit, minmax(var(--field-min-width), 1fr))",
-      gap: "var(--space-md)",
-      width: "100%",
+      display: 'grid',
+      gridTemplateColumns: 'repeat(auto-fit, minmax(var(--field-min-width), 1fr))',
+      gap: 'var(--space-md)',
+      width: '100%',
     }}
   >
     <TextField
@@ -32,7 +31,7 @@ export const DateRangeField = ({
       label={fromLabel}
       size="small"
       fullWidth
-      value={from ?? ""}
+      value={from ?? ''}
       onChange={onFromChange}
       slotProps={{ inputLabel: { shrink: true } }}
     />
@@ -42,7 +41,7 @@ export const DateRangeField = ({
       label={toLabel}
       size="small"
       fullWidth
-      value={to ?? ""}
+      value={to ?? ''}
       onChange={onToChange}
       slotProps={{ inputLabel: { shrink: true } }}
     />

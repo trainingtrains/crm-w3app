@@ -1,18 +1,18 @@
-import Box from "@mui/material/Box";
-import { styled } from "@mui/material/styles";
+import Box from '@mui/material/Box';
+import { styled } from '@mui/material/styles';
 
 export const ActionContainer = styled(Box)({
-  width: "100%",
+  width: '100%',
 
-  display: "flex",
+  display: 'flex',
 
-  justifyContent: "flex-end",
+  justifyContent: 'flex-end',
 
-  alignItems: "center",
+  alignItems: 'center',
 
-  flexWrap: "wrap",
+  flexWrap: 'wrap',
 
-  gap: "var(--space-md)",
+  gap: 'var(--space-md)',
 
-  marginBlock: "var(--space-lg)",
+  marginBlock: 'var(--space-lg)',
 });

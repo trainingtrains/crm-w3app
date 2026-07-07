@@ -1,9 +1,9 @@
-import type { ReactNode } from "react";
+import type { ReactNode } from 'react';
 
-import Grid from "@mui/material/Grid";
-import Paper from "@mui/material/Paper";
-import Box from "@mui/material/Box";
-import Typography from "@mui/material/Typography";
+import Grid from '@mui/material/Grid';
+import Paper from '@mui/material/Paper';
+import Box from '@mui/material/Box';
+import Typography from '@mui/material/Typography';
 
 export interface StatItem {
   label: string;
@@ -31,18 +31,18 @@ const StatsSection = ({ items }: StatsSectionProps) => {
           <Paper
             elevation={0}
             sx={{
-              display: "flex",
-              alignItems: "center",
-              gap: "var(--space-md)",
+              display: 'flex',
+              alignItems: 'center',
+              gap: 'var(--space-md)',
 
-              p: "var(--space-lg)",
+              p: 'var(--space-lg)',
 
-              height: "100%",
+              height: '100%',
 
-              border: "1px solid var(--border)",
-              borderRadius: "var(--radius-md)",
+              border: '1px solid var(--border)',
+              borderRadius: 'var(--radius-md)',
 
-              backgroundColor: "var(--surface)",
+              backgroundColor: 'var(--surface)',
             }}
           >
             <Box>{icon}</Box>
@@ -51,7 +51,7 @@ const StatsSection = ({ items }: StatsSectionProps) => {
               <Typography
                 variant="h5"
                 sx={{
-                  fontWeight: "var(--font-weight-bold)",
+                  fontWeight: 'var(--font-weight-bold)',
                   lineHeight: 1.2,
                 }}
               >
@@ -61,8 +61,8 @@ const StatsSection = ({ items }: StatsSectionProps) => {
               <Typography
                 variant="body2"
                 sx={{
-                  color: "var(--text-secondary)",
-                  mt: "2px",
+                  color: 'var(--text-secondary)',
+                  mt: '2px',
                 }}
               >
                 {label}

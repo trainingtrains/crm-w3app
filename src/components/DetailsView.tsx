@@ -1,15 +1,15 @@
-import { useCallback } from "react";
-import { useNavigate } from "react-router-dom";
+import { useCallback } from 'react';
+import { useNavigate } from 'react-router-dom';
 
-import Grid from "@mui/material/Grid";
-import TextField from "@mui/material/TextField";
+import Grid from '@mui/material/Grid';
+import TextField from '@mui/material/TextField';
 
-import { ActionContainer } from "../atoms/ActionContainer";
-import { FormContainer } from "../atoms/FormContainer";
+import { ActionContainer } from '../atoms/ActionContainer';
+import { FormContainer } from '../atoms/FormContainer';
 
-import { SecondaryButton } from "../atoms/SecondaryButton";
-import { NegativeButton } from "../atoms/NegativeButton";
-import { PrimaryButton } from "../atoms/PrimaryButton";
+import { SecondaryButton } from '../atoms/SecondaryButton';
+import { NegativeButton } from '../atoms/NegativeButton';
+import { PrimaryButton } from '../atoms/PrimaryButton';
 
 export interface DetailsField {
   name: string;
@@ -46,30 +46,18 @@ const DetailsView = ({
   return (
     <>
       <ActionContainer>
-        <SecondaryButton
-          type="button"
-          variant="outlined"
-          onClick={handleBack}
-        >
+        <SecondaryButton type="button" variant="outlined" onClick={handleBack}>
           Back
         </SecondaryButton>
 
         {negativeLabel && (
-          <NegativeButton
-            type="button"
-            variant="outlined"
-            onClick={onNegativeClick}
-          >
+          <NegativeButton type="button" variant="outlined" onClick={onNegativeClick}>
             {negativeLabel}
           </NegativeButton>
         )}
 
         {actionLabel && (
-          <PrimaryButton
-            type="button"
-            variant="contained"
-            onClick={onActionClick}
-          >
+          <PrimaryButton type="button" variant="contained" onClick={onActionClick}>
             {actionLabel}
           </PrimaryButton>
         )}
@@ -95,7 +83,7 @@ const DetailsView = ({
                 value={
                   field.render
                     ? field.render(data[field.name], data)
-                    : String(data[field.name] ?? "")
+                    : String(data[field.name] ?? '')
                 }
                 slotProps={{
                   input: {

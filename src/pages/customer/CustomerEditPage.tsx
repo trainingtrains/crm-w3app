@@ -1,17 +1,17 @@
-import { useEffect, useMemo, useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { useEffect, useMemo, useState } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
 
-import { StyledSection } from "../../atoms/StyledSection";
-import { PageTitle } from "../../atoms/PageTitle";
+import { StyledSection } from '../../atoms/StyledSection';
+import { PageTitle } from '../../atoms/PageTitle';
 
-import Form, { type FormValues } from "../../components/CustomForm";
+import Form, { type FormValues } from '../../components/CustomForm';
 
-import { clientEditConfig } from "./config/customerConfig";
+import { clientEditConfig } from './config/customerConfig';
 
-import { CONSTANTS } from "../../constants";
+import { CONSTANTS } from '../../constants';
 
-import { customerService } from "../../services/customerService";
-import { masterService } from "../../services/masterService";
+import { customerService } from '../../services/customerService';
+import { masterService } from '../../services/masterService';
 
 export default function EditCustomerPage() {
   const navigate = useNavigate();
@@ -112,11 +112,11 @@ export default function EditCustomerPage() {
       delete payload.city;
 
       await customerService.update(id, payload);
-      alert("Customer updated successfully.");
+      alert('Customer updated successfully.');
       navigate(-1);
     } catch (error) {
       console.error(error);
-      alert("Unable to update customer.");
+      alert('Unable to update customer.');
     }
   };
 

@@ -1,18 +1,31 @@
-/* =========================
-   Secondary
-========================= */
-
 import { styled } from '@mui/material/styles';
 import { BaseButton } from './BaseButton';
 
-export const SecondaryButton = styled(BaseButton)(({ theme }) => ({
-  color: theme.palette.text.primary,
+/* =========================
+   SECONDARY BUTTON
+========================= */
 
-  backgroundColor: theme.palette.grey[100],
+export const SecondaryButton = styled(BaseButton)({
+  color: 'var(--text)',
 
-  border: `1px solid ${theme.palette.divider}`,
+  backgroundColor: 'var(--surface)',
+
+  border: '1px solid var(--border)',
 
   '&:hover': {
-    backgroundColor: theme.palette.grey[200],
+    backgroundColor: 'var(--background)',
+    borderColor: 'var(--primary)',
+    color: 'var(--primary)',
+    boxShadow: 'var(--shadow-sm)',
   },
-}));
+
+  '&:active': {
+    transform: 'scale(0.98)',
+  },
+
+  '&:disabled': {
+    opacity: 0.6,
+    cursor: 'not-allowed',
+    boxShadow: 'none',
+  },
+});

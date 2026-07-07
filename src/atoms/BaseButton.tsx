@@ -1,29 +1,33 @@
 import Button from '@mui/material/Button';
 import { styled } from '@mui/material/styles';
 
-export const BaseButton = styled(Button)(({ theme }) => ({
-  minHeight: 44,
-  minWidth: 130,
+export const BaseButton = styled(Button)({
+  minWidth: 'clamp(110px, 8vw, 140px)',
+  height: 'var(--button-height)',
 
-  padding: theme.spacing(1, 2),
+  padding: '0 var(--space-lg)',
 
-  borderRadius: 10,
+  borderRadius: 'var(--radius-md)',
 
-  fontWeight: 600,
-
-  fontSize: '0.875rem',
+  fontSize: 'var(--font-md)',
+  fontWeight: 'var(--font-weight-medium)',
 
   textTransform: 'none',
 
-  transition: 'all 0.2s ease',
+  whiteSpace: 'nowrap',
 
   boxShadow: 'none',
 
+  transition:
+    'background-color var(--transition), border-color var(--transition), box-shadow var(--transition)',
+
   '&:hover': {
-    transform: 'translateY(-2px)',
+    boxShadow: 'var(--shadow-sm)',
   },
 
-  [theme.breakpoints.down('sm')]: {
-    width: '100%',
+  '&:disabled': {
+    opacity: 0.6,
+    cursor: 'not-allowed',
+    boxShadow: 'none',
   },
-}));
+});

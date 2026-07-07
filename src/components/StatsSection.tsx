@@ -1,7 +1,9 @@
-import Grid from '@mui/material/Grid';
-import Typography from '@mui/material/Typography';
-
 import type { ReactNode } from 'react';
+
+import Grid from '@mui/material/Grid';
+import Paper from '@mui/material/Paper';
+import Box from '@mui/material/Box';
+import Typography from '@mui/material/Typography';
 
 export interface StatItem {
   label: string;
@@ -16,31 +18,57 @@ interface StatsSectionProps {
 const StatsSection = ({ items }: StatsSectionProps) => {
   return (
     <Grid container spacing={2}>
-      {items.map((item) => (
+      {items.map(({ label, value, icon }) => (
         <Grid
-          key={item.label}
+          key={label}
           size={{
             xs: 12,
             sm: 6,
             md: 4,
+            lg: 3,
           }}
         >
-          {item.icon}
-
-          <Typography
-            component="div"
-            variant="h4"
+          <Paper
+            elevation={0}
             sx={{
-              fontWeight: 700,
-              mt: 1,
+              display: 'flex',
+              alignItems: 'center',
+              gap: 'var(--space-md)',
+
+              p: 'var(--space-lg)',
+
+              height: '100%',
+
+              border: '1px solid var(--border)',
+              borderRadius: 'var(--radius-md)',
+
+              backgroundColor: 'var(--surface)',
             }}
           >
-            {item.value}
-          </Typography>
+            <Box>{icon}</Box>
 
-          <Typography component="p" color="text.secondary">
-            {item.label}
-          </Typography>
+            <Box sx={{ flex: 1 }}>
+              <Typography
+                variant="h5"
+                sx={{
+                  fontWeight: 'var(--font-weight-bold)',
+                  lineHeight: 1.2,
+                }}
+              >
+                {value}
+              </Typography>
+
+              <Typography
+                variant="body2"
+                sx={{
+                  color: 'var(--text-secondary)',
+                  mt: '2px',
+                }}
+              >
+                {label}
+              </Typography>
+            </Box>
+          </Paper>
         </Grid>
       ))}
     </Grid>

@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useCallback, useEffect } from 'react';
 import { useForm, type SubmitHandler } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
 
@@ -8,21 +8,22 @@ import { FormField } from './FormField';
 import type { Field } from './types/form';
 
 import { ActionContainer } from '../atoms/ActionContainer';
-import { NegativeButton } from '../atoms/NegativeButton';
-import { ResetButton } from '../atoms/ResetButton';
-import { SearchButton } from '../atoms/SearchButton';
+import { SecondaryButton } from '../atoms/SecondaryButton';
+import { ResetButton as WarningButton } from '../atoms/ResetButton';
+import { PrimaryButton } from '../atoms/PrimaryButton';
 
-export type FormValues = Record<string, any>;
+export type FormValues = Record<string, unknown>;
 
-export type FormProps = {
+export interface FormProps {
   config: Field[];
   onSubmit: SubmitHandler<FormValues>;
   submitLabel?: string;
   defaultValues?: FormValues;
-};
+}
 
-const Form = ({ config, onSubmit, submitLabel, defaultValues }: FormProps) => {
+const Form = ({ config, onSubmit, submitLabel = 'Search', defaultValues }: FormProps) => {
   const navigate = useNavigate();
+
   const {
     register,
     control,
@@ -33,32 +34,29 @@ const Form = ({ config, onSubmit, submitLabel, defaultValues }: FormProps) => {
     defaultValues,
   });
 
-  // Update form when default values change (e.g., after API/Firebase fetch)
   useEffect(() => {
-    if (defaultValues) {
-      reset(defaultValues);
-    }
+    reset(defaultValues);
   }, [defaultValues, reset]);
 
-  const onCancel = () => {
+  const handleCancel = useCallback(() => {
     reset(defaultValues);
     navigate(-1);
-  };
+  }, [defaultValues, navigate, reset]);
 
-  const onReset = () => {
+  const handleReset = useCallback(() => {
     reset(defaultValues);
-  };
+  }, [defaultValues, reset]);
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)}>
-      <Grid container spacing={2} columns={12}>
+    <form noValidate onSubmit={handleSubmit(onSubmit)}>
+      <Grid container spacing={2}>
         {config.map((field) => (
           <Grid
             key={field.name}
             size={{
               xs: 12,
               sm: 6,
-              md: 6,
+              md: field.grid ?? 4,
               lg: field.grid ?? 3,
               xl: field.grid ?? 3,
             }}
@@ -69,19 +67,19 @@ const Form = ({ config, onSubmit, submitLabel, defaultValues }: FormProps) => {
       </Grid>
 
       <ActionContainer>
-        {submitLabel && (
-          <NegativeButton variant="outlined" onClick={onCancel}>
+        {submitLabel !== 'Search' && (
+          <SecondaryButton type="button" variant="outlined" onClick={handleCancel}>
             Cancel
-          </NegativeButton>
+          </SecondaryButton>
         )}
 
-        <ResetButton variant="outlined" onClick={onReset}>
+        <WarningButton type="button" variant="outlined" onClick={handleReset}>
           Reset
-        </ResetButton>
+        </WarningButton>
 
-        <SearchButton variant="contained" type="submit">
-          {submitLabel ?? 'Search'}
-        </SearchButton>
+        <PrimaryButton type="submit" variant="contained">
+          {submitLabel}
+        </PrimaryButton>
       </ActionContainer>
     </form>
   );

@@ -1,8 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 
-import { useForm } from 'react-hook-form';
-
 import { StyledSection } from '../../atoms/StyledSection';
 import { PageTitle } from '../../atoms/PageTitle';
 
@@ -10,91 +8,115 @@ import Form, { type FormValues } from '../../components/CustomForm';
 
 import { clientEditConfig } from './config/customerConfig';
 
-import { masterService } from '../../services/masterService';
-import { customerService } from '../../services/customerService';
-
 import { CONSTANTS } from '../../constants';
+
+import { customerService } from '../../services/customerService';
+import { masterService } from '../../services/masterService';
 
 export default function EditCustomerPage() {
   const navigate = useNavigate();
-
   const { id } = useParams<{ id: string }>();
 
-  const { reset } = useForm<FormValues>();
-
   const [cities, setCities] = useState<any[]>([]);
+  const [customerData, setCustomerData] = useState<any | null>(null);
+  const [citiesLoaded, setCitiesLoaded] = useState(false);
+  const [customerLoaded, setCustomerLoaded] = useState(false);
+  const [loadError, setLoadError] = useState(false);
 
-  const [customer, setCustomer] = useState<FormValues>({});
-
+  // Fetch cities and customer in parallel — they don't depend on each other to fetch,
+  // only to combine afterwards. Removes the "empty cities list = infinite loading" deadlock.
   useEffect(() => {
-    loadInitialData();
+    let isMounted = true;
+
+    masterService
+      .getCities()
+      .then((response) => {
+        if (isMounted) setCities(response ?? []);
+      })
+      .catch((error) => {
+        console.error(error);
+        if (isMounted) setLoadError(true);
+      })
+      .finally(() => {
+        if (isMounted) setCitiesLoaded(true);
+      });
+
+    return () => {
+      isMounted = false;
+    };
   }, []);
 
   useEffect(() => {
-    if (id && cities.length > 0) {
-      loadCustomer(id);
-    }
-  }, [id, cities]);
+    if (!id) return;
+    let isMounted = true;
 
-  const loadInitialData = async () => {
-    try {
-      const cityData = await masterService.getCities();
-      setCities(cityData);
-    } catch (error) {
-      console.error(error);
-    }
-  };
-
-  const loadCustomer = async (customerId: string) => {
-    try {
-      const data = await customerService.getById(customerId);
-      const city = cities.find((c) => c.value === data.cityId);
-      setCustomer({
-        ...data,
-        city,
+    customerService
+      .getById(id)
+      .then((data) => {
+        if (isMounted) setCustomerData(data);
+      })
+      .catch((error) => {
+        console.error(error);
+        if (isMounted) setLoadError(true);
+      })
+      .finally(() => {
+        if (isMounted) setCustomerLoaded(true);
       });
-    } catch (error) {
-      console.error(error);
-    }
-  };
 
-  const loadFormFields = useMemo(() => {
-    return clientEditConfig.map((field) => {
-      switch (field.name) {
-        case CONSTANTS.KEY_CITY:
-          return {
-            ...field,
-            options: cities.map((city) => ({
-              label: city.name,
-              value: city.id,
-            })),
-          };
+    return () => {
+      isMounted = false;
+    };
+  }, [id]);
 
-        default:
-          return field;
-      }
-    });
-  }, [cities]);
+  const isLoading = !citiesLoaded || !customerLoaded;
 
-  const onHandleSubmit = async (form: any) => {
+  // Combine once both are ready. Shape `city` to match the Autocomplete's option shape
+  // ({ label, value }) instead of the raw city entity — this is what fixes the
+  // "selected city doesn't show" bug.
+  const customer: FormValues | null = useMemo(() => {
+    if (!customerData) return null;
+
+    const matchedCity = cities.find((city) => city.id === customerData.cityId);
+
+    return {
+      ...customerData,
+      city: matchedCity ? { label: matchedCity.name, value: matchedCity.id } : null,
+    };
+  }, [customerData, cities]);
+
+  const formFields = useMemo(
+    () =>
+      clientEditConfig.map((field) => {
+        if (field.name !== CONSTANTS.KEY_CITY) return field;
+
+        return {
+          ...field,
+          options: cities.map((city) => ({
+            label: city.name,
+            value: city.id,
+          })),
+        };
+      }),
+    [cities]
+  );
+
+  const handleSubmit = async (form: FormValues) => {
+    if (!id) return;
+
     try {
       const payload = {
         ...form,
-        cityId: form.city,
-      };
+        cityId: (form.city as { value: string | number } | null)?.value ?? null,
+      } as any;
 
       delete payload.city;
 
-      await customerService.update(id!, payload);
-
+      await customerService.update(id, payload);
       alert('Customer updated successfully.');
-
-      reset();
-
       navigate(-1);
-    } catch (error: any) {
+    } catch (error) {
       console.error(error);
-      alert(error.message);
+      alert('Unable to update customer.');
     }
   };
 
@@ -104,11 +126,18 @@ export default function EditCustomerPage() {
         <PageTitle>{CONSTANTS.LBL_CRM_CUST_EDIT}</PageTitle>
       </StyledSection>
 
-      {Object.keys(customer) && (
+      {isLoading ? (
+        <>Loading......</>
+      ) : loadError || !customer ? (
+        <p>Unable to load customer details.</p>
+      ) : (
+        // key forces a clean remount with correct defaultValues if this ever
+        // re-renders before data was ready — RHF only reads defaultValues on mount.
         <Form
-          config={loadFormFields}
+          key={id}
+          config={formFields}
           defaultValues={customer}
-          onSubmit={onHandleSubmit}
+          onSubmit={handleSubmit}
           submitLabel="Update"
         />
       )}

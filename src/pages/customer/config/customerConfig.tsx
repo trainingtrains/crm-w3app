@@ -1,4 +1,3 @@
-import type { GridColDef } from '@mui/x-data-grid';
 import type { Field } from '../../../components/types/form';
 import { CONSTANTS } from '../../../constants';
 import type { DetailsField } from '../../../components/DetailsView';
@@ -31,57 +30,6 @@ export const customerSearchConfig: Field[] = [
     label: CONSTANTS.LBL_CITY,
     options: [],
     grid: 3,
-  },
-];
-
-export const customeDetailsCoulmn: GridColDef[] = [
-  {
-    field: 'customerId',
-    headerName: 'Customer ID',
-    flex: 1,
-    minWidth: 140,
-  },
-  {
-    field: 'companyName',
-    headerName: 'Company Name',
-    flex: 1,
-    minWidth: 220,
-  },
-  {
-    field: 'projectType',
-    headerName: 'Project Type',
-    flex: 1,
-    minWidth: 150,
-  },
-  {
-    field: 'status',
-    headerName: 'Status',
-    flex: 1,
-    minWidth: 120,
-  },
-  {
-    field: 'contactPerson',
-    headerName: 'Contact Person',
-    flex: 1,
-    minWidth: 200,
-  },
-  {
-    field: 'mobile',
-    headerName: 'Mobile',
-    flex: 1,
-    minWidth: 150,
-  },
-  {
-    field: 'email',
-    headerName: 'Email',
-    flex: 1.5,
-    minWidth: 250,
-  },
-  {
-    field: 'cityName',
-    headerName: 'City',
-    flex: 1,
-    minWidth: 150,
   },
 ];
 
@@ -118,43 +66,15 @@ export const newClientRegistrFields: Field[] = [
     grid: 6,
   },
   {
-    type: 'select',
-    name: 'projectType',
-    label: 'Project Type',
-    options: [
-      { label: 'All', value: 'all' },
-      { label: 'Web Application', value: 'web' },
-      { label: 'Mobile Application', value: 'mobile' },
-      { label: 'Desktop Application', value: 'desktop' },
-      { label: 'ERP / CRM', value: 'erp' },
-      { label: 'E-Commerce', value: 'ecommerce' },
-      { label: 'API Development', value: 'api' },
-      { label: 'Enhancement', value: 'enhancement' },
-      { label: 'Other', value: 'other' },
-    ],
-    grid: 6,
-  },
-  {
-    type: 'select',
-    name: 'status',
-    label: 'Enquiry Status',
-    options: [
-      { label: 'All', value: 'all' },
-      { label: 'New', value: 'new' },
-      { label: 'Requirement Gathering', value: 'requirement' },
-      { label: 'Proposal Sent', value: 'proposal' },
-      { label: 'Negotiation', value: 'negotiation' },
-      { label: 'Approved', value: 'approved' },
-      { label: 'Development', value: 'development' },
-      { label: 'On Hold', value: 'onhold' },
-      { label: 'Rejected', value: 'rejected' },
-    ],
-    grid: 6,
-  },
-  {
-    type: 'textarea',
+    type: 'text',
     name: CONSTANTS.KEY_ADDRESS,
     label: CONSTANTS.LBL_ADDRESS,
+    grid: 6,
+  },
+  {
+    type: 'text',
+    name: 'enquiry',
+    label: 'Enquiry details',
     grid: 6,
   },
   {
@@ -205,12 +125,12 @@ export const customerDetailsConfig: DetailsField[] = [
   {
     name: 'createdAt',
     label: 'Created Date',
-    render: (value) => (value ? new Date(value).toLocaleDateString() : '-'),
+    render: (value) => (value ? new Date(value as any).toLocaleDateString() : '-'),
   },
   {
     name: 'updatedAt',
     label: 'Updated Date',
-    render: (value) => (value ? new Date(value).toLocaleDateString() : '-'),
+    render: (value) => (value ? new Date(value as any).toLocaleDateString() : '-'),
   },
 ];
 
@@ -252,7 +172,7 @@ export const clientEditConfig: Field[] = [
     label: 'Project Type',
     required: true,
     grid: 6,
-      options: [
+    options: [
       { label: 'All', value: 'all' },
       { label: 'Web Application', value: 'web' },
       { label: 'Mobile Application', value: 'mobile' },
@@ -270,7 +190,7 @@ export const clientEditConfig: Field[] = [
     label: 'Enquiry Status',
     required: true,
     grid: 6,
-     options: [
+    options: [
       { label: 'All', value: 'all' },
       { label: 'New', value: 'new' },
       { label: 'Requirement Gathering', value: 'requirement' },

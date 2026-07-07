@@ -1,13 +1,25 @@
+import Typography from '@mui/material/Typography';
 import { styled } from '@mui/material/styles';
 
-import { Typography } from '@mui/material';
+/* ==========================================================
+   PAGE TITLE
+========================================================== */
 
-export const PageTitle = styled(Typography)(({ theme }) => ({
-  fontWeight: 700,
+export const PageTitle = styled(Typography)({
+  display: 'flex',
+  alignItems: 'center',
+  gap: 'var(--space-sm)',
 
-  color: theme.palette.text.primary,
+  color: 'var(--text)',
 
-  fontSize: 'clamp(1.6rem,2vw,2.5rem)',
+  fontSize: 'var(--font-xl)',
+  fontWeight: 'var(--font-weight-bold)',
 
   lineHeight: 1.2,
-}));
+
+  margin: 0,
+
+  whiteSpace: 'nowrap',
+  overflow: 'hidden',
+  textOverflow: 'ellipsis',
+});

@@ -1,193 +1,120 @@
-import { memo, useMemo, type JSX } from 'react';
-
-import Stack from '@mui/material/Stack';
+import Box from '@mui/material/Box';
 import Tooltip from '@mui/material/Tooltip';
 import IconButton from '@mui/material/IconButton';
+import { DataGrid, type GridColDef, type GridRowId } from '@mui/x-data-grid';
 import VisibilityOutlinedIcon from '@mui/icons-material/VisibilityOutlined';
 import EditOutlinedIcon from '@mui/icons-material/EditOutlined';
 import DeleteOutlineOutlinedIcon from '@mui/icons-material/DeleteOutlineOutlined';
 
-import { DataGrid } from '@mui/x-data-grid';
-import type {
-  GridColDef,
-  GridRenderCellParams,
-  GridRowId,
-  GridValidRowModel,
-} from '@mui/x-data-grid';
-
-// ─── Constants ───────────────────────────────────────────────────────────────
-
-const ACTIONS_FIELD = 'actions' as const;
-const PAGINATION_MODEL = { pageSize: 10, page: 0 } as const;
-const PAGE_SIZE_OPTIONS = [10, 25, 50, 100] as const;
-
-// ─── Types ───────────────────────────────────────────────────────────────────
-
-export interface CustomDataGridProps<T extends GridValidRowModel> {
-  rows: T[];
-  columns: GridColDef<T>[];
+interface CustomDataGridProps {
+  rows: any[];
+  columns: GridColDef[];
   loading?: boolean;
-  height?: number | string;
-  showActions?: boolean;
-  onView?: (id: GridRowId, row: T) => void;
-  onEdit?: (id: GridRowId, row: T) => void;
-  onDelete?: (id: GridRowId, row: T) => void;
+  onView?: (id: GridRowId) => void;
+  onEdit?: (id: GridRowId) => void;
+  onDelete?: (id: GridRowId) => void;
 }
 
-// ─── Styles ──────────────────────────────────────────────────────────────────
-
-const ACTION_STACK_SX = {
-  height: '100%',
-  alignItems: 'center',
-  justifyContent: 'center',
-} as const;
-
-const getDataGridSx = (height: number | string) =>
-  ({
-    height,
-    border: 0,
-    my: 2,
-
-    '& .MuiDataGrid-columnHeaders .MuiDataGrid-columnHeader': {
-      backgroundColor: '#000000 !important',
-      borderBottom: '2px solid #e2e8f0',
-    },
-    '& .MuiDataGrid-columnHeaderTitle': {
-      fontWeight: 700,
-      color: '#ffffff',
-    },
-    '& .MuiDataGrid-row:nth-of-type(even)': {
-      backgroundColor: '#fafafa',
-    },
-    '& .MuiDataGrid-row:hover': {
-      backgroundColor: '#e3f2fd',
-      cursor: 'pointer',
-    },
-    '& .MuiDataGrid-cell': {
-      borderColor: '#f1f5f9',
-    },
-    '& .MuiDataGrid-footerContainer': {
-      borderTop: '1px solid #e2e8f0',
-    },
-
-    // ── Sticky actions column (Community edition workaround) ──
-    [`& .MuiDataGrid-cell[data-field="${ACTIONS_FIELD}"]`]: {
-      position: 'sticky',
-      right: 0,
-      zIndex: 3,
-      backgroundColor: '#ffffff',
-      boxShadow: '-2px 0 4px rgba(0,0,0,0.08)',
-    },
-    [`& .MuiDataGrid-row:nth-of-type(even) .MuiDataGrid-cell[data-field="${ACTIONS_FIELD}"]`]: {
-      backgroundColor: '#fafafa',
-    },
-    [`& .MuiDataGrid-row:hover .MuiDataGrid-cell[data-field="${ACTIONS_FIELD}"]`]: {
-      backgroundColor: '#e3f2fd',
-    },
-    [`& .MuiDataGrid-columnHeader[data-field="${ACTIONS_FIELD}"]`]: {
-      position: 'sticky',
-      right: 0,
-      zIndex: 4,
-      backgroundColor: '#000000 !important',
-      boxShadow: '-2px 0 4px rgba(0,0,0,0.08)',
-    },
-  }) as const;
-
-// ─── Action Cell ─────────────────────────────────────────────────────────────
-
-interface ActionCellProps<T extends GridValidRowModel> {
-  params: GridRenderCellParams<T>;
-  onView?: (id: GridRowId, row: T) => void;
-  onEdit?: (id: GridRowId, row: T) => void;
-  onDelete?: (id: GridRowId, row: T) => void;
-}
-
-const ActionCell = memo(
-  <T extends GridValidRowModel>({ params, onView, onEdit, onDelete }: ActionCellProps<T>) => (
-    <Stack direction="row" spacing={0.5} sx={ACTION_STACK_SX}>
-      {onView && (
-        <Tooltip title="View">
-          <IconButton color="info" size="small" onClick={() => onView(params.id, params.row as T)}>
-            <VisibilityOutlinedIcon fontSize="small" />
-          </IconButton>
-        </Tooltip>
-      )}
-      {onEdit && (
-        <Tooltip title="Edit">
-          <IconButton
-            color="primary"
-            size="small"
-            onClick={() => onEdit(params.id, params.row as T)}
-          >
-            <EditOutlinedIcon fontSize="small" />
-          </IconButton>
-        </Tooltip>
-      )}
-      {onDelete && (
-        <Tooltip title="Delete">
-          <IconButton
-            color="error"
-            size="small"
-            onClick={() => onDelete(params.id, params.row as T)}
-          >
-            <DeleteOutlineOutlinedIcon fontSize="small" />
-          </IconButton>
-        </Tooltip>
-      )}
-    </Stack>
-  )
-) as <T extends GridValidRowModel>(props: ActionCellProps<T>) => JSX.Element;
-
-// ─── Component ───────────────────────────────────────────────────────────────
-
-export function CustomDataGrid<T extends GridValidRowModel>({
+const CustomDataGrid = ({
   rows,
   columns,
   loading = false,
-  height = 600,
-  showActions = true,
   onView,
   onEdit,
   onDelete,
-}: CustomDataGridProps<T>) {
-  const finalColumns = useMemo<GridColDef<T>[]>(() => {
-    const filtered = columns.filter((col) => col.field !== ACTIONS_FIELD);
-
-    if (!showActions) return filtered;
-
-    const actionColumn: GridColDef<T> = {
-      field: ACTIONS_FIELD,
+}: CustomDataGridProps) => {
+  const finalColumns: GridColDef[] = [
+    ...columns,
+    {
+      field: 'actions',
       headerName: 'Actions',
-      width: 150,
+      width: 140,
       sortable: false,
       filterable: false,
       disableColumnMenu: true,
       align: 'center',
       headerAlign: 'center',
-      renderCell: (params: GridRenderCellParams<T>) => (
-        <ActionCell params={params} onView={onView} onEdit={onEdit} onDelete={onDelete} />
+      renderCell: (params) => (
+        <Box
+          sx={{
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            height: '100%',
+            gap: 0.5,
+          }}
+        >
+          {onView && (
+            <Tooltip title="View">
+              <IconButton size="small" color="info" onClick={() => onView(params.id)}>
+                <VisibilityOutlinedIcon fontSize="small" />
+              </IconButton>
+            </Tooltip>
+          )}
+          {onEdit && (
+            <Tooltip title="Edit">
+              <IconButton size="small" color="primary" onClick={() => onEdit(params.id)}>
+                <EditOutlinedIcon fontSize="small" />
+              </IconButton>
+            </Tooltip>
+          )}
+          {onDelete && (
+            <Tooltip title="Delete">
+              <IconButton size="small" color="error" onClick={() => onDelete(params.id)}>
+                <DeleteOutlineOutlinedIcon fontSize="small" />
+              </IconButton>
+            </Tooltip>
+          )}
+        </Box>
       ),
-    };
-
-    return [...filtered, actionColumn];
-  }, [columns, showActions, onView, onEdit, onDelete]);
-
-  const sx = useMemo(() => getDataGridSx(height), [height]);
+    },
+  ];
 
   return (
-    <DataGrid<T>
+    <DataGrid
       rows={rows}
       columns={finalColumns}
       loading={loading}
-      disableRowSelectionOnClick
-      disableColumnMenu
-      pageSizeOptions={PAGE_SIZE_OPTIONS as unknown as number[]}
+      getRowHeight={() => 'auto'} // Core rule: dynamic auto-measurement hook
+      pageSizeOptions={[10, 20, 50]}
       initialState={{
-        pagination: { paginationModel: PAGINATION_MODEL },
+        pagination: {
+          paginationModel: {
+            page: 0,
+            pageSize: 10,
+          },
+        },
       }}
-      sx={sx}
+      disableRowSelectionOnClick
+      sx={{
+        border: 0,
+        '& .MuiDataGrid-columnHeaders': {
+          backgroundColor: 'var(--primary)',
+          color: '#fff',
+          fontWeight: 600,
+        },
+        '& .MuiDataGrid-row:nth-of-type(even)': {
+          backgroundColor: 'var(--surface-hover)',
+        },
+        // FIX OVERLAP: Forces grid layout wrappers to expand properly
+        '& .MuiDataGrid-cell': {
+          display: 'flex !important',
+          alignItems: 'center', // Vertically centers your dynamic boxes
+          paddingTop: '12px !important',
+          paddingBottom: '12px !important',
+          whiteSpace: 'normal !important',
+          maxHeight: 'none !important',
+          overflow: 'visible !important',
+        },
+        // Allows custom wrapper containers inside cells to grow naturally
+        '& .MuiDataGrid-cellContent': {
+          maxHeight: 'none !important',
+          display: 'block',
+          width: '100%',
+        },
+      }}
     />
   );
-}
+};
 
 export default CustomDataGrid;

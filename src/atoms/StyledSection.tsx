@@ -1,16 +1,13 @@
 import { Box, styled } from '@mui/material';
 
-export const StyledSection = styled(Box)(({ theme }) => ({
-  marginBottom: theme.spacing(2),
-  display: 'flex',
-  justifyContent: 'space-between',
-  gap: theme.spacing(2),
+export const StyledSection = styled(Box)({
+  width: '100%',
 
-  [theme.breakpoints.down('sm')]: {
-    flexDirection: 'column',
-  },
+  display: 'grid',
 
-  [theme.breakpoints.up('sm')]: {
-    flexDirection: 'row',
-  },
-}));
+  gridTemplateColumns: 'repeat(auto-fit, minmax(var(--field-min-width), 1fr))',
+
+  gap: 'var(--space-md)',
+
+  alignItems: 'start',
+});

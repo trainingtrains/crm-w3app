@@ -1,34 +1,5 @@
-/* ==========================================================
-   DATE RANGE FIELD
-========================================================== */
-
-import { alpha, styled } from '@mui/material/styles';
+import Box from '@mui/material/Box';
 import TextField from '@mui/material/TextField';
-import Stack from '@mui/material/Stack';
-
-export const StyledDateField = styled(TextField)(({ theme }) => ({
-  width: '100%',
-
-  '& .MuiInputLabel-root': {
-    fontWeight: 500,
-  },
-
-  '& .MuiOutlinedInput-root': {
-    borderRadius: 14,
-
-    backgroundColor: theme.palette.background.paper,
-
-    transition: 'all 0.2s ease-in-out',
-
-    '&:hover': {
-      boxShadow: '0 2px 12px rgba(0,0,0,0.08)',
-    },
-
-    '&.Mui-focused': {
-      boxShadow: `0 0 0 4px ${alpha(theme.palette.primary.main, 0.12)}`,
-    },
-  },
-}));
 
 interface DateRangeFieldProps {
   from?: string;
@@ -46,32 +17,33 @@ export const DateRangeField = ({
   onToChange,
   fromLabel = 'From',
   toLabel = 'To',
-}: DateRangeFieldProps) => {
-  return (
-    <Stack direction="row" spacing={2}>
-      <StyledDateField
-        label={fromLabel}
-        type="date"
-        value={from || ''}
-        onChange={onFromChange}
-        slotProps={{
-          inputLabel: {
-            shrink: true,
-          },
-        }}
-      />
+}: DateRangeFieldProps) => (
+  <Box
+    sx={{
+      display: 'grid',
+      gridTemplateColumns: 'repeat(auto-fit, minmax(var(--field-min-width), 1fr))',
+      gap: 'var(--space-md)',
+      width: '100%',
+    }}
+  >
+    <TextField
+      type="date"
+      label={fromLabel}
+      size="small"
+      fullWidth
+      value={from ?? ''}
+      onChange={onFromChange}
+      slotProps={{ inputLabel: { shrink: true } }}
+    />
 
-      <StyledDateField
-        label={toLabel}
-        type="date"
-        value={to || ''}
-        onChange={onToChange}
-        slotProps={{
-          inputLabel: {
-            shrink: true,
-          },
-        }}
-      />
-    </Stack>
-  );
-};
+    <TextField
+      type="date"
+      label={toLabel}
+      size="small"
+      fullWidth
+      value={to ?? ''}
+      onChange={onToChange}
+      slotProps={{ inputLabel: { shrink: true } }}
+    />
+  </Box>
+);

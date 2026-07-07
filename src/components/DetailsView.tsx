@@ -1,27 +1,32 @@
-// components/DetailsView.tsx
-
-import { Card, CardContent, Grid } from '@mui/material';
-import { ActionContainer } from '../atoms/ActionContainer';
-import { ResetButton } from '../atoms/ResetButton';
-import { SearchButton } from '../atoms/SearchButton';
+import { useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { StyledTextField } from '../atoms/StyledTextField';
+
+import Grid from '@mui/material/Grid';
+import TextField from '@mui/material/TextField';
+
+import { ActionContainer } from '../atoms/ActionContainer';
+import { FormContainer } from '../atoms/FormContainer';
+
+import { SecondaryButton } from '../atoms/SecondaryButton';
 import { NegativeButton } from '../atoms/NegativeButton';
+import { PrimaryButton } from '../atoms/PrimaryButton';
 
 export interface DetailsField {
   name: string;
   label: string;
   grid?: number;
-  render?: (value: any, data: any) => React.ReactNode;
+  render?: (value: unknown, data: Record<string, unknown>) => React.ReactNode;
 }
 
-interface DetailsViewProps {
+export interface DetailsViewProps {
   config: DetailsField[];
-  data: Record<string, any>;
+  data: Record<string, unknown>;
+
   negativeLabel?: string;
   actionLabel?: string;
+
   onActionClick?: () => void;
-  onhandleNegativeClick?: () => void;
+  onNegativeClick?: () => void;
 }
 
 const DetailsView = ({
@@ -30,62 +35,66 @@ const DetailsView = ({
   actionLabel,
   onActionClick,
   negativeLabel,
-  onhandleNegativeClick,
+  onNegativeClick,
 }: DetailsViewProps) => {
   const navigate = useNavigate();
-  const handleBackClick = () => {
+
+  const handleBack = useCallback(() => {
     navigate(-1);
-  };
+  }, [navigate]);
+
   return (
     <>
       <ActionContainer>
-        <ResetButton variant="outlined" onClick={handleBackClick}>
+        <SecondaryButton type="button" variant="outlined" onClick={handleBack}>
           Back
-        </ResetButton>
+        </SecondaryButton>
 
         {negativeLabel && (
-          <NegativeButton variant="outlined" onClick={onhandleNegativeClick}>
+          <NegativeButton type="button" variant="outlined" onClick={onNegativeClick}>
             {negativeLabel}
           </NegativeButton>
         )}
 
         {actionLabel && (
-          <SearchButton variant="outlined" onClick={onActionClick}>
+          <PrimaryButton type="button" variant="contained" onClick={onActionClick}>
             {actionLabel}
-          </SearchButton>
+          </PrimaryButton>
         )}
       </ActionContainer>
-      <Card elevation={2}>
-        <CardContent>
-          <Grid container spacing={2} columns={12}>
-            {config.map((field) => (
-              <Grid
-                key={field.name}
-                size={{
-                  xs: 12,
-                  sm: 6,
-                  md: 6,
-                  lg: field.grid ?? 3,
-                  xl: field.grid ?? 3,
+
+      <FormContainer>
+        <Grid container spacing={2}>
+          {config.map((field) => (
+            <Grid
+              key={field.name}
+              size={{
+                xs: 12,
+                sm: 6,
+                md: field.grid ?? 4,
+                lg: field.grid ?? 3,
+                xl: field.grid ?? 3,
+              }}
+            >
+              <TextField
+                fullWidth
+                size="small"
+                label={field.label}
+                value={
+                  field.render
+                    ? field.render(data[field.name], data)
+                    : String(data[field.name] ?? '')
+                }
+                slotProps={{
+                  input: {
+                    readOnly: true,
+                  },
                 }}
-              >
-                <StyledTextField
-                  fullWidth
-                  label={field.label}
-                  value={
-                    field.render ? field.render(data[field.name], data) : (data[field.name] ?? '')
-                  }
-                  slotProps={{
-                    input: {
-                      readOnly: true,
-                    },
-                  }}
-                />
-              </Grid>
-            ))}
-          </Grid>
-        </CardContent>
-      </Card>
+              />
+            </Grid>
+          ))}
+        </Grid>
+      </FormContainer>
     </>
   );
 };

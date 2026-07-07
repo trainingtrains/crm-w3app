@@ -1,10 +1,10 @@
-/* ==========================================================
-   CHECKBOX / SWITCH
-========================================================== */
-
 import Checkbox from '@mui/material/Checkbox';
 import { styled } from '@mui/material/styles';
 
 export const StyledCheckbox = styled(Checkbox)({
-  transform: 'scale(1.05)',
+  padding: '4px',
+
+  '& .MuiSvgIcon-root': {
+    fontSize: '1.1rem',
+  },
 });

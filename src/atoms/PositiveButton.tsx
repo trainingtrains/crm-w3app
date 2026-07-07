@@ -1,18 +1,20 @@
-/* =========================
-   Positive
-========================= */
+import { styled } from "@mui/material/styles";
+import { BaseButton } from "./BaseButton";
 
-import { alpha, styled } from '@mui/material/styles';
-import { BaseButton } from './BaseButton';
+export const PositiveButton = styled(BaseButton)({
+  color: "#fff",
 
-export const PositiveButton = styled(BaseButton)(({ theme }) => ({
-  color: '#fff',
+  background: "var(--success)",
 
-  backgroundColor: theme.palette.success.main,
+  border: "1px solid var(--success)",
 
-  '&:hover': {
-    backgroundColor: theme.palette.success.dark,
-
-    boxShadow: `0 6px 20px ${alpha(theme.palette.success.main, 0.3)}`,
+  "&:hover": {
+    background: "var(--success-hover)",
+    borderColor: "var(--success-hover)",
+    boxShadow: "var(--shadow-sm)",
   },
-}));
+
+  "&:disabled": {
+    opacity: 0.6,
+  },
+});

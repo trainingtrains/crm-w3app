@@ -1,12 +1,24 @@
-import { styled, alpha } from '@mui/material/styles';
-import { BaseButton } from './BaseButton';
+import { styled } from "@mui/material/styles";
+import { BaseButton } from "./BaseButton";
 
-export const SearchButton = styled(BaseButton)(({ theme }) => ({
-  boxShadow: `0 8px 20px ${alpha(theme.palette.primary.main, 0.25)}`,
-  '&:hover': {
-    backgroundColor: theme.palette.primary.dark,
-    color: '#fff',
+/* =========================
+   SEARCH BUTTON
+========================= */
 
-    boxShadow: `0 6px 20px ${alpha(theme.palette.primary.main, 0.3)}`,
+export const SearchButton = styled(BaseButton)({
+  color: "#fff",
+
+  backgroundColor: "var(--primary)",
+
+  border: "1px solid var(--primary)",
+
+  "&:hover": {
+    backgroundColor: "var(--primary-hover)",
+    borderColor: "var(--primary-hover)",
+    boxShadow: "var(--shadow-sm)",
   },
-}));
+
+  "&:active": {
+    transform: "scale(0.98)",
+  },
+});

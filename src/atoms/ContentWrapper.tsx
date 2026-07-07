@@ -1,16 +1,16 @@
-/* ==========================================================
-   CONTENT WRAPPER
-========================================================== */
+import Box from "@mui/material/Box";
+import { styled } from "@mui/material/styles";
 
-import Box from '@mui/material/Box';
-import { styled } from '@mui/material/styles';
+export const ContentWrapper = styled(Box)({
+  width: "100%",
+  flex: 1,
 
-export const ContentWrapper = styled(Box)(({ theme }) => ({
-  width: '100%',
+  display: "flex",
+  flexDirection: "column",
 
-  display: 'flex',
+  gap: "var(--space-md)",
 
-  flexDirection: 'column',
+  padding: "var(--content-padding)",
 
-  gap: theme.spacing(2),
-}));
+  overflow: "auto",
+});

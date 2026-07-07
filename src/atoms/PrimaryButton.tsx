@@ -1,19 +1,30 @@
+import { styled } from "@mui/material/styles";
+import { BaseButton } from "./BaseButton";
+
 /* =========================
-   Primary
+   PRIMARY BUTTON
 ========================= */
 
-import { alpha, styled } from '@mui/material/styles';
-import { BaseButton } from './BaseButton';
+export const PrimaryButton = styled(BaseButton)({
+  color: "#fff",
 
-export const PrimaryButton = styled(BaseButton)(({ theme }) => ({
-  color: '#0044cc',
+  backgroundColor: "var(--primary)",
 
-  // backgroundColor: theme.palette.primary.main,
+  border: "1px solid var(--primary)",
 
-  '&:hover': {
-    backgroundColor: theme.palette.primary.dark,
-    color: '#fff',
-
-    boxShadow: `0 6px 20px ${alpha(theme.palette.primary.main, 0.3)}`,
+  "&:hover": {
+    backgroundColor: "var(--primary-hover)",
+    borderColor: "var(--primary-hover)",
+    boxShadow: "var(--shadow-sm)",
   },
-}));
+
+  "&:active": {
+    transform: "scale(0.98)",
+  },
+
+  "&:disabled": {
+    opacity: 0.6,
+    cursor: "not-allowed",
+    boxShadow: "none",
+  },
+});

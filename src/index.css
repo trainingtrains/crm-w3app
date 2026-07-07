@@ -1,44 +1,379 @@
-#root {
-  width: 100%;
-  max-width: 1366px;
-  margin: 0 auto;
-  text-align: center;
-  border-inline: 1px solid var(--border);
-  min-height: 100svh;
-  display: flex;
-  flex-direction: column;
-  box-sizing: border-box;
+/* ==========================================================================
+   DESIGN TOKENS (Precise Billing App Configuration)
+   ========================================================================== */
+
+:root {
+    /* Layout Constants */
+    --page-width: min(98vw, 1920px); /* Max App Width: 98% / 1920px */
+    --input-min-width: 210px;        /* High-density input layout width */
+
+    /* Spacing & Gaps */
+    --gap-grid: 12px;                /* Gap: 10–12px */
+    --space-sm: 6px;
+    --space-md: 12px;
+    --card-padding: 16px;            /* Card Padding: 16px */
+
+    /* Radius */
+    --radius: 6px;                   /* Border Radius: 6px */
+
+    /* Typography */
+    --font-family: "Segoe UI", Roboto, -apple-system, sans-serif;
+    --font-base: 14px;               /* Base Font: 14px */
+    --font-label: 13px;              /* Label: 13px */
+    --font-input: 14px;              /* Input Text: 14px */
+    
+    --font-xs: 11px;
+    --font-sm: var(--font-label);
+    --font-md: var(--font-base);
+    --font-lg: 16px;
+    --font-xl: 24px;
+
+    /* Control Heights */
+    --input-height: 38px;            /* Input Height: 38–40px */
+    --button-height: 38px;           /* Button Height: 38px */
+    --table-row-height: 38px;        /* Table Row: 38px */
+    --table-cell-padding: 8px;       /* Table Cell Padding: 8px */
+
+    /* Colors & High-Visibility Highlights */
+    --primary: #1976d2;
+    --primary-hover: #115293;
+    --highlight-border: #0066cc;     /* Sharp focus highlight color */
+    --highlight-shadow: rgba(0, 102, 204, 0.15);
+    --surface: #fff;
+    --background: #f6f8fb;
+    --border: #d9d9d9;
+    --text: #333;
+     --success:#2e7d32;
+    --success-hover:#1b5e20;
+
+    --primary:#1976d2;
+    --primary-hover:#1565c0;
+
+    --error:#d32f2f;
+    --error-hover:#b71c1c;
+
+    --warning:#ed6c02;
+    --warning-hover:#e65100;
+
+      --primary:#1976d2;
+    --primary-hover:#1565c0;
+
+    --success:#2e7d32;
+    --success-hover:#1b5e20;
+
+    --warning:#ed6c02;
+    --warning-hover:#e65100;
+
+    --error:#d32f2f;
+    --error-hover:#b71c1c;
+
+    --secondary:#546e7a;
+    --secondary-hover:#455a64;
+}
+
+/* ==========================================================================
+   RESET & VIEWPORT-LOCK (Eliminates App/Page Level Scrolling)
+   ========================================================================== */
+
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+}
+
+html, body {
+    height: 100% !important;
+    max-height: 100svh !important;
+    overflow: hidden !important; /* CRITICAL: Disables global page scroll entirely */
+}
+
+html {
+    font-size: 100%;
+    -webkit-font-smoothing: antialiased;
 }
 
 body {
-  margin: 0;
+    margin: 0;
+    background: var(--background);
+    color: var(--text);
+    font-family: var(--font-family);
+    font-size: var(--font-base);
+    font-style: normal;
 }
 
-h1,
-h2 {
-  font-family: var(--heading);
-  font-weight: 500;
-  color: var(--text-h);
+/* ==========================================================================
+   ROOT CONTAINER (Strict Dynamic Fit Layout)
+   ========================================================================== */
+
+#root {
+    width: var(--page-width);
+    height: 100svh;
+    max-height: 100svh;
+    margin-inline: auto;
+    display: flex;
+    flex-direction: column;
+    padding: var(--space-md);
+    overflow: hidden; /* Prevents outer leakage */
 }
 
-h1 {
-  font-size: 56px;
-  letter-spacing: -1.68px;
-  margin: 32px 0;
-  @media (max-width: 1024px) {
-    font-size: 36px;
-    margin: 20px 0;
-  }
+/* ==========================================================================
+   HEADINGS
+   ========================================================================== */
+
+h1 { font-size: var(--font-xl); margin: 0 0 var(--space-md); font-weight: 600; flex-shrink: 0; }
+h2 { font-size: var(--font-lg); margin-bottom: var(--space-sm); font-weight: 600; flex-shrink: 0; }
+h3 { font-size: var(--font-base); font-weight: 600; flex-shrink: 0; }
+p { margin: 0; }
+
+/* ==========================================================================
+   FORM CONTAINER ENGINE
+   ========================================================================== */
+
+form, 
+.MuiGrid-container,
+[class*="Grid-container"] {
+    display: flex !important;
+    flex-wrap: wrap !important;
+    gap: var(--gap-grid) !important;
+    width: 100% !important;
+    align-items: flex-end !important;
+    flex-shrink: 0; /* Ensures form fields never collapse their height */
 }
-h2 {
-  font-size: 24px;
-  line-height: 118%;
-  letter-spacing: -0.24px;
-  margin: 0 0 8px;
-  @media (max-width: 1024px) {
-    font-size: 20px;
-  }
+
+/* ==========================================================================
+   INPUTS, SELECTIONS, & GRID CELLS
+   ========================================================================== */
+
+input,
+textarea,
+select,
+.MuiGrid-item,
+[class*="Grid-item"],
+.MuiTextField-root,
+.MuiFormControl-root,
+.MuiAutocomplete-root,
+.MuiPickersTextField-root {
+    flex: 1 1 var(--input-min-width) !important;
+    min-width: var(--input-min-width) !important;
+    max-width: 100% !important;
+    width: auto !important;
 }
-p {
-  margin: 0;
+
+input,
+textarea,
+select {
+    font-family: var(--font-family);
+    font-size: var(--font-input);
+    outline: none;
+}
+
+textarea {
+    min-height: 70px;
+    resize: none; /* Block resize option to preserve view locked container structures */
+}
+
+/* ==========================================================================
+   ACTIVE FIELD USER INTERFACE HIGHLIGHTS
+   ========================================================================== */
+
+input:focus,
+textarea:focus,
+select:focus {
+    border-color: var(--highlight-border) !important;
+    box-shadow: 0 0 0 2px var(--highlight-shadow) !important;
+}
+
+.MuiOutlinedInput-root.Mui-focused {
+    box-shadow: 0 0 0 2px var(--highlight-shadow) !important;
+}
+.MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline {
+    border-color: var(--highlight-border) !important;
+    border-width: 1.5px !important;
+}
+
+/* ==========================================================================
+   BUTTONS
+   ========================================================================== */
+
+button,
+.MuiButton-root {
+    height: var(--button-height) !important;
+    font-family: var(--font-family) !important;
+    font-size: var(--font-base) !important;
+    font-weight: 500 !important;
+    cursor: pointer;
+    text-transform: none !important;
+    border-radius: var(--radius) !important;
+    
+    flex: 0 0 auto !important;
+    min-width: 90px !important;
+    padding-inline: var(--space-md) !important;
+    
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+}
+
+/* ==========================================================================
+   MATERIAL-UI OVERRIDES
+   ========================================================================== */
+
+.MuiOutlinedInput-root {
+    min-height: var(--input-height) !important;
+    height: var(--input-height) !important;
+    border-radius: var(--radius) !important;
+}
+
+.MuiInputBase-input {
+    padding-block: 0 !important;
+    padding-inline: 10px !important;
+    font-size: var(--font-input) !important;
+    height: 100% !important;
+}
+
+.MuiInputLabel-root {
+    font-size: var(--font-label) !important;
+    transform: translate(12px, 10px) scale(1) !important;
+}
+.MuiInputLabel-shrink {
+    transform: translate(12px, -6px) scale(0.75) !important;
+}
+
+.MuiFormHelperText-root {
+    font-size: var(--font-xs) !important;
+    margin-top: 2px !important;
+}
+
+/* ==========================================================================
+   ISOLATED WORKSPACE PANELS (Enforces Isolated Inner Scrolling Only)
+   ========================================================================== */
+
+/* Main dynamic parent holding billing forms and datagrids */
+.billing-workspace,
+.MuiCard-root {
+    flex: 1 1 auto !important; 
+    display: flex !important;
+    flex-direction: column !important;
+    min-height: 0 !important; /* CRITICAL: Enables container inner scrolling boundaries */
+    overflow: hidden !important; 
+    padding: var(--card-padding) !important;
+    border-radius: var(--radius) !important;
+    background-color: var(--surface);
+    border: 1px solid var(--border);
+}
+
+/* Container wrapper specifically enveloping your native tables or lists */
+.table-scroll-container {
+    flex: 1 1 auto !important;
+    overflow-y: auto !important; /* Vertical scrolling locked safely INSIDE the table block only */
+    overflow-x: auto !important;
+    min-height: 0 !important;
+}
+
+/* ==========================================================================
+   TABLE MATRIX CONFIGURATION
+   ========================================================================== */
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+tr {
+    height: var(--table-row-height) !important;
+}
+
+th,
+td {
+    padding: var(--table-cell-padding) !important;
+    font-size: var(--font-base);
+    border-bottom: 1px solid var(--border);
+}
+
+th {
+    position: sticky !important; /* Table headers lock to top during internal scrolling */
+    top: 0;
+    background-color: var(--background);
+    z-index: 2;
+}
+
+/* ==========================================================================
+   DATAGRID ALIGNMENT OVERRIDES (Fills Available Height Safely)
+   ========================================================================== */
+
+.MuiDataGrid-root {
+    font-size: var(--font-base) !important;
+    flex: 1 1 auto !important;
+    min-height: 0 !important; /* Forces scrollbars inside internal grid block wrapper */
+}
+
+.MuiDataGrid-columnHeader {
+    min-height: var(--table-row-height) !important;
+    height: var(--table-row-height) !important;
+}
+
+.MuiDataGrid-cell {
+    min-height: var(--table-row-height) !important;
+    height: var(--table-row-height) !important;
+    padding-inline: var(--table-cell-padding) !important;
+}
+
+/* ==========================================================================
+   DIALOG OVERRIDES
+   ========================================================================== */
+
+.MuiDialog-paper {
+    width: 100% !important;
+    max-width: 900px !important;
+    max-height: 85svh !important;
+}
+
+/* ==========================================================================
+   IMAGES
+   ========================================================================== */
+
+img {
+    max-width: 100%;
+    display: block;
+}
+
+
+/* Checkbox */
+
+.MuiCheckbox-root {
+    padding: 6px;
+}
+
+.MuiCheckbox-root .MuiSvgIcon-root {
+    font-size: 1.2rem;
+}
+
+.MuiTextField-root,
+.MuiFormControl-root{
+    width:100%;
+    min-width:var(--field-min-width);
+}
+
+.MuiOutlinedInput-root {
+    min-height: var(--input-height);
+    border-radius: var(--radius);
+    align-items: center;
+}
+
+.MuiInputBase-input {
+    padding: 10px 14px;
+    line-height: 1.5;
+    font-size: var(--font-md);
+    font-family: var(--font-family);
+    font-style: italic;
+}
+
+.MuiInputBase-multiline {
+    align-items: flex-start;
+}
+
+.MuiInputBase-inputMultiline {
+    min-height: 90px;
+    padding: 10px 14px;
+    line-height: 1.5;
 }

@@ -1,13 +1,25 @@
-import { alpha, styled } from '@mui/material/styles';
-import { BaseButton } from './BaseButton';
+import { styled } from "@mui/material/styles";
+import { BaseButton } from "./BaseButton";
 
-export const ResetButton = styled(BaseButton)(({ theme }) => ({
-  border: `1px solid ${theme.palette.divider}`,
-  color: 'green',
-  '&:hover': {
-    backgroundColor: 'green',
-    color: '#fff',
+/* =========================
+   RESET BUTTON
+========================= */
 
-    boxShadow: `0 6px 20px ${alpha(theme.palette.primary.main, 0.3)}`,
+export const ResetButton = styled(BaseButton)({
+  color: "var(--warning)",
+
+  backgroundColor: "var(--surface)",
+
+  border: "1px solid var(--warning)",
+
+  "&:hover": {
+    backgroundColor: "var(--warning)",
+    color: "#fff",
+    borderColor: "var(--warning-hover)",
+    boxShadow: "var(--shadow-sm)",
   },
-}));
+
+  "&:disabled": {
+    opacity: 0.6,
+  },
+});

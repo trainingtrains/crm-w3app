@@ -1,81 +1,90 @@
-import { StyledSection } from '../../atoms/StyledSection';
-import { PageTitle } from '../../atoms/PageTitle';
-import Form, { type FormValues } from '../../components/CustomForm';
-import { newClientRegistrFields as clientRequirementColumns } from './config/customerConfig';
-import { useEffect, useMemo, useState } from 'react';
-import { masterService } from '../../services/masterService';
-import { CONSTANTS } from '../../constants';
-import { customerService } from '../../services/customerService';
-import { useForm } from 'react-hook-form';
-import { useNavigate } from 'react-router-dom';
+import { useCallback, useEffect, useMemo, useState } from "react";
+import { useNavigate } from "react-router-dom";
+
+import { StyledSection } from "../../atoms/StyledSection";
+import { PageTitle } from "../../atoms/PageTitle";
+
+import Form, { type FormValues } from "../../components/CustomForm";
+
+import { CONSTANTS } from "../../constants";
+
+import { newClientRegistrFields } from "./config/customerConfig";
+
+import { masterService } from "../../services/masterService";
+import { customerService } from "../../services/customerService";
+import { PageHeader } from "../../atoms/PageHeader";
 
 export default function Register() {
   const navigate = useNavigate();
 
-  const { reset } = useForm<FormValues>();
   const [cities, setCities] = useState<any[]>([]);
+
+  const loadCities = useCallback(async () => {
+    try {
+      const response = await masterService.getCities();
+      setCities(response);
+    } catch (error) {
+      console.error(error);
+    }
+  }, []);
 
   useEffect(() => {
     loadCities();
-  }, []);
-
-  const loadCities = async () => {
-    const data = await masterService.getCities();
-    setCities(data);
-  };
-
-  const loadFormFields = useMemo(() => {
-    return clientRequirementColumns.map((field) => {
-      if (field.type !== 'select' && field.type !== 'autocomplete') {
-        return field;
-      }
-
-      switch (field.name) {
-        case CONSTANTS.KEY_CITY:
-          return {
-            ...field,
-            options: cities,
-          };
-
-        // case CONSTANTS.KEY_PROJECT_TYPE:
-        //     return {
-        //         ...field,
-        //         options: projectTypes,
-        //     };
-
-        // case CONSTANTS.KEY_STATUS:
-        //     return {
-        //         ...field,
-        //         options: statuses,
-        //     };
-
-        default:
+  }, [loadCities]);
+ 
+  const formFields = useMemo(
+    () =>
+      newClientRegistrFields.map((field) => {
+        if (field.name !== CONSTANTS.KEY_CITY) {
           return field;
+        }
+
+        return {
+          ...field,
+          options: cities,
+        };
+      }),
+    [cities]
+  );
+ console.log("--------------------",formFields);
+  const handleSubmit = useCallback(
+    async (form: FormValues) => {
+      try {
+        const payload = {
+          ...form,
+          cityId:
+            (form.city as { value: string | number } | null)?.value ??
+            form.city,
+        } as any;
+
+        delete payload.city;
+
+        await customerService.create(payload);
+
+        alert("Customer created successfully.");
+
+        navigate(-1);
+      } catch (error) {
+        console.error(error);
+        alert("Failed to create customer.");
       }
-    });
-  }, [cities]);
-
-  const onHandleSubmit = async (data: any) => {
-    try {
-      await customerService.create(data);
-
-      alert('Customer created successfully');
-
-      reset(); // react-hook-form reset if needed
-      navigate(-1); // if using react-router
-    } catch (error: any) {
-      console.error(error);
-      alert(error.message || 'Failed to create customer');
-    }
-  };
+    },
+    [navigate]
+  );
 
   return (
     <>
       <StyledSection>
-        <PageTitle>{CONSTANTS.LBL_CRM_NEW_ENTRY}</PageTitle>
+        <PageHeader><PageTitle>
+          {CONSTANTS.LBL_CRM_NEW_ENTRY}
+        </PageTitle></PageHeader>
       </StyledSection>
 
-      <Form config={loadFormFields} onSubmit={onHandleSubmit} submitLabel="Save" />
+      <Form
+        config={formFields}
+        onSubmit={handleSubmit}
+        submitLabel="Save"
+      />
     </>
   );
 }

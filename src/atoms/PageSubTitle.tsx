@@ -1,12 +1,20 @@
-import { styled } from '@mui/material/styles';
-import Typography from '@mui/material/Typography';
+import Typography from "@mui/material/Typography";
+import { styled } from "@mui/material/styles";
 
-export const PageSubTitle = styled(Typography)(({ theme }) => ({
-  marginTop: theme.spacing(1),
+/* ==========================================================
+   PAGE SUBTITLE
+========================================================== */
 
-  color: theme.palette.text.secondary,
+export const PageSubTitle = styled(Typography)({
+  color: "var(--text-secondary)",
 
-  maxWidth: 700,
+  fontSize: "var(--font-sm)",
 
-  marginInline: 'auto',
-}));
+  fontWeight: "var(--font-weight-normal)",
+
+  lineHeight: 1.5,
+
+  marginTop: "var(--space-2xs)",
+
+  marginBottom: "var(--space-sm)",
+});

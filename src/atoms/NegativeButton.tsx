@@ -1,19 +1,17 @@
-/* =========================
-   Negative
-========================= */
+import { styled } from "@mui/material/styles";
+import { BaseButton } from "./BaseButton";
 
-import { alpha, styled } from '@mui/material/styles';
-import { BaseButton } from './BaseButton';
+export const NegativeButton = styled(BaseButton)({
+  color: "var(--text-secondary)",
 
-export const NegativeButton = styled(BaseButton)(({ theme }) => ({
-  color: theme.palette.error.main,
+  backgroundColor: "var(--surface)",
 
-  backgroundColor: '#fff',
+  border: "1px solid var(--border)",
 
-  '&:hover': {
-    backgroundColor: theme.palette.error.main,
-    color: '#fff',
-
-    boxShadow: `0 6px 20px ${alpha(theme.palette.error.main, 0.3)}`,
+  "&:hover": {
+    backgroundColor: "var(--background)",
+    borderColor: "var(--primary)",
+    color: "var(--primary)",
+    boxShadow: "var(--shadow-sm)",
   },
-}));
+});

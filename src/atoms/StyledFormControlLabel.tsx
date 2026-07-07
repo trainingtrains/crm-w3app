@@ -1,14 +1,24 @@
-import FormControlLabel from '@mui/material/FormControlLabel';
-import { styled } from '@mui/material/styles';
+import FormControlLabel from "@mui/material/FormControlLabel";
+import { styled } from "@mui/material/styles";
 
-export const StyledFormControlLabel = styled(FormControlLabel)(({ theme }) => ({
-  width: '100%',
+export const StyledFormControlLabel = styled(FormControlLabel)({
+  width: "100%",
 
-  marginLeft: 0,
+  margin: 0,
 
-  '& .MuiTypography-root': {
-    fontWeight: 500,
+  display: "flex",
+  alignItems: "center",
 
-    color: theme.palette.text.primary,
+  gap: "var(--space-xs)",
+
+  "& .MuiTypography-root": {
+    fontSize: "var(--font-md)",
+    fontWeight: "var(--font-weight-medium)",
+    color: "var(--text)",
+    userSelect: "none",
   },
-}));
+
+  "& .MuiCheckbox-root, & .MuiRadio-root, & .MuiSwitch-root": {
+    padding: "4px",
+  },
+});

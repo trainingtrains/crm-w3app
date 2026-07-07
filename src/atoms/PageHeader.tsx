@@ -1,13 +1,11 @@
-import { styled } from '@mui/material/styles';
-
-import { Box } from '@mui/material';
-
-/* ==========================================================
-   HEADER
-========================================================== */
+import { Box, styled } from "@mui/material";
 
 export const PageHeader = styled(Box)(({ theme }) => ({
-  marginBottom: theme.spacing(4),
-
-  textAlign: 'center',
+  display: "flex",
+  alignItems: "center",
+  justifyContent: "space-between",
+  width: "100%",
+  marginBottom: theme.spacing(3),
+  gap: theme.spacing(2),
+  flexWrap: "wrap",
 }));

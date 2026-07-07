@@ -1,6 +1,23 @@
-import { styled } from '@mui/material/styles';
-import Switch from '@mui/material/Switch';
+import Switch from "@mui/material/Switch";
+import { styled } from "@mui/material/styles";
+
+/* ==========================================================
+   SWITCH
+========================================================== */
 
 export const StyledSwitch = styled(Switch)({
-  transform: 'scale(1.05)',
+  margin: 0,
+
+  "& .MuiSwitch-switchBase": {
+    padding: 6,
+  },
+
+  "& .MuiSwitch-thumb": {
+    width: 16,
+    height: 16,
+  },
+
+  "& .MuiSwitch-track": {
+    borderRadius: 10,
+  },
 });

@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import PersonAddAlt1Icon from '@mui/icons-material/PersonAddAlt1';
-import Form from '../../components/CustomForm';
+import CustomForm from '../../layouts/CustomForm';
 import { PrimaryButton } from '../../atoms/PrimaryButton';
 import { PageTitle } from '../../atoms/PageTitle';
 import { StyledSection } from '../../atoms/StyledSection';
@@ -9,10 +9,11 @@ import { CONSTANTS } from '../../constants';
 import { customerSearchConfig } from './config/customerConfig';
 import { customerService } from '../../services/customerService';
 import { masterService } from '../../services/masterService';
-import type { FormValues } from '../../components/CustomForm';
+import type { FormValues } from '../../layouts/CustomForm';
 import { PageHeader } from '../../atoms/PageHeader';
-import ReusableDataGrid from '../../components/ReusableDataGrid';
+import ReusableDataGrid from '../../layouts/ReusableDataGrid';
 import { FormContainer } from '../../atoms/FormContainer';
+import AppLayout from '../../layouts/AppLayout';
 
 const CustomerSrchPage = () => {
   const navigate = useNavigate();
@@ -139,7 +140,8 @@ const CustomerSrchPage = () => {
   }, [customerDetails]);
 
   return (
-    <>
+    <><AppLayout>
+
       <PageHeader>
         <PageTitle>{CONSTANTS.LBL_CRM_SRCH_PAGE}</PageTitle>
         <PrimaryButton
@@ -153,7 +155,7 @@ const CustomerSrchPage = () => {
 
       <FormContainer>
         <StyledSection>
-          <Form config={searchFields} onSubmit={handleSearch} />
+          <CustomForm config={searchFields} onSubmit={handleSearch} />
         </StyledSection>
 
         <ReusableDataGrid
@@ -161,7 +163,7 @@ const CustomerSrchPage = () => {
           onExportCSV={handleExportCSV}
           onView={handleView}
         />
-      </FormContainer>
+      </FormContainer></AppLayout>
     </>
   );
 };

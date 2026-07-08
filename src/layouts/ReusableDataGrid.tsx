@@ -22,6 +22,7 @@ const ReusableDataGrid: React.FC<ReusableDataGridProps> = ({
   onExportCSV,
 }) => {
   if (!data.length) return <>No record found</>;
+
   const columns: GridColDef[] = useMemo(() => {
     if (!data || data.length === 0) return [];
 
@@ -80,11 +81,23 @@ const ReusableDataGrid: React.FC<ReusableDataGridProps> = ({
           </Button>
         </Box>
       )}
-
       <Box
         sx={{
           width: '100%',
           height: maxHeight,
+          // Reordering the core layouts using CSS Flex order
+          '& .MuiDataGrid-root': {
+            display: 'flex',
+            flexDirection: 'column',
+          },
+          '& .MuiDataGrid-main': {
+            order: 2, // Moves the main table grid content below the footer
+          },
+          '& .MuiDataGrid-footerContainer': {
+            order: 1, // Moves the pagination footer container to the top
+            borderBottom: '1px solid rgba(224, 224, 224, 1)', // Adds divider line underneath the top pagination
+            borderTop: 'none', // Removes default top border
+          },
           '& .MuiDataGrid-cell:focus, & .MuiDataGrid-cell:focus-within': {
             outline: 'none !important',
           },

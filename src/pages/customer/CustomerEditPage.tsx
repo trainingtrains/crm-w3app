@@ -4,7 +4,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { StyledSection } from '../../atoms/StyledSection';
 import { PageTitle } from '../../atoms/PageTitle';
 
-import Form, { type FormValues } from '../../components/CustomForm';
+import CustomForm, { type FormValues } from '../../layouts/CustomForm';
 
 import { clientEditConfig } from './config/customerConfig';
 
@@ -12,6 +12,8 @@ import { CONSTANTS } from '../../constants';
 
 import { customerService } from '../../services/customerService';
 import { masterService } from '../../services/masterService';
+import { FormContainer } from '../../atoms/FormContainer';
+import AppLayout from '../../layouts/AppLayout';
 
 export default function EditCustomerPage() {
   const navigate = useNavigate();
@@ -122,25 +124,28 @@ export default function EditCustomerPage() {
 
   return (
     <>
-      <StyledSection>
-        <PageTitle>{CONSTANTS.LBL_CRM_CUST_EDIT}</PageTitle>
-      </StyledSection>
-
-      {isLoading ? (
-        <>Loading......</>
-      ) : loadError || !customer ? (
-        <p>Unable to load customer details.</p>
-      ) : (
-        // key forces a clean remount with correct defaultValues if this ever
-        // re-renders before data was ready — RHF only reads defaultValues on mount.
-        <Form
-          key={id}
-          config={formFields}
-          defaultValues={customer}
-          onSubmit={handleSubmit}
-          submitLabel="Update"
-        />
-      )}
+      <AppLayout>
+        <StyledSection>
+          <PageTitle>{CONSTANTS.LBL_CRM_CUST_EDIT}</PageTitle>
+        </StyledSection>
+        <FormContainer>
+          {isLoading ? (
+            <>Loading......</>
+          ) : loadError || !customer ? (
+            <p>Unable to load customer details.</p>
+          ) : (
+            // key forces a clean remount with correct defaultValues if this ever
+            // re-renders before data was ready — RHF only reads defaultValues on mount.
+            <CustomForm
+              key={id}
+              config={formFields}
+              defaultValues={customer}
+              onSubmit={handleSubmit}
+              submitLabel="Update"
+            />
+          )}
+        </FormContainer>
+      </AppLayout>
     </>
   );
 }

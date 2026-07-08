@@ -4,11 +4,12 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { StyledSection } from '../../atoms/StyledSection';
 import { PageTitle } from '../../atoms/PageTitle';
 
-import DetailsView from '../../components/DetailsView';
+import DetailsView from '../../layouts/DetailsView';
 
 import { CONSTANTS } from '../../constants';
 import { customerDetailsConfig } from './config/customerConfig';
 import { customerService } from '../../services/customerService';
+import AppLayout from '../../layouts/AppLayout';
 
 const CustomerDetailsPage = () => {
   const { id } = useParams<{ id: string }>();
@@ -56,7 +57,7 @@ const CustomerDetailsPage = () => {
   }
 
   return (
-    <>
+    <> <AppLayout>
       <StyledSection>
         <PageTitle>{CONSTANTS.LBL_CRM_CUST_DETAILS}</PageTitle>
 
@@ -68,7 +69,7 @@ const CustomerDetailsPage = () => {
           onActionClick={handleEdit}
           onNegativeClick={handleDelete}
         />
-      </StyledSection>
+      </StyledSection> </AppLayout>
     </>
   );
 };

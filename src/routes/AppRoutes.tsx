@@ -1,16 +1,66 @@
+import { lazy, Suspense } from 'react';
 import { Routes, Route } from 'react-router-dom';
-import CustomerSrchPage from '../pages/customer/CustomerSrchPage';
-import NewCustomer from '../pages/customer/NewCustomer';
-import CustomerDetailsPage from '../pages/customer/CustomerDetailsPage';
-import EditCustomerPage from '../pages/customer/CustomerEditPage';
+
+import ProtectedRoute from '../components/ProtectedRoute';
+import PublicRoute from '../components/PublicRoute';
+import LazyLoader from '../components/LazyLoader';
+
+const LoginPage = lazy(() => import('../pages/loginpage/LoginPage'));
+const CustomerSrchPage = lazy(() => import('../pages/customer/CustomerSrchPage'));
+const NewCustomer = lazy(() => import('../pages/customer/NewCustomer'));
+const CustomerDetailsPage = lazy(() => import('../pages/customer/CustomerDetailsPage'));
+const EditCustomerPage = lazy(() => import('../pages/customer/CustomerEditPage'));
+
 
 export default function AppRoutes() {
   return (
-    <Routes>
-      <Route path="/" element={<CustomerSrchPage />} />
-      <Route path="/newCust" element={<NewCustomer />} />
-      <Route path="/custDetails/:id" element={<CustomerDetailsPage />} />
-      <Route path="/custEdit/:id" element={<EditCustomerPage />} />
-    </Routes>
+    <Suspense fallback={<LazyLoader />}>
+      <Routes>
+        <Route
+          path="/"
+          element={
+            <PublicRoute>
+              <LoginPage />
+            </PublicRoute>
+          }
+        />
+
+        <Route
+          path="/crm"
+          element={
+            <ProtectedRoute>
+              <CustomerSrchPage />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/newCust"
+          element={
+            <ProtectedRoute>
+              <NewCustomer />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/custDetails/:id"
+          element={
+            <ProtectedRoute>
+              <CustomerDetailsPage />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/custEdit/:id"
+          element={
+            <ProtectedRoute>
+              <EditCustomerPage />
+            </ProtectedRoute>
+          }
+        />
+      </Routes>
+    </Suspense>
   );
 }

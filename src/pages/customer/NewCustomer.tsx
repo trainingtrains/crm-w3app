@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { StyledSection } from '../../atoms/StyledSection';
 import { PageTitle } from '../../atoms/PageTitle';
 
-import Form, { type FormValues } from '../../components/CustomForm';
+import CustomForm, { type FormValues } from '../../layouts/CustomForm';
 
 import { CONSTANTS } from '../../constants';
 
@@ -13,6 +13,8 @@ import { newClientRegistrFields } from './config/customerConfig';
 import { masterService } from '../../services/masterService';
 import { customerService } from '../../services/customerService';
 import { PageHeader } from '../../atoms/PageHeader';
+import { FormContainer } from '../../atoms/FormContainer';
+import AppLayout from '../../layouts/AppLayout';
 
 export default function Register() {
   const navigate = useNavigate();
@@ -46,7 +48,6 @@ export default function Register() {
       }),
     [cities]
   );
-  console.log('--------------------', formFields);
   const handleSubmit = useCallback(
     async (form: FormValues) => {
       try {
@@ -72,13 +73,16 @@ export default function Register() {
 
   return (
     <>
-      <StyledSection>
-        <PageHeader>
-          <PageTitle>{CONSTANTS.LBL_CRM_NEW_ENTRY}</PageTitle>
-        </PageHeader>
-      </StyledSection>
-
-      <Form config={formFields} onSubmit={handleSubmit} submitLabel="Save" />
+      <AppLayout>
+        <StyledSection>
+          <PageHeader>
+            <PageTitle>{CONSTANTS.LBL_CRM_NEW_ENTRY}</PageTitle>
+          </PageHeader>
+        </StyledSection>
+        <FormContainer>
+          <CustomForm config={formFields} onSubmit={handleSubmit} submitLabel="Save" />
+        </FormContainer>{' '}
+      </AppLayout>
     </>
   );
 }

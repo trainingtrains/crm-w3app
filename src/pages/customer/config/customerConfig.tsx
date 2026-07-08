@@ -1,6 +1,6 @@
-import type { Field } from '../../../components/types/form';
+import type { Field } from '../../../layouts/types/form';
 import { CONSTANTS } from '../../../constants';
-import type { DetailsField } from '../../../components/DetailsView';
+import type { DetailsField } from '../../../layouts/DetailsView';
 
 export const customerSearchConfig: Field[] = [
   {

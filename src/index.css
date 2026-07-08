@@ -69,6 +69,7 @@
 
   --secondary: #546e7a;
   --secondary-hover: #455a64;
+  --app-theme-color: #161C27
 }
 
 /* ==========================================================================
@@ -95,7 +96,7 @@ html {
 
 body {
   margin: 0;
-  background: var(--background);
+  background: var(--app-theme-color);
   color: var(--text);
   font-family: var(--font-family);
   font-size: var(--font-base);
@@ -107,13 +108,10 @@ body {
    ========================================================================== */
 
 #root {
-  width: var(--page-width);
   height: 100svh;
   max-height: 100svh;
-  margin-inline: auto;
   display: flex;
   flex-direction: column;
-  padding: var(--space-md);
   overflow: hidden; /* Prevents outer leakage */
 }
 

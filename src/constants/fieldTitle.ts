@@ -5,4 +5,5 @@ export const FIELD_LBLS = {
   LBL_CRM_CUST_EDIT: 'Edit Customer Details',
   LBL_CITY: 'City/Place',
   LBL_ADDRESS: 'Address',
+  LBL_LOGIN:'Login'
 };

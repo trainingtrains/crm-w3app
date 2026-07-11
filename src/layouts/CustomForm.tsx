@@ -5,7 +5,7 @@ import { useNavigate } from 'react-router-dom';
 import { Box } from '@mui/material';
 
 import { FormField } from './FormField';
-import type { Field } from './types/form';
+import type { FormField as Field } from './types/form';
 
 import { ActionContainer } from '../atoms/ActionContainer';
 import { PrimaryButton } from '../atoms/PrimaryButton';

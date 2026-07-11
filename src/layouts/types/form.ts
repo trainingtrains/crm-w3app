@@ -3,7 +3,7 @@ export type SelectOption = {
   value: string;
 };
 
-export type Field =
+export type FormField =
   | {
       type: 'text' | 'email' | 'number' | 'password';
       name: string;

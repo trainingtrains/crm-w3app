@@ -1,8 +1,8 @@
-import type { Field } from '../../../layouts/types/form';
+import type { FormField } from '../../../layouts/types/form';
 import { CONSTANTS } from '../../../constants';
 import type { DetailsField } from '../../../layouts/DetailsView';
 
-export const customerSearchConfig: Field[] = [
+export const customerSearchConfig: FormField[] = [
   {
     type: 'text',
     name: 'custId',
@@ -33,7 +33,7 @@ export const customerSearchConfig: Field[] = [
   },
 ];
 
-export const newClientRegistrFields: Field[] = [
+export const newClientRegistrFields: FormField[] = [
   {
     type: 'text',
     name: 'companyName',
@@ -134,7 +134,7 @@ export const customerDetailsConfig: DetailsField[] = [
   },
 ];
 
-export const clientEditConfig: Field[] = [
+export const clientEditConfig: FormField[] = [
   {
     type: 'text',
     name: 'companyName',

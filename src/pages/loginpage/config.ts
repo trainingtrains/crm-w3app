@@ -1,4 +1,4 @@
-import type { Field } from '../../layouts/types/form';
+import type { FormField as Field } from '../../layouts/types/form';
 
 export const loginConfig: Field[] = [
   {

@@ -9,7 +9,7 @@ import {
   type UseFormRegister,
 } from 'react-hook-form';
 
-import type { Field } from './types/form';
+import type { FormField as Field } from './types/form';
 
 import { StyledAutocomplete } from '../atoms/StyledAutoComplete';
 import { StyledCheckbox } from '../atoms/StyledCheckbox';

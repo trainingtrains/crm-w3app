@@ -5,7 +5,7 @@ import { useNavigate } from 'react-router-dom';
 import DashboardRoundedIcon from '@mui/icons-material/DashboardRounded';
 import GroupsRoundedIcon from '@mui/icons-material/GroupsRounded';
 import PersonAddRoundedIcon from '@mui/icons-material/PersonAddRounded';
-
+import ManageAccountsRoundedIcon from '@mui/icons-material/ManageAccountsRounded';
 import AppHeader from './AppHeader';
 import SideNavigation, { type NavigationItem } from './SideNavigation';
 
@@ -28,6 +28,12 @@ const AppLayout = ({
     const navigationItems =
         useMemo<NavigationItem[]>(
             () => [
+                {
+                    id: 'admin',
+                    title: 'Admin',
+                    path: '/admin',
+                    icon: <ManageAccountsRoundedIcon />,
+                },
                 {
                     id: 'dashboard',
                     title: 'Dashboard',

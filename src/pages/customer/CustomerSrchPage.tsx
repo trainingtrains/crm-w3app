@@ -19,6 +19,12 @@ const CustomerSrchPage = () => {
   const navigate = useNavigate();
   const [customers, setCustomers] = useState<any[]>([]);
   const [cities, setCities] = useState<any[]>([]);
+  const [filters, setFilters] = useState({
+    custId: '',
+    custName: '',
+    mobile: '',
+    city: '',
+  });
 
   const loadCities = useCallback(async () => {
     try {
@@ -29,24 +35,20 @@ const CustomerSrchPage = () => {
     }
   }, []);
 
-  const loadCustomers = useCallback(async () => {
-    try {
-      const response = await customerService.searchCustomers({
-        custId: '',
-        custName: '',
-        mobile: '',
-        city: '',
-      });
-      setCustomers(response);
-    } catch (error) {
-      console.error(error);
-    }
-  }, []);
-
   useEffect(() => {
     loadCities();
-    loadCustomers();
-  }, [loadCities, loadCustomers]);
+  }, [loadCities]);
+
+  // Real-time subscription to customer updates matching active filters
+  useEffect(() => {
+    const unsubscribe = customerService.subscribeCustomers(filters, (data) => {
+      setCustomers(data);
+    });
+
+    return () => {
+      unsubscribe();
+    };
+  }, [filters]);
 
   const searchFields = useMemo(
     () =>
@@ -62,18 +64,13 @@ const CustomerSrchPage = () => {
     [cities]
   );
 
-  const handleSearch = useCallback(async (form: FormValues) => {
-    try {
-      const response = await customerService.searchCustomers({
-        custId: String(form.custId ?? ''),
-        custName: String(form.custName ?? ''),
-        mobile: String(form.mobile ?? ''),
-        city: String(form.city ?? ''),
-      });
-      setCustomers(response);
-    } catch (error) {
-      console.error(error);
-    }
+  const handleSearch = useCallback((form: FormValues) => {
+    setFilters({
+      custId: String(form.custId ?? ''),
+      custName: String(form.custName ?? ''),
+      mobile: String(form.mobile ?? ''),
+      city: String(form.city ?? ''),
+    });
   }, []);
 
   const handleAddCustomer = useCallback(() => {
@@ -92,10 +89,11 @@ const CustomerSrchPage = () => {
 
   const customerDetails = useMemo(() => {
     return customers.map((customer) => {
-      console.log(customer);
-      const mappedCity = cities.find(
-        (c) => String(c.id || c.cityId) === String(customer.city || customer.cityId)
-      );
+      const mappedCity = cities.find((c) => String(c.value) === String(customer.cityId));
+
+      const totalAmt = Number(customer.totalAmount) || 0;
+      const paidAmt = Number(customer.paidAmount) || 0;
+      const balanceAmt = Number(customer.balanceAmount) || 0;
 
       return {
         id: customer.id,
@@ -103,11 +101,15 @@ const CustomerSrchPage = () => {
         companyName: customer.companyName,
         contactPerson: customer.contactPerson,
         contactDetails: `${customer.mobile || '-'} / ${customer.email || '-'}`,
-        city: mappedCity ? mappedCity.name || mappedCity.cityName : customer.city || '-',
-        enquiry: customer.enquiry ? String(customer.enquiry).toUpperCase() : '-',
-        totalAmount: customer.totalAmount ?? 0,
-        paidAmount: customer.paidAmount ?? 0,
-        balanceAmount: customer.balanceAmount ?? 0,
+        city: mappedCity ? mappedCity.label : customer.cityId || '-',
+        project: customer.projectName || '-',
+        status: customer.status ? String(customer.status).toUpperCase() : '-',
+        totalAmount: `₹${totalAmt.toLocaleString('en-IN')}`,
+        paidAmount: `₹${paidAmt.toLocaleString('en-IN')}`,
+        balanceAmount: `₹${balanceAmt.toLocaleString('en-IN')}`,
+        paymentStatus: customer.paymentStatus
+          ? String(customer.paymentStatus).toUpperCase()
+          : 'UNPAID',
       };
     });
   }, [customers, cities]);
@@ -140,30 +142,31 @@ const CustomerSrchPage = () => {
   }, [customerDetails]);
 
   return (
-    <><AppLayout>
+    <>
+      <AppLayout title="Training Trains CRM">
+        <PageHeader>
+          <PageTitle>{CONSTANTS.LBL_CRM_SRCH_PAGE}</PageTitle>
+          <PrimaryButton
+            variant="contained"
+            startIcon={<PersonAddAlt1Icon />}
+            onClick={handleAddCustomer}
+          >
+            Add Customer
+          </PrimaryButton>
+        </PageHeader>
 
-      <PageHeader>
-        <PageTitle>{CONSTANTS.LBL_CRM_SRCH_PAGE}</PageTitle>
-        <PrimaryButton
-          variant="contained"
-          startIcon={<PersonAddAlt1Icon />}
-          onClick={handleAddCustomer}
-        >
-          Add Customer
-        </PrimaryButton>
-      </PageHeader>
+        <FormContainer>
+          <StyledSection>
+            <CustomForm config={searchFields} onSubmit={handleSearch} />
+          </StyledSection>
 
-      <FormContainer>
-        <StyledSection>
-          <CustomForm config={searchFields} onSubmit={handleSearch} />
-        </StyledSection>
-
-        <ReusableDataGrid
-          data={customerDetails}
-          onExportCSV={handleExportCSV}
-          onView={handleView}
-        />
-      </FormContainer></AppLayout>
+          <ReusableDataGrid
+            data={customerDetails}
+            onExportCSV={handleExportCSV}
+            onView={handleView}
+          />
+        </FormContainer>
+      </AppLayout>
     </>
   );
 };

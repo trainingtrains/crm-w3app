@@ -6,23 +6,24 @@ import { CONSTANTS } from '../../constants';
 import { useAuth } from '../../context/AuthContext';
 
 const LoginPage = () => {
-    const { login } = useAuth();
+  const { login } = useAuth();
 
-    const handleLogin = async (data) => {
-        await login(data);
-    };
+  const handleLogin = async (data) => {
+    console.log(data);
+    await login(data);
+  };
 
-    return (
-        <GridPatternDesign>
-            <Banner />
-            <FormPanel
-                title={CONSTANTS.LBL_LOGIN}
-                config={loginConfig}
-                handleSubmit={handleLogin}
-                submitLabel={CONSTANTS.LBL_LOGIN}
-            />
-        </GridPatternDesign>
-    );
+  return (
+    <GridPatternDesign>
+      <Banner />
+      <FormPanel
+        title={CONSTANTS.LBL_LOGIN}
+        config={loginConfig}
+        handleSubmit={handleLogin}
+        submitLabel={CONSTANTS.LBL_LOGIN}
+      />
+    </GridPatternDesign>
+  );
 };
 
 export default LoginPage;

@@ -19,6 +19,7 @@ export interface FormProps {
   onSubmit: SubmitHandler<FormValues>;
   submitLabel?: string;
   defaultValues?: FormValues;
+  onCancel?: () => void;
 }
 
 const CustomForm = ({
@@ -26,6 +27,7 @@ const CustomForm = ({
   onSubmit,
   submitLabel = 'Search',
   defaultValues,
+  onCancel,
 }: FormProps) => {
   const navigate = useNavigate();
 
@@ -45,19 +47,24 @@ const CustomForm = ({
 
   const handleCancel = useCallback(() => {
     reset(defaultValues);
-    navigate(-1);
-  }, [defaultValues, navigate, reset]);
+    if (onCancel) {
+      onCancel();
+    } else {
+      navigate(-1);
+    }
+  }, [defaultValues, navigate, reset, onCancel]);
 
   const handleReset = useCallback(() => {
     reset(defaultValues);
   }, [defaultValues, reset]);
 
+  const handleClear = useCallback(() => {
+    reset({});
+    onSubmit({});
+  }, [onSubmit, reset]);
+
   return (
-    <Box
-      component="form"
-      noValidate
-      onSubmit={handleSubmit(onSubmit)}
-    >
+    <Box component="form" noValidate onSubmit={handleSubmit(onSubmit)}>
       <Box
         sx={{
           display: 'flex',
@@ -84,42 +91,32 @@ const CustomForm = ({
                 minWidth: 250,
               }}
             >
-              <FormField
-                field={field}
-                register={register}
-                control={control}
-                errors={errors}
-              />
+              <FormField field={field} register={register} control={control} errors={errors} />
             </Box>
           );
         })}
       </Box>
 
       <ActionContainer>
-        {submitLabel === 'Save' && (
+        {['Save', 'Update'].includes(submitLabel) && (
           <>
-            <SecondaryButton
-              type="button"
-              variant="outlined"
-              onClick={handleCancel}
-            >
+            <SecondaryButton type="button" variant="outlined" onClick={handleCancel}>
               Cancel
             </SecondaryButton>
 
-            <WarningButton
-              type="button"
-              variant="outlined"
-              onClick={handleReset}
-            >
+            <WarningButton type="button" variant="outlined" onClick={handleReset}>
               Reset
             </WarningButton>
           </>
         )}
 
-        <PrimaryButton
-          type="submit"
-          variant="contained"
-        >
+        {submitLabel === 'Search' && (
+          <SecondaryButton type="button" variant="outlined" onClick={handleClear}>
+            Clear
+          </SecondaryButton>
+        )}
+
+        <PrimaryButton type="submit" variant="contained">
           {submitLabel}
         </PrimaryButton>
       </ActionContainer>

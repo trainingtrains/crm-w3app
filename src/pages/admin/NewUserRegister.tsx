@@ -7,60 +7,44 @@ import { PageHeader } from '../../atoms/PageHeader';
 import { FormContainer } from '../../atoms/FormContainer';
 
 import AppLayout from '../../layouts/AppLayout';
-import CustomForm, { type FormValues } from '../../layouts/CustomForm';
+import CustomForm from '../../layouts/CustomForm';
 
 import { CONSTANTS } from '../../constants';
 import { newUserRegistrationFields } from './adminConfig';
-
-
-// import { companyService } from '../../services/companyService';
-// import { roleService } from '../../services/roleService';
-// import { userService } from '../../services/userService';
+import UserService from '../../services/userService';
+import { useNotification } from '../../context/NotificationContext';
 
 export default function NewUserPage() {
-    const navigate = useNavigate();
+  const navigate = useNavigate();
 
-    const handleSubmit = useCallback(
-        async (form: FormValues) => {
-            try {
-                const payload: any = {
-                    ...form,
+  const { showSuccess, showError } = useNotification();
 
-                    companyId:
-                        (form.companyId as { value: number | string } | null)?.value ??
-                        form.companyId,
+  const handleSubmit = useCallback(
+    async (data) => {
+      try {
+        await UserService.create(data);
+        showSuccess('User created successfully.');
 
-                    roleId:
-                        (form.roleId as { value: number | string } | null)?.value ??
-                        form.roleId,
-                };
-                console.log(payload)
-                alert('User created successfully.');
+        navigate(-1);
+      } catch (error: any) {
+        console.error(error);
+        showError(error.message || 'Failed to create user.');
+      }
+    },
+    [navigate, showSuccess, showError]
+  );
 
-                navigate(-1);
-            } catch (error) {
-                console.error(error);
-                alert('Failed to create user.');
-            }
-        },
-        [navigate]
-    );
+  return (
+    <AppLayout>
+      <StyledSection>
+        <PageHeader>
+          <PageTitle>{CONSTANTS.LBL_NEW_USER}</PageTitle>
+        </PageHeader>
+      </StyledSection>
 
-    return (
-        <AppLayout>
-            <StyledSection>
-                <PageHeader>
-                    <PageTitle>{CONSTANTS.LBL_NEW_USER}</PageTitle>
-                </PageHeader>
-            </StyledSection>
-
-            <FormContainer>
-                <CustomForm
-                    config={newUserRegistrationFields}
-                    onSubmit={handleSubmit}
-                    submitLabel="Save"
-                />
-            </FormContainer>
-        </AppLayout>
-    );
+      <FormContainer>
+        <CustomForm config={newUserRegistrationFields} onSubmit={handleSubmit} submitLabel="Save" />
+      </FormContainer>
+    </AppLayout>
+  );
 }

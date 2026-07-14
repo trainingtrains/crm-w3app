@@ -5,16 +5,19 @@ import ProtectedRoute from '../components/ProtectedRoute';
 import PublicRoute from '../components/PublicRoute';
 import LazyLoader from '../components/LazyLoader';
 import AdminSrchPage from '../pages/admin/AdminPanel';
-import NewUserRegistration from '../pages/admin/NewUserRegister'
-import NewCompanyPage from '../pages/admin/NewCompanyRegister';
+import NewUserRegistration from '../pages/admin/NewUserRegister';
+
 import DashboardPage from '../pages/dashboard/Dashboard';
+import UserDetailsPage from '../pages/admin/UserDetailsPage';
+import UserEditPage from '../pages/admin/UserEditPage';
+import ProfilePage from '../pages/admin/ProfilePage';
 
 const LoginPage = lazy(() => import('../pages/loginpage/LoginPage'));
 const CustomerSrchPage = lazy(() => import('../pages/customer/CustomerSrchPage'));
 const NewCustomer = lazy(() => import('../pages/customer/NewCustomer'));
 const CustomerDetailsPage = lazy(() => import('../pages/customer/CustomerDetailsPage'));
 const EditCustomerPage = lazy(() => import('../pages/customer/CustomerEditPage'));
-
+const TicketsPage = lazy(() => import('../pages/tickets/TicketsPage'));
 
 export default function AppRoutes() {
   return (
@@ -55,18 +58,36 @@ export default function AppRoutes() {
         />
 
         <Route
-          path="/nUser"
+          path="/admin/nUser"
           element={
             <ProtectedRoute>
               <NewUserRegistration />
             </ProtectedRoute>
           }
         />
+
         <Route
-          path="/ncompany"
+          path="/admin/nuserview/:id"
           element={
             <ProtectedRoute>
-              <NewCompanyPage />
+              <UserDetailsPage />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/admin/nedituser/:id"
+          element={
+            <ProtectedRoute>
+              <UserEditPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/admin/profile"
+          element={
+            <ProtectedRoute>
+              <ProfilePage />
             </ProtectedRoute>
           }
         />
@@ -94,6 +115,15 @@ export default function AppRoutes() {
           element={
             <ProtectedRoute>
               <EditCustomerPage />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/tickets"
+          element={
+            <ProtectedRoute>
+              <TicketsPage />
             </ProtectedRoute>
           }
         />

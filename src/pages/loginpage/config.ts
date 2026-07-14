@@ -6,7 +6,7 @@ export const loginConfig: Field[] = [
     name: 'username',
     label: 'username',
     placeholder: 'User Name',
-    required: true,
+    rules: { required: 'Username is required' },
     grid: 6,
   },
   {
@@ -14,6 +14,6 @@ export const loginConfig: Field[] = [
     name: 'password',
     label: 'Password',
     grid: 6,
-    required: true,
+    rules: { required: 'Password is required' },
   },
 ];

@@ -11,8 +11,10 @@ export type FormField =
       placeholder?: string;
       grid?: number;
       defaultValue?: string;
-      required?: boolean;
+      rules?: Record<string, any>;
       disabled?: boolean;
+      isNumeric?: boolean;
+      fixedLength?: number;
     }
   | {
       type: 'textarea';
@@ -21,9 +23,11 @@ export type FormField =
       placeholder?: string;
       rows?: number;
       grid?: number;
-      required?: boolean;
       disabled?: boolean;
+      rules?: Record<string, any>;
       defaultValue?: string;
+      isNumeric?: boolean;
+      fixedLength?: number;
     }
   | {
       type: 'select';
@@ -31,18 +35,22 @@ export type FormField =
       label: string;
       options: SelectOption[];
       grid?: number;
-      required?: boolean;
+      rules?: Record<string, any>;
       disabled?: boolean;
       defaultValue?: string;
+      isNumeric?: boolean;
+      fixedLength?: number;
     }
   | {
       type: 'checkbox' | 'switch';
       name: string;
       label: string;
       grid?: number;
-      required?: boolean;
+      rules?: Record<string, any>;
       disabled?: boolean;
       defaultValue?: string;
+      isNumeric?: boolean;
+      fixedLength?: number;
     }
   | {
       type: 'autocomplete';
@@ -51,7 +59,9 @@ export type FormField =
       options: SelectOption[];
       grid?: number;
       placeholder?: string;
-      required?: boolean;
+      rules?: Record<string, any>;
       disabled?: boolean;
       defaultValue?: string;
+      isNumeric?: boolean;
+      fixedLength?: number;
     };

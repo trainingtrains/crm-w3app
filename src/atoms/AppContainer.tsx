@@ -1,20 +1,16 @@
-import { Box, type BoxProps } from "@mui/material";
-import type { ReactNode } from "react";
+import { Box, type BoxProps } from '@mui/material';
+import type { ReactNode } from 'react';
 
 interface AppContainerProps extends BoxProps {
   children: ReactNode;
 }
 
-const AppContainer = ({
-  children,
-  sx,
-  ...props
-}: AppContainerProps) => {
+const AppContainer = ({ children, sx, ...props }: AppContainerProps) => {
   return (
     <Box
       sx={{
-        minHeight: "100vh",
-        bgcolor: "var(--app-theme-color)",
+        minHeight: '100vh',
+        bgcolor: 'var(--app-theme-color)',
         ...sx,
       }}
       {...props}

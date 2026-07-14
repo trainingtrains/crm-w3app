@@ -1,21 +1,21 @@
-import { Box, Stack, Typography } from "@mui/material";
+import { Box, Stack, Typography } from '@mui/material';
 
 const LoginBanner = () => {
   return (
     <Box
       sx={{
-        display: { xs: "none", md: "flex" },
-        position: "relative",
-        overflow: "hidden",
-        justifyContent: "center",
-        alignItems: "center",
-        height: "100%",
+        display: { xs: 'none', md: 'flex' },
+        position: 'relative',
+        overflow: 'hidden',
+        justifyContent: 'center',
+        alignItems: 'center',
+        height: '100%',
       }}
     >
       {/* Background */}
       <Box
         sx={{
-          position: "absolute",
+          position: 'absolute',
           inset: 0,
         }}
       />
@@ -24,9 +24,9 @@ const LoginBanner = () => {
       <Stack
         spacing={5}
         sx={{
-          position: "relative",
-          width: "75%",
-          color: "#fff",
+          position: 'relative',
+          width: '75%',
+          color: '#fff',
           zIndex: 1,
         }}
       >
@@ -36,10 +36,10 @@ const LoginBanner = () => {
           variant="h3"
           sx={{
             fontWeight: 800,
-            lineHeight: 1.3
+            lineHeight: 1.3,
           }}
         >
-          W3App Developers
+          Training Trains
         </Typography>
 
         <Typography
@@ -49,7 +49,7 @@ const LoginBanner = () => {
             maxWidth: 500,
           }}
         >
-          Training Trains
+          Customer Relationship Management
         </Typography>
       </Stack>
     </Box>

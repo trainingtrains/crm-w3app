@@ -10,15 +10,15 @@ import {
 import { ThemeProvider as MuiThemeProvider } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
 
-import { brightTheme, darkTheme, applyThemeVars, type AppTheme } from '../theme';
+import { brightTheme, applyThemeVars, type AppTheme } from '../theme';
 
 // ─── Context Type ─────────────────────────────────────────────────────────────
 interface ThemeContextType {
-  theme:       AppTheme;
-  mode:        'light' | 'dark';
-  isDark:      boolean;
+  theme: AppTheme;
+  mode: 'light' | 'dark';
+  isDark: boolean;
   toggleTheme: () => void;
-  setTheme:    (t: AppTheme) => void;
+  setTheme: (t: AppTheme) => void;
 }
 
 const ThemeContext = createContext<ThemeContextType | null>(null);
@@ -50,10 +50,10 @@ export const ThemeProvider = ({ children }: { children: ReactNode }) => {
   const mode = theme === 'dark' ? 'dark' : 'light';
   const isDark = theme === 'dark';
 
-  const muiTheme = useMemo(
-    () => (theme === 'dark' ? darkTheme : brightTheme),
-    [theme],
-  );
+  // const muiTheme = useMemo(
+  //   () => (theme === 'dark' ? brightTheme : brightTheme),
+  //   [theme],
+  // );
 
   const value = useMemo<ThemeContextType>(
     () => ({ theme, mode, isDark, toggleTheme, setTheme }),
@@ -63,7 +63,7 @@ export const ThemeProvider = ({ children }: { children: ReactNode }) => {
 
   return (
     <ThemeContext.Provider value={value}>
-      <MuiThemeProvider theme={muiTheme}>
+      <MuiThemeProvider theme={brightTheme}>
         <CssBaseline />
         {children}
       </MuiThemeProvider>

@@ -63,7 +63,7 @@ export default function ProfilePage() {
     [user, loadProfile, showSuccess, showError]
   );
 
-  const { themeName, changeTheme } = useAppTheme();
+  const { theme: themeName, toggleTheme: changeTheme } = useAppTheme();
 
   return (
     <AppLayout>
@@ -98,7 +98,7 @@ export default function ProfilePage() {
               labelId="theme-select-label"
               value={themeName}
               label="Select Workspace Theme"
-              onChange={(e) => changeTheme(e.target.value as any)}
+              onChange={() => changeTheme()}
             >
               <MenuItem value="modernEnterprise">Modern Enterprise (Recommended Default)</MenuItem>
               <MenuItem value="executiveDark">Executive Dark (Premium Dark Vibe)</MenuItem>

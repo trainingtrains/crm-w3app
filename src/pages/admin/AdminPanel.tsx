@@ -13,13 +13,16 @@ import { StyledSection } from '../../atoms/StyledSection';
 import { PageHeader } from '../../atoms/PageHeader';
 import { FormContainer } from '../../atoms/FormContainer';
 
-import { CONSTANTS } from '../../constants';
 import { adminSearchConfig } from './adminConfig';
 
 import UserService, { type UserSearchResponse } from '../../services/userService';
+import { useLanguage } from '../../context/LanguageContext';
+import { usePermission } from '../../auth/usePermission';
 
 const AdminSrchPage = () => {
   const navigate = useNavigate();
+  const { t } = useLanguage();
+  const { hasPermission } = usePermission();
 
   const [users, setUsers] = useState<UserSearchResponse[]>([]);
   const [loading, setLoading] = useState(false);
@@ -78,15 +81,17 @@ const AdminSrchPage = () => {
   return (
     <AppLayout>
       <PageHeader>
-        <PageTitle>{CONSTANTS.LBL_ADMIN_SRCH_PAGE}</PageTitle>
+        <PageTitle>{t('employees')}</PageTitle>
 
-        <PrimaryButton
-          variant="contained"
-          startIcon={<PersonAddAlt1Icon />}
-          onClick={handleAddUser}
-        >
-          New User
-        </PrimaryButton>
+        {hasPermission('USER_CREATE') && (
+          <PrimaryButton
+            variant="contained"
+            startIcon={<PersonAddAlt1Icon />}
+            onClick={handleAddUser}
+          >
+            {t('addNew')}
+          </PrimaryButton>
+        )}
       </PageHeader>
 
       <FormContainer>

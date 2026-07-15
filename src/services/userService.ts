@@ -1,7 +1,8 @@
-import { get, push, ref, remove, update } from 'firebase/database';
+import { get, push, ref, update } from 'firebase/database';
 import { db } from '../db/firebase';
 import type { FormValues } from '../layouts/CustomForm';
 import { masterService } from './masterService';
+import { timelineService } from './timelineService';
 
 export interface User {
   id?: string;
@@ -17,7 +18,7 @@ export interface LoginResponse {
   success: boolean;
   adminCreated?: boolean;
   message?: string;
-  user?: User & { id: string };
+  user?: User & { id: string; employeeId?: string; userName?: string; firstName?: string; lastName?: string; roleId?: string };
 }
 
 export interface User {
@@ -31,6 +32,11 @@ export interface User {
   roleId: string;
   mustChangePassword?: boolean;
   isActive?: boolean;
+  status?: string;
+  serviceStartDate?: number;
+  serviceEndDate?: number | null;
+  deactivatedBy?: string;
+  deactivationReason?: string;
   createdAt?: number;
   updatedAt?: number;
 }
@@ -46,13 +52,11 @@ export interface UserSearchRequest {
   userId?: string;
   userName?: string;
   mobile?: string;
-}
-
-export interface User {
-  id?: string;
-  userId: string;
-  userName: string;
-  mobile: string;
+  status?: string; // 'ALL' | 'ACTIVE' | 'INACTIVE'
+  role?: string; // role filter
+  serviceStartDate?: string | null;
+  serviceEndDate?: string | null;
+  requestorRole?: string;
 }
 
 export interface UserSearchResponse {
@@ -65,6 +69,11 @@ export interface UserSearchResponse {
   mobile: string;
   roleId: string;
   isActive: boolean;
+  status?: string;
+  serviceStartDate?: number | null;
+  serviceEndDate?: number | null;
+  deactivatedBy?: string;
+  deactivationReason?: string;
 }
 
 export type UserDetailsResponse = Record<string, any>;
@@ -79,7 +88,7 @@ const UserService = {
       if (!snapshot.exists()) {
         const now = Date.now();
 
-        await push(usersRef, {
+        const newAdmin = await push(usersRef, {
           employeeId: 'ADMIN',
           firstName: 'Administrator',
           lastName: '',
@@ -88,15 +97,17 @@ const UserService = {
           email: '',
           mobile: '',
           roleId: 'admin',
-
           mustChangePassword: false,
           isActive: true,
-
+          status: 'ACTIVE',
+          serviceStartDate: now,
+          serviceEndDate: null,
           createdAt: now,
           updatedAt: now,
         });
 
         await masterService.seedMastersIfEmpty();
+        await timelineService.logEvent(newAdmin.key!, 'User Created', 'System Administrator account provisioned');
 
         return {
           success: true,
@@ -136,6 +147,7 @@ const UserService = {
       throw error;
     }
   },
+
   async create(user: User): Promise<CreateUserResponse> {
     try {
       const usersRef = ref(db, 'users');
@@ -146,7 +158,6 @@ const UserService = {
       // Check duplicate username
       const userExists = Object.values(users).some((item) => {
         const value = item as User;
-
         return value.userName.trim().toLowerCase() === user.userName.trim().toLowerCase();
       });
 
@@ -157,7 +168,6 @@ const UserService = {
       // Check duplicate employee id
       const employeeExists = Object.values(users).some((item) => {
         const value = item as User;
-
         return value.employeeId.trim().toLowerCase() === user.employeeId.trim().toLowerCase();
       });
 
@@ -180,10 +190,15 @@ const UserService = {
         roleId: user.roleId,
         password: defaultPassword,
         mustChangePassword: true,
-        isActive: 1,
+        isActive: true,
+        status: 'ACTIVE',
+        serviceStartDate: now,
+        serviceEndDate: null,
         createdAt: now,
         updatedAt: now,
       });
+
+      await timelineService.logEvent(newUserRef.key!, 'User Created', 'Employee registered in the system');
 
       return {
         success: true,
@@ -196,6 +211,7 @@ const UserService = {
       throw error;
     }
   },
+
   async search(search: UserSearchRequest): Promise<UserSearchResponse[]> {
     try {
       const usersRef = ref(db, 'users');
@@ -205,15 +221,19 @@ const UserService = {
         return [];
       }
 
+      const requestorRole = search.requestorRole || 'ADMIN';
+      const filterStatus = search.status || 'ALL';
+      const filterRole = search.role || '';
+      const filterStartDate = search.serviceStartDate || null;
+      const filterEndDate = search.serviceEndDate || null;
+
       const users = Object.entries(snapshot.val())
         .filter(([_, value]) => {
           const user = value as User;
-
           return user.roleId?.trim().toLowerCase() !== 'admin';
         })
         .map(([id, value]) => {
           const user = value as User;
-
           return {
             id,
             employeeId: user.employeeId,
@@ -224,22 +244,17 @@ const UserService = {
             mobile: user.mobile,
             roleId: user.roleId,
             isActive: user.isActive ?? true,
-
-            // Used only for sorting, removed before returning
+            status: user.status || 'ACTIVE',
+            serviceStartDate: user.serviceStartDate || user.createdAt || null,
+            serviceEndDate: user.serviceEndDate || null,
+            deactivatedBy: user.deactivatedBy || '',
+            deactivationReason: user.deactivationReason || '',
             createdAt: user.createdAt ?? 0,
           };
         });
 
-      // Always sort newest first
+      // Sort newest first
       users.sort((a, b) => b.createdAt - a.createdAt);
-
-      const hasSearch =
-        !!search.userId?.trim() || !!search.userName?.trim() || !!search.mobile?.trim();
-
-      // No search criteria -> return all users
-      if (!hasSearch) {
-        return users.map(({ createdAt, ...user }) => user);
-      }
 
       const userId = search.userId?.trim().toLowerCase() ?? '';
       const userName = search.userName?.trim().toLowerCase() ?? '';
@@ -247,14 +262,29 @@ const UserService = {
 
       const filteredUsers = users.filter((user) => {
         const fullName = `${user.firstName} ${user.lastName ?? ''}`.trim().toLowerCase();
+        
+        // Visibility rules checks
+        if (requestorRole === 'VIEWER' && user.status !== 'ACTIVE') {
+          return false;
+        }
+
+        // Apply filters
+        if (filterStatus === 'ACTIVE' && user.status !== 'ACTIVE') return false;
+        if (filterStatus === 'INACTIVE' && user.status !== 'INACTIVE') return false;
+        if (filterRole && user.roleId !== filterRole) return false;
+        
+        if (filterStartDate && user.serviceStartDate && user.serviceStartDate < new Date(filterStartDate).getTime()) {
+          return false;
+        }
+        if (filterEndDate && user.serviceEndDate && user.serviceEndDate > new Date(filterEndDate).getTime()) {
+          return false;
+        }
 
         const matchEmployeeId = !userId || user.employeeId.toLowerCase().includes(userId);
-
         const matchUserName =
           !userName ||
           user.userName.toLowerCase().includes(userName) ||
           fullName.includes(userName);
-
         const matchMobile = !mobile || user.mobile.includes(mobile);
 
         return matchEmployeeId && matchUserName && matchMobile;
@@ -266,6 +296,7 @@ const UserService = {
       throw error;
     }
   },
+
   async getById(id: string): Promise<UserDetailsResponse> {
     try {
       const snapshot = await get(ref(db, `users/${id}`));
@@ -286,28 +317,71 @@ const UserService = {
         mobile: user.mobile,
         roleId: user.roleId,
         isActive: user.isActive ?? true,
+        status: user.status || 'ACTIVE',
+        serviceStartDate: user.serviceStartDate || user.createdAt || null,
+        serviceEndDate: user.serviceEndDate || null,
+        deactivatedBy: user.deactivatedBy || '',
+        deactivationReason: user.deactivationReason || '',
       };
     } catch (error) {
       console.error('Get User Error:', error);
       throw error;
     }
   },
-  async delete(id: string): Promise<void> {
+
+  async delete(id: string, deactivatedBy: string = 'System', deactivationReason: string = 'Requested deactivation'): Promise<void> {
     try {
       const userRef = ref(db, `users/${id}`);
-
       const snapshot = await get(userRef);
 
       if (!snapshot.exists()) {
         throw new Error('User not found.');
       }
 
-      await remove(userRef);
+      const now = Date.now();
+      await update(userRef, {
+        status: 'INACTIVE',
+        serviceEndDate: now,
+        deactivatedBy,
+        deactivationReason,
+        isActive: false,
+        updatedAt: now,
+      });
+
+      await timelineService.logEvent(id, 'User Deactivated', `Deactivated by ${deactivatedBy}. Reason: ${deactivationReason}`);
     } catch (error) {
       console.error('Delete User Error:', error);
       throw error;
     }
   },
+
+  async activate(id: string): Promise<void> {
+    try {
+      const userRef = ref(db, `users/${id}`);
+      const snapshot = await get(userRef);
+
+      if (!snapshot.exists()) {
+        throw new Error('User not found.');
+      }
+
+      const now = Date.now();
+      await update(userRef, {
+        status: 'ACTIVE',
+        serviceStartDate: now,
+        serviceEndDate: null,
+        deactivatedBy: '',
+        deactivationReason: '',
+        isActive: true,
+        updatedAt: now,
+      });
+
+      await timelineService.logEvent(id, 'User Activated', 'Status restored to ACTIVE');
+    } catch (error) {
+      console.error('Activate User Error:', error);
+      throw error;
+    }
+  },
+
   async getProfile(userId: string): Promise<FormValues> {
     try {
       const userRef = ref(db, `users/${userId}`);
@@ -327,8 +401,6 @@ const UserService = {
         roleId: user.roleId,
         email: user.email ?? '',
         mobile: user.mobile,
-
-        // Password fields are empty by default
         currentPassword: '',
         newPassword: '',
         confirmPassword: '',
@@ -338,15 +410,18 @@ const UserService = {
       throw error;
     }
   },
+
   async update(id: string, user: Partial<User>): Promise<void> {
     try {
       const userRef = ref(db, `users/${id}`);
-
       const snapshot = await get(userRef);
 
       if (!snapshot.exists()) {
         throw new Error('User not found.');
       }
+
+      const oldUser = snapshot.val() as User;
+      const now = Date.now();
 
       await update(userRef, {
         employeeId: user.employeeId,
@@ -356,16 +431,23 @@ const UserService = {
         mobile: user.mobile,
         roleId: user.roleId,
         isActive: user.isActive,
-        updatedAt: Date.now(),
+        updatedAt: now,
       });
+
+      // Log promotions or timeline details changes
+      if (oldUser.roleId !== user.roleId) {
+        await timelineService.logEvent(id, 'Role Updated', `Promoted/Moved from ${oldUser.roleId} to ${user.roleId}`);
+      } else {
+        await timelineService.logEvent(id, 'Details Updated', 'User profile information updated');
+      }
     } catch (error) {
       console.error('Update User Error:', error);
       throw error;
     }
   },
+
   async updateProfile(id: string, form: FormValues): Promise<void> {
     const userRef = ref(db, `users/${id}`);
-
     const snapshot = await get(userRef);
 
     if (!snapshot.exists()) {
@@ -389,21 +471,6 @@ const UserService = {
       mustChangePassword: false,
       updatedAt: Date.now(),
     });
-  },
-  async deleteAll(): Promise<void> {
-    try {
-      const usersRef = ref(db, 'users');
-      const snapshot = await get(usersRef);
-
-      if (!snapshot.exists()) {
-        return;
-      }
-
-      await remove(usersRef);
-    } catch (error) {
-      console.error('Delete All Users Error:', error);
-      throw error;
-    }
   },
 };
 

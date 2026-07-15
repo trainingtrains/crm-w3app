@@ -2,6 +2,8 @@
 
 import { get, push, ref, update, remove, onValue } from 'firebase/database';
 import { db } from '../db/firebase';
+import { auditService } from './auditService';
+import { timelineService } from './timelineService';
 
 export const customerService = {
   async create(customer: any) {
@@ -57,9 +59,17 @@ export const customerService = {
         paidAmount: paidAmt,
         balanceAmount: balanceAmt,
         paymentStatus: payStatus,
+        status: 'ACTIVE',
+        serviceStartDate: now,
+        serviceEndDate: null,
+        deactivatedBy: '',
+        deactivationReason: '',
+        assignedEmployee: customerData.assignedEmployee || '',
         createdAt: now,
         updatedAt: now,
       });
+
+      await timelineService.logEvent(customerRef.key!, 'Customer Created', 'Customer onboarding completed');
 
       return {
         id: customerRef.key,
@@ -70,6 +80,7 @@ export const customerService = {
       throw error;
     }
   },
+
   async getById(id: string) {
     try {
       const snapshot = await get(ref(db, `customers/${id}`));
@@ -78,9 +89,16 @@ export const customerService = {
         throw new Error('Customer not found.');
       }
 
+      const val = snapshot.val();
       return {
         id,
-        ...snapshot.val(),
+        ...val,
+        status: val.status || 'ACTIVE',
+        serviceStartDate: val.serviceStartDate || val.createdAt || null,
+        serviceEndDate: val.serviceEndDate || null,
+        deactivatedBy: val.deactivatedBy || '',
+        deactivationReason: val.deactivationReason || '',
+        assignedEmployee: val.assignedEmployee || '',
       };
     } catch (error) {
       console.error('Get Customer Error:', error);
@@ -88,24 +106,63 @@ export const customerService = {
     }
   },
 
-  async delete(id: string) {
+  async delete(id: string, deactivatedBy: string = 'System', deactivationReason: string = 'Requested') {
     try {
       const customerRef = ref(db, `customers/${id}`);
-
       const snapshot = await get(customerRef);
 
       if (!snapshot.exists()) {
         throw new Error('Customer not found.');
       }
 
-      await remove(customerRef);
+      const now = Date.now();
+      await update(customerRef, {
+        status: 'INACTIVE',
+        serviceEndDate: now,
+        deactivatedBy,
+        deactivationReason,
+        updatedAt: now,
+      });
+
+      await timelineService.logEvent(id, 'Service Ended', `Service ended / Customer deactivated by ${deactivatedBy}. Reason: ${deactivationReason}`);
 
       return {
         success: true,
-        message: 'Customer deleted successfully.',
+        message: 'Customer soft-deactivated successfully.',
       };
     } catch (error) {
       console.error('Delete Customer Error:', error);
+      throw error;
+    }
+  },
+
+  async activate(id: string) {
+    try {
+      const customerRef = ref(db, `customers/${id}`);
+      const snapshot = await get(customerRef);
+
+      if (!snapshot.exists()) {
+        throw new Error('Customer not found.');
+      }
+
+      const now = Date.now();
+      await update(customerRef, {
+        status: 'ACTIVE',
+        serviceStartDate: now,
+        serviceEndDate: null,
+        deactivatedBy: '',
+        deactivationReason: '',
+        updatedAt: now,
+      });
+
+      await timelineService.logEvent(id, 'Service Reactivated', 'Customer reactivated, service resumed');
+
+      return {
+        success: true,
+        message: 'Customer activated successfully.',
+      };
+    } catch (error) {
+      console.error('Activate Customer Error:', error);
       throw error;
     }
   },
@@ -115,17 +172,55 @@ export const customerService = {
     custName?: string;
     mobile?: string;
     city?: string;
+    status?: string;
+    serviceStartDate?: string | null;
+    serviceEndDate?: string | null;
+    assignedEmployee?: string;
+    userRole?: string;
+    username?: string;
   }) {
     const snapshot = await get(ref(db, 'customers'));
 
     if (!snapshot.exists()) return [];
 
+    const userRole = filters.userRole || 'ADMIN';
+    const username = filters.username || '';
+    const filterStatus = filters.status || 'ALL';
+    const filterStartDate = filters.serviceStartDate || null;
+    const filterEndDate = filters.serviceEndDate || null;
+    const filterEmployee = filters.assignedEmployee || '';
+
     const customers = Object.entries(snapshot.val()).map(([key, value]: any) => ({
       id: key,
       ...value,
+      status: value.status || 'ACTIVE',
+      serviceStartDate: value.serviceStartDate || value.createdAt || null,
+      serviceEndDate: value.serviceEndDate || null,
+      assignedEmployee: value.assignedEmployee || '',
     }));
 
     const filteredCustomers = customers.filter((customer: any) => {
+      // Visibility rules checks
+      if (userRole === 'VIEWER' && customer.status !== 'ACTIVE') {
+        return false;
+      }
+      if (userRole === 'SUPPORT') {
+        if (customer.status !== 'ACTIVE') return false;
+        if (customer.assignedEmployee && customer.assignedEmployee !== username) return false;
+      }
+
+      // Filter settings checks
+      if (filterStatus === 'ACTIVE' && customer.status !== 'ACTIVE') return false;
+      if (filterStatus === 'INACTIVE' && customer.status !== 'INACTIVE') return false;
+      if (filterEmployee && customer.assignedEmployee !== filterEmployee) return false;
+      
+      if (filterStartDate && customer.serviceStartDate && customer.serviceStartDate < new Date(filterStartDate).getTime()) {
+        return false;
+      }
+      if (filterEndDate && customer.serviceEndDate && customer.serviceEndDate > new Date(filterEndDate).getTime()) {
+        return false;
+      }
+
       const matchCustId =
         !filters.custId ||
         customer.customerId?.toLowerCase().includes(filters.custId.toLowerCase());
@@ -163,7 +258,18 @@ export const customerService = {
 
   // Real-time listener for customer searches
   subscribeCustomers(
-    filters: { custId?: string; custName?: string; mobile?: string; city?: string },
+    filters: {
+      custId?: string;
+      custName?: string;
+      mobile?: string;
+      city?: string;
+      status?: string;
+      serviceStartDate?: string | null;
+      serviceEndDate?: string | null;
+      assignedEmployee?: string;
+      userRole?: string;
+      username?: string;
+    },
     callback: (customers: any[]) => void
   ) {
     const customersRef = ref(db, 'customers');
@@ -173,12 +279,44 @@ export const customerService = {
         return;
       }
 
+      const userRole = filters.userRole || 'ADMIN';
+      const username = filters.username || '';
+      const filterStatus = filters.status || 'ALL';
+      const filterStartDate = filters.serviceStartDate || null;
+      const filterEndDate = filters.serviceEndDate || null;
+      const filterEmployee = filters.assignedEmployee || '';
+
       const customers = Object.entries(snapshot.val()).map(([key, value]: any) => ({
         id: key,
         ...value,
+        status: value.status || 'ACTIVE',
+        serviceStartDate: value.serviceStartDate || value.createdAt || null,
+        serviceEndDate: value.serviceEndDate || null,
+        assignedEmployee: value.assignedEmployee || '',
       }));
 
       const filteredCustomers = customers.filter((customer: any) => {
+        // Visibility rules checks
+        if (userRole === 'VIEWER' && customer.status !== 'ACTIVE') {
+          return false;
+        }
+        if (userRole === 'SUPPORT') {
+          if (customer.status !== 'ACTIVE') return false;
+          if (customer.assignedEmployee && customer.assignedEmployee !== username) return false;
+        }
+
+        // Filter parameters checks
+        if (filterStatus === 'ACTIVE' && customer.status !== 'ACTIVE') return false;
+        if (filterStatus === 'INACTIVE' && customer.status !== 'INACTIVE') return false;
+        if (filterEmployee && customer.assignedEmployee !== filterEmployee) return false;
+        
+        if (filterStartDate && customer.serviceStartDate && customer.serviceStartDate < new Date(filterStartDate).getTime()) {
+          return false;
+        }
+        if (filterEndDate && customer.serviceEndDate && customer.serviceEndDate > new Date(filterEndDate).getTime()) {
+          return false;
+        }
+
         const matchCustId =
           !filters.custId ||
           customer.customerId?.toLowerCase().includes(filters.custId.toLowerCase());
@@ -210,9 +348,16 @@ export const customerService = {
         callback(null);
         return;
       }
+      const val = snapshot.val();
       callback({
         id,
-        ...snapshot.val(),
+        ...val,
+        status: val.status || 'ACTIVE',
+        serviceStartDate: val.serviceStartDate || val.createdAt || null,
+        serviceEndDate: val.serviceEndDate || null,
+        deactivatedBy: val.deactivatedBy || '',
+        deactivationReason: val.deactivationReason || '',
+        assignedEmployee: val.assignedEmployee || '',
       });
     });
   },
@@ -309,7 +454,7 @@ export const customerService = {
     const now = Date.now();
     const newTicket = {
       ...ticket,
-      status: 'not_started', // not_started | reviewed_started | in_progress | completed
+      status: 'not_started',
       createdAt: now,
       updatedAt: now,
       history: [
@@ -322,6 +467,16 @@ export const customerService = {
       ],
     };
     const ticketRef = await push(ticketsRef, newTicket);
+    await auditService.logEvent(
+      ticket.createdBy || 'System',
+      'USER',
+      `Registered new support complaint ticket: ${ticket.title} for customer ID ${ticket.customerId}`,
+      'TICKETS'
+    );
+    
+    // Log ticket timeline event under customer ID
+    await timelineService.logEvent(ticket.customerId, 'Ticket Raised', `Subject: ${ticket.title}`);
+
     return ticketRef.key;
   },
 
@@ -330,7 +485,9 @@ export const customerService = {
     status: string,
     comment: string,
     updatedBy: string,
-    newAssignee?: string
+    newAssignee?: string,
+    priority?: string,
+    dueDate?: string
   ) {
     const ticketRef = ref(db, `tickets/${ticketId}`);
     const snapshot = await get(ticketRef);
@@ -345,6 +502,8 @@ export const customerService = {
       updatedBy,
       timestamp: now,
       assignedTo: newAssignee || currentTicket.assignedTo,
+      priority: priority || currentTicket.priority || 'medium',
+      dueDate: dueDate || currentTicket.dueDate || '',
     };
     const currentHistory = currentTicket.history || [];
 
@@ -356,6 +515,19 @@ export const customerService = {
     if (newAssignee) {
       updates.assignedTo = newAssignee;
     }
+    if (priority) {
+      updates.priority = priority;
+    }
+    if (dueDate) {
+      updates.dueDate = dueDate;
+    }
+
+    await auditService.logEvent(
+      updatedBy,
+      'USER',
+      `Updated support ticket ${ticketId} status to ${status} - Comments: ${comment}`,
+      'TICKETS'
+    );
 
     return update(ticketRef, updates);
   },

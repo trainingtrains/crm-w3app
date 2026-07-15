@@ -14,9 +14,13 @@ import { PageHeader } from '../../atoms/PageHeader';
 import ReusableDataGrid from '../../layouts/ReusableDataGrid';
 import { FormContainer } from '../../atoms/FormContainer';
 import AppLayout from '../../layouts/AppLayout';
+import { useLanguage } from '../../context/LanguageContext';
+import { usePermission } from '../../auth/usePermission';
 
 const CustomerSrchPage = () => {
   const navigate = useNavigate();
+  const { t } = useLanguage();
+  const { hasPermission, isReadOnly } = usePermission();
   const [customers, setCustomers] = useState<any[]>([]);
   const [cities, setCities] = useState<any[]>([]);
   const [filters, setFilters] = useState({
@@ -145,14 +149,16 @@ const CustomerSrchPage = () => {
     <>
       <AppLayout title="Training Trains CRM">
         <PageHeader>
-          <PageTitle>{CONSTANTS.LBL_CRM_SRCH_PAGE}</PageTitle>
-          <PrimaryButton
-            variant="contained"
-            startIcon={<PersonAddAlt1Icon />}
-            onClick={handleAddCustomer}
-          >
-            Add Customer
-          </PrimaryButton>
+          <PageTitle>{t('customers')}</PageTitle>
+          {hasPermission('CUSTOMER_CREATE') && (
+            <PrimaryButton
+              variant="contained"
+              startIcon={<PersonAddAlt1Icon />}
+              onClick={handleAddCustomer}
+            >
+              {t('addNew')}
+            </PrimaryButton>
+          )}
         </PageHeader>
 
         <FormContainer>
@@ -162,7 +168,7 @@ const CustomerSrchPage = () => {
 
           <ReusableDataGrid
             data={customerDetails}
-            onExportCSV={handleExportCSV}
+            onExportCSV={isReadOnly ? undefined : handleExportCSV}
             onView={handleView}
           />
         </FormContainer>

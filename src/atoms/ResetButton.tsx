@@ -1,25 +1,30 @@
+/* =============================================================
+   RESET BUTTON — BLUE (outlined, lighter)
+   Use for: Reset · Clear · Undo · Re-fetch
+   ============================================================= */
+
 import { styled } from '@mui/material/styles';
 import { BaseButton } from './BaseButton';
 
-/* =========================
-   RESET BUTTON
-========================= */
-
 export const ResetButton = styled(BaseButton)({
-  color: 'var(--warning)',
-
-  backgroundColor: 'var(--surface)',
-
-  border: '1px solid var(--warning)',
+  color:           'var(--clr-blue)',
+  backgroundColor: 'transparent',
+  border:          '1px solid var(--clr-blue)',
 
   '&:hover': {
-    backgroundColor: 'var(--warning)',
-    color: '#fff',
-    borderColor: 'var(--warning-hover)',
-    boxShadow: 'var(--shadow-sm)',
+    backgroundColor: 'var(--clr-blue-light)',
+    borderColor:     'var(--clr-blue-hover)',
+    color:           'var(--clr-blue-hover)',
+    boxShadow:       'var(--shadow-sm)',
+  },
+
+  '&:active': {
+    transform: 'scale(0.98)',
   },
 
   '&:disabled': {
-    opacity: 0.6,
+    opacity:   0.55,
+    cursor:    'not-allowed',
+    boxShadow: 'none',
   },
 });

@@ -1,24 +1,29 @@
+/* =============================================================
+   SEARCH BUTTON — GREEN
+   Use for: Search · Filter · Find · Look up
+   ============================================================= */
+
 import { styled } from '@mui/material/styles';
 import { BaseButton } from './BaseButton';
 
-/* =========================
-   SEARCH BUTTON
-========================= */
-
 export const SearchButton = styled(BaseButton)({
-  color: '#fff',
-
-  backgroundColor: 'var(--primary)',
-
-  border: '1px solid var(--primary)',
+  color:           '#ffffff',
+  backgroundColor: 'var(--clr-green)',
+  border:          '1px solid var(--clr-green)',
 
   '&:hover': {
-    backgroundColor: 'var(--primary-hover)',
-    borderColor: 'var(--primary-hover)',
-    boxShadow: 'var(--shadow-sm)',
+    backgroundColor: 'var(--clr-green-hover)',
+    borderColor:     'var(--clr-green-hover)',
+    boxShadow:       'var(--shadow-sm)',
   },
 
   '&:active': {
     transform: 'scale(0.98)',
+  },
+
+  '&:disabled': {
+    opacity:   0.55,
+    cursor:    'not-allowed',
+    boxShadow: 'none',
   },
 });

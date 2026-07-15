@@ -1,21 +1,20 @@
+/* =============================================================
+   PRIMARY BUTTON — GREEN
+   Use for: Save · Submit · Create · Add · Activate · Confirm
+   ============================================================= */
+
 import { styled } from '@mui/material/styles';
 import { BaseButton } from './BaseButton';
 
-/* =========================
-   PRIMARY BUTTON
-========================= */
-
 export const PrimaryButton = styled(BaseButton)({
-  color: '#fff',
-
-  backgroundColor: 'var(--primary)',
-
-  border: '1px solid var(--primary)',
+  color:           '#ffffff',
+  backgroundColor: 'var(--clr-green)',
+  border:          '1px solid var(--clr-green)',
 
   '&:hover': {
-    backgroundColor: 'var(--primary-hover)',
-    borderColor: 'var(--primary-hover)',
-    boxShadow: 'var(--shadow-sm)',
+    backgroundColor: 'var(--clr-green-hover)',
+    borderColor:     'var(--clr-green-hover)',
+    boxShadow:       'var(--shadow-sm)',
   },
 
   '&:active': {
@@ -23,8 +22,8 @@ export const PrimaryButton = styled(BaseButton)({
   },
 
   '&:disabled': {
-    opacity: 0.6,
-    cursor: 'not-allowed',
+    opacity:   0.55,
+    cursor:    'not-allowed',
     boxShadow: 'none',
   },
 });

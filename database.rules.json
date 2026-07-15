@@ -1,0 +1,24 @@
+{
+  "rules": {
+    ".read": "auth != null",
+    ".write": "auth != null",
+    "users": {
+      ".read": "auth != null",
+      ".write": "auth != null && (root.child('users').child(auth.uid).child('role').val() == 'ADMIN' || !data.exists())"
+    },
+    "customers": {
+      ".read": "auth != null",
+      ".write": "auth != null && (root.child('users').child(auth.uid).child('role').val() == 'ADMIN' || root.child('users').child(auth.uid).child('role').val() == 'MANAGER' || root.child('users').child(auth.uid).child('role').val() == 'SUPPORT')"
+    },
+    "tickets": {
+      ".read": "auth != null",
+      "$ticketId": {
+        ".write": "auth != null && (root.child('users').child(auth.uid).child('role').val() == 'ADMIN' || root.child('users').child(auth.uid).child('role').val() == 'MANAGER' || (root.child('users').child(auth.uid).child('role').val() == 'SUPPORT' && data.child('assignedTo').val() == root.child('users').child(auth.uid).child('userName').val()))"
+      }
+    },
+    "audit_logs": {
+      ".read": "auth != null && (root.child('users').child(auth.uid).child('role').val() == 'ADMIN')",
+      ".write": "auth != null"
+    }
+  }
+}

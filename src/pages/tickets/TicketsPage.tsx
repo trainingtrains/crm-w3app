@@ -23,10 +23,14 @@ import { useAuth } from '../../context/AuthContext';
 import { useNotification } from '../../context/NotificationContext';
 import ReusableDataGrid from '../../layouts/ReusableDataGrid';
 import type { FormField } from '../../layouts/types/form';
+import { useLanguage } from '../../context/LanguageContext';
+import { usePermission } from '../../auth/usePermission';
 
 export default function TicketsPage() {
   const { user } = useAuth();
+  const { hasPermission } = usePermission();
   const { showSuccess, showError } = useNotification();
+  const { t } = useLanguage();
 
   const [activeTab, setActiveTab] = useState(0);
   const [tickets, setTickets] = useState<any[]>([]);
@@ -85,6 +89,27 @@ export default function TicketsPage() {
     }));
   }, [users]);
 
+  const hasEditAccess = useMemo(() => {
+    if (!selectedTicket || !user) return false;
+    return (
+      user.role === 'ADMIN' ||
+      user.role === 'MANAGER' ||
+      user.username === selectedTicket.assignedTo
+    );
+  }, [selectedTicket, user]);
+
+  const updateDefaultValues = useMemo(() => {
+    if (!selectedTicket) return {};
+    return {
+      actionType: selectedTicket.status || 'not_started',
+      newAssignee: selectedTicket.assignedTo || '',
+      priority: selectedTicket.priority || 'medium',
+      dueDate: selectedTicket.dueDate || '',
+      comment: '',
+    };
+  }, [selectedTicket]);
+
+  // Form Configurations
   // Form Configurations
   const createFormConfig = useMemo<FormField[]>(
     () => [
@@ -109,6 +134,24 @@ export default function TicketsPage() {
         label: 'Assign Complaint To',
         rules: { required: 'Assignee is required' },
         options: userOptions,
+        grid: 6,
+      },
+      {
+        type: 'select',
+        name: 'priority',
+        label: 'Priority',
+        rules: { required: 'Priority is required' },
+        options: [
+          { label: 'Low', value: 'low' },
+          { label: 'Medium', value: 'medium' },
+          { label: 'High', value: 'high' },
+        ],
+        grid: 6,
+      },
+      {
+        type: 'date',
+        name: 'dueDate',
+        label: 'Due Date',
         grid: 6,
       },
       {
@@ -146,6 +189,7 @@ export default function TicketsPage() {
           { label: 'Complete / Resolve Ticket', value: 'completed' },
         ],
         grid: 12,
+        disabled: !hasEditAccess,
       },
       {
         type: 'select',
@@ -153,6 +197,26 @@ export default function TicketsPage() {
         label: 'Reassign To (Only if Reassigning)',
         options: userOptions,
         grid: 12,
+        disabled: !hasEditAccess,
+      },
+      {
+        type: 'select',
+        name: 'priority',
+        label: 'Priority',
+        options: [
+          { label: 'Low', value: 'low' },
+          { label: 'Medium', value: 'medium' },
+          { label: 'High', value: 'high' },
+        ],
+        grid: 6,
+        disabled: !hasEditAccess,
+      },
+      {
+        type: 'date',
+        name: 'dueDate',
+        label: 'Due Date',
+        grid: 6,
+        disabled: !hasEditAccess,
       },
       {
         type: 'textarea',
@@ -161,9 +225,10 @@ export default function TicketsPage() {
         placeholder: 'Enter notes or comments regarding this update...',
         rules: { required: 'Comments are required' },
         grid: 12,
+        disabled: !hasEditAccess,
       },
     ];
-  }, [selectedTicket, userOptions]);
+  }, [selectedTicket, userOptions, hasEditAccess]);
 
   // Submit new ticket
   const handleCreateSubmit = async (values: FormValues) => {
@@ -175,6 +240,8 @@ export default function TicketsPage() {
         companyName: selectedCust?.companyName || 'Unknown Customer',
         projectName: String(values.projectName || 'General Support'),
         assignedTo: String(values.assignedTo || ''),
+        priority: String(values.priority || 'medium'),
+        dueDate: String(values.dueDate || ''),
         title: String(values.title || ''),
         description: String(values.description || ''),
         createdBy: loggedInUsername,
@@ -207,7 +274,9 @@ export default function TicketsPage() {
         nextStatus,
         String(values.comment || ''),
         loggedInUsername,
-        isReassign ? String(values.newAssignee) : undefined
+        isReassign ? String(values.newAssignee) : undefined,
+        String(values.priority || ''),
+        String(values.dueDate || '')
       );
 
       showSuccess('Support ticket updated successfully.');
@@ -221,13 +290,13 @@ export default function TicketsPage() {
   const getStatusChip = (status: string) => {
     switch (status) {
       case 'not_started':
-        return <Chip label="NOT STARTED" color="error" size="small" />;
+        return <Chip label={t('notStarted').toUpperCase()} color="error" size="small" />;
       case 'reviewed_started':
-        return <Chip label="REVIEWED & STARTED" color="info" size="small" />;
+        return <Chip label={t('reviewedStarted').toUpperCase()} color="info" size="small" />;
       case 'in_progress':
-        return <Chip label="IN PROGRESS" color="warning" size="small" />;
+        return <Chip label={t('inProgress').toUpperCase()} color="warning" size="small" />;
       case 'completed':
-        return <Chip label="COMPLETED" color="success" size="small" />;
+        return <Chip label={t('completed').toUpperCase()} color="success" size="small" />;
       default:
         return <Chip label={status.toUpperCase()} size="small" />;
     }
@@ -241,11 +310,11 @@ export default function TicketsPage() {
       company: t.companyName,
       project: t.projectName,
       assigned: `@${t.assignedTo}`,
-      status: t.status ? t.status.toUpperCase().replace('_', ' & ') : 'NOT STARTED',
+      status: t.status ? t.status.toUpperCase().replace('_', ' & ') : t('notStarted').toUpperCase(),
       created: new Date(t.createdAt).toLocaleString('en-IN'),
       raw: t,
     }));
-  }, [displayedTickets]);
+  }, [displayedTickets, t]);
 
   const handleGridAction = useCallback((row: any) => {
     setSelectedTicket(row.raw);
@@ -255,10 +324,12 @@ export default function TicketsPage() {
   return (
     <AppLayout title="Training Trains CRM">
       <PageHeader>
-        <PageTitle>Complaint & Support Ticketing</PageTitle>
-        <PrimaryButton type="button" variant="contained" onClick={() => setIsCreateOpen(true)}>
-          Register Complaint
-        </PrimaryButton>
+        <PageTitle>{t('tickets')}</PageTitle>
+        {hasPermission('TICKET_CREATE') && (
+          <PrimaryButton type="button" variant="contained" onClick={() => setIsCreateOpen(true)}>
+            {t('registerComplaint')}
+          </PrimaryButton>
+        )}
       </PageHeader>
 
       <Box sx={{ mt: 2, mb: 3 }}>
@@ -273,8 +344,8 @@ export default function TicketsPage() {
             textColor="primary"
             sx={{ px: 2, borderBottom: '1px solid var(--border)' }}
           >
-            <Tab label={`Assigned to Me (${myTickets.length})`} />
-            <Tab label={`All Tickets (${tickets.length})`} />
+            <Tab label={`${t('assignedToMe')} (${myTickets.length})`} />
+            <Tab label={`${t('allTickets')} (${tickets.length})`} />
           </Tabs>
 
           <Box sx={{ p: 3 }}>
@@ -350,12 +421,31 @@ export default function TicketsPage() {
               </Box>
             </Box>
           )}
+          {selectedTicket && !hasEditAccess && (
+            <Box
+              sx={{
+                mb: 2,
+                p: 1.5,
+                bgcolor: '#fff5f5',
+                border: '1px solid #ffe3e3',
+                borderRadius: 1,
+                color: 'error.main',
+              }}
+            >
+              <Typography variant="body2" sx={{ fontWeight: 600 }}>
+                Insufficient Permissions: Only the assigned user or an administrator can modify this
+                ticket.
+              </Typography>
+            </Box>
+          )}
           <Box sx={{ pt: 1 }}>
             <CustomForm
               config={updateFormConfig}
               onSubmit={handleUpdateSubmit}
               submitLabel="Update Ticket"
+              defaultValues={updateDefaultValues}
               onCancel={() => setIsUpdateOpen(false)}
+              disabled={!hasEditAccess}
             />
           </Box>
         </DialogContent>

@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useState } from 'react';
+import { Select, MenuItem, FormControl, InputLabel, Typography } from '@mui/material';
 
 import AppLayout from '../../layouts/AppLayout';
 import CustomForm, { type FormValues } from '../../layouts/CustomForm';
@@ -11,6 +12,7 @@ import UserService from '../../services/userService';
 import { profileConfig } from './adminConfig';
 import { useAuth } from '../../context/AuthContext';
 import { useNotification } from '../../context/NotificationContext';
+import { useAppTheme } from '../../context/ThemeContext';
 
 export default function ProfilePage() {
   const { user } = useAuth();
@@ -61,6 +63,8 @@ export default function ProfilePage() {
     [user, loadProfile, showSuccess, showError]
   );
 
+  const { themeName, changeTheme } = useAppTheme();
+
   return (
     <AppLayout>
       <StyledSection>
@@ -80,6 +84,28 @@ export default function ProfilePage() {
             submitLabel="Update"
           />
         )}
+
+        <StyledSection sx={{ mt: 5, pt: 3, borderTop: '1px solid var(--border)' }}>
+          <Typography variant="h6" sx={{ fontWeight: 600, mb: 1 }}>
+            Theme Customization
+          </Typography>
+          <Typography variant="body2" color="text.secondary" sx={{ mb: 2.5 }}>
+            Choose your preferred CRM workspace style. Optimized for long hours of operational usage.
+          </Typography>
+          <FormControl size="small" sx={{ minWidth: 280 }}>
+            <InputLabel id="theme-select-label">Select Workspace Theme</InputLabel>
+            <Select
+              labelId="theme-select-label"
+              value={themeName}
+              label="Select Workspace Theme"
+              onChange={(e) => changeTheme(e.target.value as any)}
+            >
+              <MenuItem value="modernEnterprise">Modern Enterprise (Recommended Default)</MenuItem>
+              <MenuItem value="executiveDark">Executive Dark (Premium Dark Vibe)</MenuItem>
+              <MenuItem value="professionalLight">Professional Light (High Contrast Light)</MenuItem>
+            </Select>
+          </FormControl>
+        </StyledSection>
       </FormContainer>
     </AppLayout>
   );

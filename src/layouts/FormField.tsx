@@ -18,6 +18,7 @@ import { StyledSwitch } from '../atoms/StyledSwitch';
 import { StyledTextField } from '../atoms/StyledTextField';
 import { StyledAutocomplete } from '../atoms/StyledAutoComplete';
 import FormHelperText from '@mui/material/FormHelperText';
+import { useLanguage } from '../context/LanguageContext';
 
 type FormFieldProps = {
   field: Field;
@@ -32,17 +33,29 @@ const COMMON_TEXTFIELD_PROPS = {
   autoComplete: 'off',
 };
 
+import { usePermission } from '../auth/usePermission';
+
 export const FormField = ({ field, control, errors }: FormFieldProps) => {
-  const { type, label: mlabel, name, rules = {}, isNumeric = false, fixedLength, disabled } = field;
+  const {
+    type,
+    label: mlabel,
+    name,
+    rules = {},
+    isNumeric = false,
+    fixedLength,
+    disabled,
+    placeholder: mplaceholder,
+  } = field;
   const error = errors?.[name];
+  const { t } = useLanguage();
+  const { isReadOnly } = usePermission();
 
   const helperText = error?.message?.toString();
 
-  // const rules = {
-  //   required: field.required ? `${mlabel} is required` : false,
-  // };
-
-  const label = rules?.required ? `${mlabel}*` : mlabel;
+  const translatedLabel = t(name, mlabel);
+  const label = rules?.required ? `${translatedLabel}*` : translatedLabel;
+  const placeholder = mplaceholder ? t(mplaceholder) : undefined;
+  const isDisabled = disabled || isReadOnly;
 
   switch (type) {
     //====================================================
@@ -64,8 +77,9 @@ export const FormField = ({ field, control, errors }: FormFieldProps) => {
             <StyledTextField
               {...COMMON_TEXTFIELD_PROPS}
               {...field}
+              placeholder={placeholder}
               type={type}
-              disabled={disabled}
+              disabled={isDisabled}
               value={field.value ?? ''}
               label={label}
               error={!!error}
@@ -111,6 +125,7 @@ export const FormField = ({ field, control, errors }: FormFieldProps) => {
               onChange={rhfField.onChange}
               value={rhfField.value ?? ''}
               select
+              disabled={isDisabled}
               label={label}
               error={Boolean(error)}
               helperText={helperText}
@@ -152,8 +167,7 @@ export const FormField = ({ field, control, errors }: FormFieldProps) => {
           rules={rules}
           render={({ field: { onChange, value, ref }, fieldState: { error } }) => {
             const options = field.options ?? [];
-            const valueId =
-              value && typeof value === 'object' ? (value as any).value : value;
+            const valueId = value && typeof value === 'object' ? (value as any).value : value;
             const selectedOption =
               options.find((opt) => String(opt.value) === String(valueId)) || null;
 
@@ -168,11 +182,12 @@ export const FormField = ({ field, control, errors }: FormFieldProps) => {
                 onChange={(_, newValue: any) => {
                   onChange(newValue ? newValue.value : '');
                 }}
-                disabled={disabled}
+                disabled={isDisabled}
                 renderInput={(params) => (
                   <StyledTextField
                     {...params}
                     {...COMMON_TEXTFIELD_PROPS}
+                    placeholder={placeholder}
                     label={label}
                     error={!!error}
                     helperText={error?.message ?? helperText}
@@ -198,6 +213,7 @@ export const FormField = ({ field, control, errors }: FormFieldProps) => {
             <IconButton
               color="primary"
               onClick={onAddCity}
+              disabled={isDisabled}
               sx={{
                 mt: 0.5,
                 border: '1px solid var(--border)',
@@ -232,6 +248,7 @@ export const FormField = ({ field, control, errors }: FormFieldProps) => {
                     checked={!!field.value}
                     onChange={(e) => field.onChange(e.target.checked)}
                     onBlur={field.onBlur}
+                    disabled={isDisabled}
                   />
                 }
                 label={label}
@@ -258,6 +275,7 @@ export const FormField = ({ field, control, errors }: FormFieldProps) => {
                     checked={!!field.value}
                     onChange={(e) => field.onChange(e.target.checked)}
                     onBlur={field.onBlur}
+                    disabled={isDisabled}
                   />
                 }
                 label={label}

@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 
 import Grid from '@mui/material/Grid';
 import TextField from '@mui/material/TextField';
+import { useLanguage } from '../context/LanguageContext';
 
 import { ActionContainer } from '../atoms/ActionContainer';
 import { FormContainer } from '../atoms/FormContainer';
@@ -42,6 +43,7 @@ const DetailsView = ({
   plain = false,
 }: DetailsViewProps) => {
   const navigate = useNavigate();
+  const { t } = useLanguage();
 
   const handleBack = useCallback(() => {
     navigate(-1);
@@ -49,32 +51,35 @@ const DetailsView = ({
 
   const gridContent = (
     <Grid container spacing={2}>
-      {config.map((field) => (
-        <Grid
-          key={field.name}
-          size={{
-            xs: 12,
-            sm: 6,
-            md: field.grid ?? 4,
-            lg: field.grid ?? 3,
-            xl: field.grid ?? 3,
-          }}
-        >
-          <TextField
-            fullWidth
-            size="small"
-            label={field.label}
-            value={
-              field.render ? field.render(data[field.name], data) : String(data[field.name] ?? '')
-            }
-            slotProps={{
-              input: {
-                readOnly: true,
-              },
+      {config.map((field) => {
+        const translatedLabel = t(field.name, field.label);
+        return (
+          <Grid
+            key={field.name}
+            size={{
+              xs: 12,
+              sm: 6,
+              md: field.grid ?? 4,
+              lg: field.grid ?? 3,
+              xl: field.grid ?? 3,
             }}
-          />
-        </Grid>
-      ))}
+          >
+            <TextField
+              fullWidth
+              size="small"
+              label={translatedLabel}
+              value={
+                field.render ? field.render(data[field.name], data) : String(data[field.name] ?? '')
+              }
+              slotProps={{
+                input: {
+                  readOnly: true,
+                },
+              }}
+            />
+          </Grid>
+        );
+      })}
     </Grid>
   );
 

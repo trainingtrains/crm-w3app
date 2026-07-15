@@ -121,9 +121,7 @@ export const newUserRegistrationFields: FormField[] = [
     rules: {
       validate: (val: any) => {
         if (!val) return true;
-        return (
-          /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i.test(val) || 'Invalid email address'
-        );
+        return /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i.test(val) || 'Invalid email address';
       },
     },
     grid: 6,
@@ -302,9 +300,7 @@ export const profileConfig: FormField[] = [
     rules: {
       validate: (val: any) => {
         if (!val) return true;
-        return (
-          /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i.test(val) || 'Invalid email address'
-        );
+        return /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i.test(val) || 'Invalid email address';
       },
     },
     grid: 6,

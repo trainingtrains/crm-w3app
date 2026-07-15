@@ -1,4 +1,5 @@
 import { type MouseEvent, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 import {
   AppBar,
@@ -19,7 +20,11 @@ import HomeRoundedIcon from '@mui/icons-material/HomeRounded';
 import LogoutRoundedIcon from '@mui/icons-material/LogoutRounded';
 import NotificationsNoneRoundedIcon from '@mui/icons-material/NotificationsNoneRounded';
 import PersonRoundedIcon from '@mui/icons-material/PersonRounded';
-import { useNavigate } from 'react-router-dom';
+import DarkModeRoundedIcon from '@mui/icons-material/DarkModeRounded';
+import LightModeRoundedIcon from '@mui/icons-material/LightModeRounded';
+
+import { useLanguage } from '../context/LanguageContext';
+import { useAppTheme } from '../context/ThemeContext';
 
 export interface AppHeaderProps {
   title: string;
@@ -31,6 +36,9 @@ export interface AppHeaderProps {
 const AppHeader = ({ title, username, onHome, onLogout }: AppHeaderProps) => {
   const navigate = useNavigate();
   const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
+
+  const { t } = useLanguage();
+  const { mode, toggleTheme } = useAppTheme();
 
   const open = Boolean(anchorEl);
 
@@ -88,6 +96,14 @@ const AppHeader = ({ title, username, onHome, onLogout }: AppHeaderProps) => {
             alignItems: 'center',
           }}
         >
+          <IconButton
+            color="inherit"
+            onClick={toggleTheme}
+            title={mode === 'light' ? 'Switch to Dark Mode' : 'Switch to Light Mode'}
+          >
+            {mode === 'light' ? <DarkModeRoundedIcon /> : <LightModeRoundedIcon />}
+          </IconButton>
+
           <IconButton color="inherit">
             <NotificationsNoneRoundedIcon />
           </IconButton>
@@ -152,7 +168,7 @@ const AppHeader = ({ title, username, onHome, onLogout }: AppHeaderProps) => {
                 <PersonRoundedIcon fontSize="small" />
               </ListItemIcon>
 
-              <ListItemText>Profile</ListItemText>
+              <ListItemText>{t('profile')}</ListItemText>
             </MenuItem>
 
             <Divider />
@@ -167,7 +183,7 @@ const AppHeader = ({ title, username, onHome, onLogout }: AppHeaderProps) => {
                 <LogoutRoundedIcon color="error" fontSize="small" />
               </ListItemIcon>
 
-              <ListItemText>Logout</ListItemText>
+              <ListItemText>{t('logout')}</ListItemText>
             </MenuItem>
           </Menu>
         </Stack>

@@ -148,7 +148,8 @@ export default function EditCustomerPage() {
     try {
       const payload = {
         ...form,
-        cityId: form.city && typeof form.city === 'object' ? (form.city as any).value : (form.city || null),
+        cityId:
+          form.city && typeof form.city === 'object' ? (form.city as any).value : form.city || null,
         totalAmount: Number(form.totalAmount) || 0,
         paidAmount: Number(form.paidAmount) || 0,
       } as any;

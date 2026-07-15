@@ -1,81 +1,156 @@
-/* ==========================================================================
-   DESIGN TOKENS (Precise Billing App Configuration)
-   ========================================================================== */
+/* ============================================================================
+   ENTERPRISE CRM — MASTER STYLESHEET
+   Design System: 5 Colors — Green | Blue | Red | Gray | White/Dark-Gray
+   Themes: Bright (default) | Dark
+   ============================================================================ */
 
+/* ─── GOOGLE FONTS ─────────────────────────────────────────────────────────── */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+
+/* ─── DESIGN TOKENS — BRIGHT THEME (Default) ──────────────────────────────── */
 :root {
-  /* Layout Constants */
-  --page-width: min(98vw, 1920px); /* Max App Width: 98% / 1920px */
-  --input-min-width: 210px; /* High-density input layout width */
+  /* ── Color Palette (5 approved colors only) ─────────────────────────────── */
+  --clr-green:        #2e7d32;
+  --clr-green-hover:  #1b5e20;
+  --clr-green-light:  #e8f5e9;
 
-  /* Spacing & Gaps */
-  --gap-grid: 12px; /* Gap: 10–12px */
-  --space-sm: 6px;
-  --space-md: 12px;
-  --card-padding: 16px; /* Card Padding: 16px */
+  --clr-blue:         #1565c0;
+  --clr-blue-hover:   #0d47a1;
+  --clr-blue-light:   #e3f2fd;
 
-  /* Radius */
-  --radius: 6px; /* Border Radius: 6px */
+  --clr-red:          #c62828;
+  --clr-red-hover:    #b71c1c;
+  --clr-red-light:    #ffebee;
 
-  /* Typography */
-  --font-family: 'Segoe UI', Roboto, -apple-system, sans-serif;
-  --font-base: 14px; /* Base Font: 14px */
-  --font-label: 13px; /* Label: 13px */
-  --font-input: 14px; /* Input Text: 14px */
+  --clr-gray:         #757575;
+  --clr-gray-light:   #f5f5f5;
+  --clr-gray-border:  #e0e0e0;
 
-  --font-xs: 11px;
-  --font-sm: var(--font-label);
-  --font-md: var(--font-base);
-  --font-lg: 16px;
-  --font-xl: 24px;
+  /* ── Surfaces & Text ─────────────────────────────────────────────────────── */
+  --background:       #f4f6f9;
+  --surface:          #ffffff;
+  --surface-alt:      #f9fafb;
+  --border:           #e0e0e0;
+  --border-focus:     #1565c0;
 
-  /* Control Heights */
-  --input-height: 38px; /* Input Height: 38–40px */
-  --button-height: 38px; /* Button Height: 38px */
-  --table-row-height: 38px; /* Table Row: 38px */
-  --table-cell-padding: 8px; /* Table Cell Padding: 8px */
+  --text-primary:     #1a1a2e;
+  --text-secondary:   #616161;
+  --text-disabled:    #bdbdbd;
 
-  /* Colors & High-Visibility Highlights */
-  --primary: #1976d2;
-  --primary-hover: #115293;
-  --highlight-border: #0066cc; /* Sharp focus highlight color */
-  --highlight-shadow: rgba(0, 102, 204, 0.15);
-  --surface: #fff;
-  --background: #f6f8fb;
-  --border: #d9d9d9;
-  --text: #333;
-  --success: #2e7d32;
-  --success-hover: #1b5e20;
+  /* ── Semantic Aliases (for backward compatibility) ───────────────────────── */
+  --primary:          var(--clr-blue);
+  --primary-hover:    var(--clr-blue-hover);
+  --success:          var(--clr-green);
+  --success-hover:    var(--clr-green-hover);
+  --error:            var(--clr-red);
+  --error-hover:      var(--clr-red-hover);
+  --text:             var(--text-primary);
+  --app-theme-color:  var(--background);
 
-  --primary: #1976d2;
-  --primary-hover: #1565c0;
+  /* ── Focus Rings ─────────────────────────────────────────────────────────── */
+  --highlight-border:  #1565c0;
+  --highlight-shadow:  rgba(21, 101, 192, 0.15);
 
-  --error: #d32f2f;
-  --error-hover: #b71c1c;
+  /* ── Shadows ─────────────────────────────────────────────────────────────── */
+  --shadow-xs:  0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  --shadow-sm:  0 1px 3px 0 rgba(0, 0, 0, 0.08), 0 1px 2px -1px rgba(0, 0, 0, 0.08);
+  --shadow-md:  0 4px 6px -1px rgba(0, 0, 0, 0.07), 0 2px 4px -2px rgba(0, 0, 0, 0.07);
 
-  --warning: #ed6c02;
-  --warning-hover: #e65100;
+  /* ── Typography ──────────────────────────────────────────────────────────── */
+  --font-family:  'Inter', 'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, sans-serif;
+  --font-xs:      11px;
+  --font-sm:      12px;
+  --font-base:    13px;
+  --font-md:      14px;
+  --font-lg:      16px;
+  --font-xl:      20px;
+  --font-label:   12px;
+  --font-input:   14px;
 
-  --primary: #1976d2;
-  --primary-hover: #1565c0;
+  --font-weight-normal:   400;
+  --font-weight-medium:   500;
+  --font-weight-semibold: 600;
+  --font-weight-bold:     700;
 
-  --success: #2e7d32;
-  --success-hover: #1b5e20;
+  /* ── Spacing ─────────────────────────────────────────────────────────────── */
+  --space-xs:     4px;
+  --space-sm:     8px;
+  --space-md:     12px;
+  --space-lg:     16px;
+  --space-xl:     24px;
+  --space-xxl:    32px;
+  --gap-grid:     12px;
+  --card-padding: 20px;
 
-  --warning: #ed6c02;
-  --warning-hover: #e65100;
+  /* ── Border Radius ───────────────────────────────────────────────────────── */
+  --radius:       6px;
+  --radius-sm:    4px;
+  --radius-md:    6px;
+  --radius-lg:    8px;
+  --radius-xl:    12px;
+  --radius-full:  9999px;
 
-  --error: #d32f2f;
-  --error-hover: #b71c1c;
+  /* ── Component Sizes ─────────────────────────────────────────────────────── */
+  --input-height:       38px;
+  --button-height:      38px;
+  --table-row-height:   38px;
+  --table-cell-padding: 10px 14px;
+  --header-height:      64px;
+  --sidebar-width:      60px;
+  --page-width:         min(98vw, 1920px);
+  --input-min-width:    210px;
 
-  --secondary: #546e7a;
-  --secondary-hover: #455a64;
-  --app-theme-color: #161c27;
+  /* ── Transition ──────────────────────────────────────────────────────────── */
+  --transition: 0.15s ease;
 }
 
-/* ==========================================================================
-   RESET & VIEWPORT-LOCK (Eliminates App/Page Level Scrolling)
-   ========================================================================== */
+/* ─── DARK THEME OVERRIDES ─────────────────────────────────────────────────── */
+/* Applied when data-theme="dark" is set on <html> by ThemeContext */
+[data-theme="dark"] {
+  --clr-green:        #43a047;
+  --clr-green-hover:  #388e3c;
+  --clr-green-light:  rgba(67, 160, 71, 0.12);
 
+  --clr-blue:         #1e88e5;
+  --clr-blue-hover:   #1976d2;
+  --clr-blue-light:   rgba(30, 136, 229, 0.12);
+
+  --clr-red:          #e53935;
+  --clr-red-hover:    #d32f2f;
+  --clr-red-light:    rgba(229, 57, 53, 0.12);
+
+  --clr-gray:         #9e9e9e;
+  --clr-gray-light:   rgba(255, 255, 255, 0.05);
+  --clr-gray-border:  rgba(255, 255, 255, 0.10);
+
+  --background:       #0f1117;
+  --surface:          #1a1f2e;
+  --surface-alt:      #222840;
+  --border:           rgba(255, 255, 255, 0.10);
+  --border-focus:     #1e88e5;
+
+  --text-primary:     #e8edf8;
+  --text-secondary:   #8892b0;
+  --text-disabled:    #4a5568;
+
+  --primary:          #1e88e5;
+  --primary-hover:    #1976d2;
+  --success:          #43a047;
+  --success-hover:    #388e3c;
+  --error:            #e53935;
+  --error-hover:      #d32f2f;
+  --text:             #e8edf8;
+  --app-theme-color:  #0f1117;
+
+  --highlight-border:  #1e88e5;
+  --highlight-shadow:  rgba(30, 136, 229, 0.18);
+
+  --shadow-xs: 0 1px 2px 0 rgba(0, 0, 0, 0.30);
+  --shadow-sm: 0 2px 4px 0 rgba(0, 0, 0, 0.40);
+  --shadow-md: 0 4px 12px 0 rgba(0, 0, 0, 0.50);
+}
+
+/* ─── RESET & VIEWPORT LOCK ────────────────────────────────────────────────── */
 *,
 *::before,
 *::after {
@@ -86,79 +161,64 @@ html,
 body {
   height: 100% !important;
   max-height: 100svh !important;
-  overflow: hidden !important; /* CRITICAL: Disables global page scroll entirely */
+  overflow: hidden !important;
 }
 
 html {
   font-size: 100%;
-  -webkit-font-smoothing: antialiased;
+  -webkit-font-smoothing:  antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
 body {
   margin: 0;
-  background: var(--app-theme-color);
-  color: var(--text);
+  background:  var(--background);
+  color:       var(--text-primary);
   font-family: var(--font-family);
-  font-size: var(--font-base);
-  font-style: normal;
+  font-size:   var(--font-base);
+  transition:  background-color var(--transition), color var(--transition);
 }
 
-/* ==========================================================================
-   ROOT CONTAINER (Strict Dynamic Fit Layout)
-   ========================================================================== */
-
+/* ─── ROOT CONTAINER ────────────────────────────────────────────────────────── */
 #root {
   height: 100svh;
   max-height: 100svh;
   display: flex;
   flex-direction: column;
-  overflow: hidden; /* Prevents outer leakage */
+  overflow: hidden;
 }
 
-/* ==========================================================================
-   HEADINGS
-   ========================================================================== */
-
-h1 {
-  font-size: var(--font-xl);
-  margin: 0 0 var(--space-md);
-  font-weight: 600;
-  flex-shrink: 0;
-}
-h2 {
-  font-size: var(--font-lg);
-  margin-bottom: var(--space-sm);
-  font-weight: 600;
-  flex-shrink: 0;
-}
-h3 {
-  font-size: var(--font-base);
-  font-weight: 600;
-  flex-shrink: 0;
-}
-p {
+/* ─── HEADINGS ──────────────────────────────────────────────────────────────── */
+h1, h2, h3, h4, h5, h6 {
   margin: 0;
+  font-family: var(--font-family);
+  color: var(--text-primary);
+  flex-shrink: 0;
 }
+h1 { font-size: var(--font-xl);  font-weight: var(--font-weight-bold);     margin-bottom: var(--space-md); }
+h2 { font-size: var(--font-lg);  font-weight: var(--font-weight-semibold); margin-bottom: var(--space-sm); }
+h3 { font-size: var(--font-md);  font-weight: var(--font-weight-semibold); }
+p  { margin: 0; }
 
-/* ==========================================================================
-   FORM CONTAINER ENGINE
-   ========================================================================== */
+/* ─── SCROLLBAR STYLING ─────────────────────────────────────────────────────── */
+::-webkit-scrollbar        { width: 6px;  height: 6px; }
+::-webkit-scrollbar-track  { background: transparent; }
+::-webkit-scrollbar-thumb  { background: var(--border); border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: var(--clr-gray); }
 
+/* ─── FORM ENGINE ───────────────────────────────────────────────────────────── */
 form,
 .MuiGrid-container,
 [class*='Grid-container'] {
-  display: flex !important;
-  flex-wrap: wrap !important;
-  gap: var(--gap-grid) !important;
-  width: 100% !important;
+  display:     flex !important;
+  flex-wrap:   wrap !important;
+  gap:         var(--gap-grid) !important;
+  width:       100% !important;
   align-items: flex-end !important;
-  flex-shrink: 0; /* Ensures form fields never collapse their height */
+  flex-shrink: 0;
 }
 
-/* ==========================================================================
-   INPUTS, SELECTIONS, & GRID CELLS
-   ========================================================================== */
-
+/* ─── INPUTS & GRID CELLS ───────────────────────────────────────────────────── */
 input,
 textarea,
 select,
@@ -168,34 +228,31 @@ select,
 .MuiFormControl-root,
 .MuiAutocomplete-root,
 .MuiPickersTextField-root {
-  flex: 1 1 var(--input-min-width) !important;
+  flex:      1 1 var(--input-min-width) !important;
   min-width: var(--input-min-width) !important;
   max-width: 100% !important;
-  width: auto !important;
+  width:     auto !important;
 }
 
 input,
 textarea,
 select {
   font-family: var(--font-family);
-  font-size: var(--font-input);
-  outline: none;
+  font-size:   var(--font-input);
+  outline:     none;
 }
 
 textarea {
   min-height: 70px;
-  resize: none; /* Block resize option to preserve view locked container structures */
+  resize:     none;
 }
 
-/* ==========================================================================
-   ACTIVE FIELD USER INTERFACE HIGHLIGHTS
-   ========================================================================== */
-
+/* ─── FOCUS STATES (Accessibility) ─────────────────────────────────────────── */
 input:focus,
 textarea:focus,
 select:focus {
   border-color: var(--highlight-border) !important;
-  box-shadow: 0 0 0 2px var(--highlight-shadow) !important;
+  box-shadow:   0 0 0 2px var(--highlight-shadow) !important;
 }
 
 .MuiOutlinedInput-root.Mui-focused {
@@ -203,51 +260,47 @@ select:focus {
 }
 .MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline {
   border-color: var(--highlight-border) !important;
-  border-width: 1.5px !important;
+  border-width:  1.5px !important;
 }
 
-/* ==========================================================================
-   BUTTONS
-   ========================================================================== */
-
+/* ─── BUTTONS ───────────────────────────────────────────────────────────────── */
 button,
 .MuiButton-root {
-  height: var(--button-height) !important;
-  font-family: var(--font-family) !important;
-  font-size: var(--font-base) !important;
-  font-weight: 500 !important;
-  cursor: pointer;
-  text-transform: none !important;
-  border-radius: var(--radius) !important;
-
-  flex: 0 0 auto !important;
-  min-width: 90px !important;
-  padding-inline: var(--space-md) !important;
-
-  display: inline-flex !important;
-  align-items: center !important;
+  height:          var(--button-height) !important;
+  font-family:     var(--font-family) !important;
+  font-size:       var(--font-md) !important;
+  font-weight:     var(--font-weight-semibold) !important;
+  cursor:          pointer;
+  text-transform:  none !important;
+  border-radius:   var(--radius-md) !important;
+  flex:            0 0 auto !important;
+  min-width:       90px !important;
+  padding-inline:  var(--space-lg) !important;
+  display:         inline-flex !important;
+  align-items:     center !important;
   justify-content: center !important;
+  transition:      background-color var(--transition),
+                   border-color var(--transition),
+                   box-shadow var(--transition),
+                   transform 0.08s ease !important;
 }
 
-/* ==========================================================================
-   MATERIAL-UI OVERRIDES
-   ========================================================================== */
-
+/* ─── MATERIAL-UI OVERRIDES ─────────────────────────────────────────────────── */
 .MuiOutlinedInput-root {
-  min-height: var(--input-height) !important;
-  height: var(--input-height) !important;
-  border-radius: var(--radius) !important;
+  min-height:    var(--input-height) !important;
+  height:        var(--input-height) !important;
+  border-radius: var(--radius-md) !important;
 }
 
 .MuiInputBase-input {
-  padding-block: 0 !important;
-  padding-inline: 10px !important;
-  font-size: var(--font-input) !important;
-  height: 100% !important;
+  padding-block:  0 !important;
+  padding-inline: 12px !important;
+  font-size:      var(--font-input) !important;
+  height:         100% !important;
 }
 
 .MuiInputLabel-root {
-  font-size: var(--font-label) !important;
+  font-size: var(--font-sm) !important;
   transform: translate(12px, 10px) scale(1) !important;
 }
 .MuiInputLabel-shrink {
@@ -255,42 +308,52 @@ button,
 }
 
 .MuiFormHelperText-root {
-  font-size: var(--font-xs) !important;
+  font-size:  var(--font-xs) !important;
   margin-top: 2px !important;
 }
 
-/* ==========================================================================
-   ISOLATED WORKSPACE PANELS (Enforces Isolated Inner Scrolling Only)
-   ========================================================================== */
-
-/* Main dynamic parent holding billing forms and datagrids */
-.billing-workspace,
-.MuiCard-root {
-  flex: 1 1 auto !important;
-  display: flex !important;
-  flex-direction: column !important;
-  min-height: 0 !important; /* CRITICAL: Enables container inner scrolling boundaries */
-  overflow: hidden !important;
-  padding: var(--card-padding) !important;
-  border-radius: var(--radius) !important;
-  background-color: var(--surface);
-  border: 1px solid var(--border);
+.MuiTextField-root,
+.MuiFormControl-root {
+  width:     100%;
+  min-width: var(--input-min-width);
 }
 
-/* Container wrapper specifically enveloping your native tables or lists */
+.MuiInputBase-multiline {
+  height: auto !important;
+  min-height: var(--input-height) !important;
+  align-items: flex-start;
+}
+
+.MuiInputBase-inputMultiline {
+  min-height: 70px;
+  padding:    10px 12px !important;
+  line-height: 1.5;
+}
+
+/* ─── WORKSPACE PANELS ──────────────────────────────────────────────────────── */
+.billing-workspace,
+.MuiCard-root {
+  flex:             1 1 auto !important;
+  display:          flex !important;
+  flex-direction:   column !important;
+  min-height:       0 !important;
+  overflow:         hidden !important;
+  padding:          var(--card-padding) !important;
+  border-radius:    var(--radius-md) !important;
+  background-color: var(--surface);
+  border:           1px solid var(--border);
+}
+
 .table-scroll-container {
-  flex: 1 1 auto !important;
-  overflow-y: auto !important; /* Vertical scrolling locked safely INSIDE the table block only */
+  flex:       1 1 auto !important;
+  overflow-y: auto !important;
   overflow-x: auto !important;
   min-height: 0 !important;
 }
 
-/* ==========================================================================
-   TABLE MATRIX CONFIGURATION
-   ========================================================================== */
-
+/* ─── TABLES ────────────────────────────────────────────────────────────────── */
 table {
-  width: 100%;
+  width:           100%;
   border-collapse: collapse;
 }
 
@@ -300,94 +363,103 @@ tr {
 
 th,
 td {
-  padding: var(--table-cell-padding) !important;
-  font-size: var(--font-base);
+  padding:       var(--table-cell-padding) !important;
+  font-size:     var(--font-base);
   border-bottom: 1px solid var(--border);
 }
 
 th {
-  position: sticky !important; /* Table headers lock to top during internal scrolling */
-  top: 0;
-  background-color: var(--background);
-  z-index: 2;
+  position:         sticky !important;
+  top:              0;
+  background-color: var(--clr-blue);
+  color:            #ffffff;
+  font-weight:      var(--font-weight-semibold);
+  letter-spacing:   0.03em;
+  z-index:          2;
 }
 
-/* ==========================================================================
-   DATAGRID ALIGNMENT OVERRIDES (Fills Available Height Safely)
-   ========================================================================== */
-
+/* ─── DATA GRID ─────────────────────────────────────────────────────────────── */
 .MuiDataGrid-root {
-  font-size: var(--font-base) !important;
-  flex: 1 1 auto !important;
-  min-height: 0 !important; /* Forces scrollbars inside internal grid block wrapper */
+  font-size:  var(--font-base) !important;
+  flex:       1 1 auto !important;
+  min-height: 0 !important;
 }
 
 .MuiDataGrid-columnHeader {
   min-height: var(--table-row-height) !important;
-  height: var(--table-row-height) !important;
+  height:     var(--table-row-height) !important;
 }
 
 .MuiDataGrid-cell {
-  min-height: var(--table-row-height) !important;
-  height: var(--table-row-height) !important;
-  padding-inline: var(--table-cell-padding) !important;
+  min-height:   var(--table-row-height) !important;
+  height:       var(--table-row-height) !important;
+  padding-inline: 14px !important;
 }
 
-/* ==========================================================================
-   DIALOG OVERRIDES
-   ========================================================================== */
-
+/* ─── DIALOGS ───────────────────────────────────────────────────────────────── */
 .MuiDialog-paper {
-  width: 100% !important;
-  max-width: 900px !important;
+  width:      100% !important;
+  max-width:  900px !important;
   max-height: 85svh !important;
 }
 
-/* ==========================================================================
-   IMAGES
-   ========================================================================== */
-
-img {
-  max-width: 100%;
-  display: block;
-}
-
-/* Checkbox */
-
+/* ─── CHECKBOXES ────────────────────────────────────────────────────────────── */
 .MuiCheckbox-root {
   padding: 6px;
+  color: var(--clr-blue);
+}
+.MuiCheckbox-root.Mui-checked { color: var(--clr-blue); }
+.MuiCheckbox-root .MuiSvgIcon-root { font-size: 1.2rem; }
+
+/* ─── CHIPS / BADGES ────────────────────────────────────────────────────────── */
+.MuiBadge-badge {
+  font-size:    var(--font-xs);
+  font-weight:  var(--font-weight-semibold);
 }
 
-.MuiCheckbox-root .MuiSvgIcon-root {
-  font-size: 1.2rem;
+/* ─── IMAGES ────────────────────────────────────────────────────────────────── */
+img {
+  max-width: 100%;
+  display:   block;
 }
 
-.MuiTextField-root,
-.MuiFormControl-root {
-  width: 100%;
-  min-width: var(--field-min-width);
+/* ─── UTILITY CLASSES ───────────────────────────────────────────────────────── */
+.text-green    { color: var(--clr-green); }
+.text-blue     { color: var(--clr-blue);  }
+.text-red      { color: var(--clr-red);   }
+.text-gray     { color: var(--clr-gray);  }
+.text-muted    { color: var(--text-secondary); }
+
+.bg-green-light { background-color: var(--clr-green-light); }
+.bg-blue-light  { background-color: var(--clr-blue-light);  }
+.bg-red-light   { background-color: var(--clr-red-light);   }
+.bg-surface     { background-color: var(--surface); }
+.bg-background  { background-color: var(--background); }
+
+.border-green  { border: 1px solid var(--clr-green); }
+.border-blue   { border: 1px solid var(--clr-blue);  }
+.border-red    { border: 1px solid var(--clr-red);   }
+.border-gray   { border: 1px solid var(--border);    }
+
+/* ─── ACCESSIBILITY ─────────────────────────────────────────────────────────── */
+/* Visible keyboard focus ring on all interactive elements */
+:focus-visible {
+  outline:        2px solid var(--highlight-border);
+  outline-offset: 2px;
 }
 
-.MuiOutlinedInput-root {
-  min-height: var(--input-height);
-  border-radius: var(--radius);
-  align-items: center;
-}
-
-.MuiInputBase-input {
-  padding: 10px 14px;
-  line-height: 1.5;
+/* Skip link for screen readers */
+.skip-link {
+  position:  absolute;
+  top:       -100%;
+  left:      var(--space-lg);
+  z-index:   9999;
+  padding:   var(--space-sm) var(--space-lg);
+  background: var(--clr-blue);
+  color:     #ffffff;
+  border-radius: var(--radius-md);
   font-size: var(--font-md);
-  font-family: var(--font-family);
-  font-style: italic;
+  font-weight: var(--font-weight-semibold);
+  text-decoration: none;
 }
-
-.MuiInputBase-multiline {
-  align-items: flex-start;
-}
-
-.MuiInputBase-inputMultiline {
-  min-height: 90px;
-  padding: 10px 14px;
-  line-height: 1.5;
-}
+.skip-link:focus { top: var(--space-lg); }

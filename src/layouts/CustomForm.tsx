@@ -20,6 +20,7 @@ export interface FormProps {
   submitLabel?: string;
   defaultValues?: FormValues;
   onCancel?: () => void;
+  disabled?: boolean;
 }
 
 const CustomForm = ({
@@ -28,6 +29,7 @@ const CustomForm = ({
   submitLabel = 'Search',
   defaultValues,
   onCancel,
+  disabled = false,
 }: FormProps) => {
   const navigate = useNavigate();
 
@@ -116,7 +118,7 @@ const CustomForm = ({
           </SecondaryButton>
         )}
 
-        <PrimaryButton type="submit" variant="contained">
+        <PrimaryButton type="submit" variant="contained" disabled={disabled}>
           {submitLabel}
         </PrimaryButton>
       </ActionContainer>

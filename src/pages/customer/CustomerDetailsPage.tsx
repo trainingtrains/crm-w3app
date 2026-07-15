@@ -12,6 +12,7 @@ import {
   Dialog,
   DialogTitle,
   DialogContent,
+  DialogActions,
   IconButton,
   Button,
   List,
@@ -23,6 +24,7 @@ import {
   AccordionSummary,
   AccordionDetails,
   Stack,
+  TextField,
 } from '@mui/material';
 
 import DeleteOutlineRoundedIcon from '@mui/icons-material/DeleteOutlineRounded';
@@ -36,6 +38,8 @@ import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import ConfirmationNumberRoundedIcon from '@mui/icons-material/ConfirmationNumberRounded';
 
 import { useAuth } from '../../context/AuthContext';
+import { useLanguage } from '../../context/LanguageContext';
+import { usePermission } from '../../auth/usePermission';
 
 import { StyledSection } from '../../atoms/StyledSection';
 import { PageTitle } from '../../atoms/PageTitle';
@@ -46,7 +50,6 @@ import { NegativeButton } from '../../atoms/NegativeButton';
 
 import DetailsView from '../../layouts/DetailsView';
 import CustomForm, { type FormValues } from '../../layouts/CustomForm';
-import { CONSTANTS } from '../../constants';
 import {
   customerDetailsConfig,
   projectTypeOptions,
@@ -98,6 +101,8 @@ export default function CustomerDetailsPage() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const { showSuccess, showError } = useNotification();
+  const { t } = useLanguage();
+  const { hasPermission, isReadOnly } = usePermission();
 
   const { user } = useAuth();
   const [customer, setCustomer] = useState<any>(null);
@@ -105,6 +110,11 @@ export default function CustomerDetailsPage() {
   const [followups, setFollowups] = useState<any[]>([]);
   const [appUsers, setAppUsers] = useState<any[]>([]);
   const [customerTickets, setCustomerTickets] = useState<any[]>([]);
+
+  // Deactivation dialog state
+  const [isDeactivateOpen, setIsDeactivateOpen] = useState(false);
+  const [deactivationReason, setDeactivationReason] = useState('');
+  const [isDeactivating, setIsDeactivating] = useState(false);
 
   const loadUsers = useCallback(async () => {
     try {
@@ -129,14 +139,10 @@ export default function CustomerDetailsPage() {
   // Subscribe to real-time updates for customer details
   useEffect(() => {
     if (!id) return;
-
     const unsubscribe = customerService.subscribeCustomerDetails(id, (data) => {
       setCustomer(data);
     });
-
-    return () => {
-      unsubscribe();
-    };
+    return () => unsubscribe();
   }, [id]);
 
   // Subscribe to real-time updates for project tasks
@@ -178,18 +184,32 @@ export default function CustomerDetailsPage() {
     };
   }, [id]);
 
-  const handleDelete = useCallback(async () => {
-    if (!id) return;
-
+  const handleDeactivate = useCallback(async () => {
+    if (!id || !deactivationReason.trim()) return;
+    setIsDeactivating(true);
     try {
-      await customerService.delete(id);
-      showSuccess('Customer deleted successfully.');
-      navigate('/crm');
+      await customerService.delete(id, user?.username || 'System', deactivationReason.trim());
+      showSuccess('Customer deactivated successfully. All records preserved.');
+      setIsDeactivateOpen(false);
+      setDeactivationReason('');
     } catch (error: any) {
       console.error(error);
-      showError(error.message || 'Unable to delete customer.');
+      showError(error.message || 'Unable to deactivate customer.');
+    } finally {
+      setIsDeactivating(false);
     }
-  }, [id, navigate, showSuccess, showError]);
+  }, [id, deactivationReason, user, showSuccess, showError]);
+
+  const handleActivate = useCallback(async () => {
+    if (!id) return;
+    try {
+      await customerService.activate(id);
+      showSuccess('Customer reactivated successfully.');
+    } catch (error: any) {
+      console.error(error);
+      showError(error.message || 'Unable to activate customer.');
+    }
+  }, [id, showSuccess, showError]);
 
   const handleEdit = useCallback(() => {
     navigate(`/custEdit/${id}`);
@@ -511,14 +531,21 @@ export default function CustomerDetailsPage() {
     const s = String(customer.paymentStatus || 'unpaid').toLowerCase();
     switch (s) {
       case 'paid':
-        return <Chip size="small" label="FULLY PAID" color="success" />;
+        return <Chip size="small" label={t('fullyPaid', 'FULLY PAID')} color="success" />;
       case 'partial':
-        return <Chip size="small" label="PARTIALLY PAID" color="warning" variant="outlined" />;
+        return (
+          <Chip
+            size="small"
+            label={t('partiallyPaid', 'PARTIALLY PAID')}
+            color="warning"
+            variant="outlined"
+          />
+        );
       case 'unpaid':
       default:
-        return <Chip size="small" label="UNPAID" color="error" variant="outlined" />;
+        return <Chip size="small" label={t('unpaid', 'UNPAID')} color="error" variant="outlined" />;
     }
-  }, [customer]);
+  }, [customer, t]);
 
   if (!customer) {
     return null;
@@ -537,17 +564,26 @@ export default function CustomerDetailsPage() {
   return (
     <AppLayout title="Training Trains CRM">
       <PageHeader>
-        <PageTitle>{customer.companyName || CONSTANTS.LBL_CRM_CUST_DETAILS}</PageTitle>
+        <PageTitle>{customer.companyName || t('customerId')}</PageTitle>
         <Box sx={{ display: 'flex', gap: 1.5 }}>
           <SecondaryButton type="button" variant="outlined" onClick={() => navigate('/crm')}>
-            Back
+            {t('back')}
           </SecondaryButton>
-          <NegativeButton type="button" variant="outlined" onClick={handleDelete}>
-            Delete
-          </NegativeButton>
-          <PrimaryButton type="button" variant="contained" onClick={handleEdit}>
-            Edit Details
-          </PrimaryButton>
+          {hasPermission('CUSTOMER_DELETE') && customer?.status === 'ACTIVE' && (
+            <NegativeButton type="button" variant="outlined" onClick={() => setIsDeactivateOpen(true)}>
+              Deactivate
+            </NegativeButton>
+          )}
+          {hasPermission('CUSTOMER_DELETE') && customer?.status === 'INACTIVE' && (
+            <Button variant="contained" color="success" onClick={handleActivate}>
+              Reactivate
+            </Button>
+          )}
+          {hasPermission('CUSTOMER_EDIT') && (
+            <PrimaryButton type="button" variant="contained" onClick={handleEdit}>
+              {t('edit')}
+            </PrimaryButton>
+          )}
         </Box>
       </PageHeader>
 
@@ -565,7 +601,7 @@ export default function CustomerDetailsPage() {
               }}
             >
               <Typography variant="h6" sx={{ fontWeight: 600, mb: 2 }}>
-                General Information
+                {t('generalInformation')}
               </Typography>
               <DetailsView config={generalFields} data={customer} hideActions={true} plain={true} />
             </Box>
@@ -589,22 +625,24 @@ export default function CustomerDetailsPage() {
                   }}
                 >
                   <Typography variant="h6" sx={{ fontWeight: 600 }}>
-                    Followup Schedule & Notes
+                    {t('followups')}
                   </Typography>
-                  <Button
-                    size="small"
-                    variant="outlined"
-                    startIcon={<AddRoundedIcon />}
-                    onClick={() => setIsFollowupOpen(true)}
-                  >
-                    Add Log
-                  </Button>
+                  {!isReadOnly && (
+                    <Button
+                      size="small"
+                      variant="outlined"
+                      startIcon={<AddRoundedIcon />}
+                      onClick={() => setIsFollowupOpen(true)}
+                    >
+                      {t('addNew')}
+                    </Button>
+                  )}
                 </Box>
 
                 <List sx={{ maxHeight: 300, overflow: 'auto', p: 0 }}>
                   {followups.length === 0 ? (
                     <Box sx={{ py: 4, textAlign: 'center', color: 'text.secondary' }}>
-                      No followup logs recorded.
+                      {t('noFollowups')}
                     </Box>
                   ) : (
                     followups.map((log) => (
@@ -679,22 +717,24 @@ export default function CustomerDetailsPage() {
                   }}
                 >
                   <Typography variant="h6" sx={{ fontWeight: 600 }}>
-                    Support Complaints & Tickets
+                    {t('complaintsTickets')}
                   </Typography>
-                  <Button
-                    size="small"
-                    variant="outlined"
-                    startIcon={<ConfirmationNumberRoundedIcon />}
-                    onClick={() => setIsComplaintOpen(true)}
-                  >
-                    Register Complaint
-                  </Button>
+                  {hasPermission('TICKET_CREATE') && (
+                    <Button
+                      size="small"
+                      variant="outlined"
+                      startIcon={<ConfirmationNumberRoundedIcon />}
+                      onClick={() => setIsComplaintOpen(true)}
+                    >
+                      {t('registerComplaint')}
+                    </Button>
+                  )}
                 </Box>
 
                 <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1.5 }}>
                   {customerTickets.length === 0 ? (
                     <Box sx={{ py: 4, textAlign: 'center', color: 'text.secondary' }}>
-                      No complaint tickets logged.
+                      {t('noTicketsLogged', 'No complaint tickets logged.')}
                     </Box>
                   ) : (
                     customerTickets.map((ticket) => (
@@ -791,7 +831,7 @@ export default function CustomerDetailsPage() {
                   }}
                 >
                   <Typography variant="h6" sx={{ fontWeight: 600 }}>
-                    Project Progress Tracker
+                    {t('projectProgressTracker', 'Project Progress Tracker')}
                   </Typography>
                   <Box sx={{ display: 'flex', gap: 1, alignItems: 'center' }}>
                     <Chip
@@ -800,9 +840,11 @@ export default function CustomerDetailsPage() {
                       size="small"
                       sx={{ fontWeight: 'bold' }}
                     />
-                    <IconButton size="small" onClick={() => setIsProgressOpen(true)}>
-                      <EditCalendarRoundedIcon fontSize="small" color="primary" />
-                    </IconButton>
+                    {!isReadOnly && (
+                      <IconButton size="small" onClick={() => setIsProgressOpen(true)}>
+                        <EditCalendarRoundedIcon fontSize="small" color="primary" />
+                      </IconButton>
+                    )}
                   </Box>
                 </Box>
 
@@ -810,15 +852,15 @@ export default function CustomerDetailsPage() {
                   <Grid container spacing={2}>
                     <Grid size={{ xs: 6 }}>
                       <Typography variant="caption" color="text.secondary">
-                        Project Name
+                        {t('projectName')}
                       </Typography>
                       <Typography variant="body1" sx={{ fontWeight: 600 }}>
-                        {customer.projectName || 'Not Assigned'}
+                        {customer.projectName || t('notAssigned', 'Not Assigned')}
                       </Typography>
                     </Grid>
                     <Grid size={{ xs: 6 }}>
                       <Typography variant="caption" color="text.secondary">
-                        Project Type
+                        {t('projectType')}
                       </Typography>
                       <Typography variant="body2" sx={{ fontWeight: 500 }}>
                         {projectTypeLabel}
@@ -829,7 +871,7 @@ export default function CustomerDetailsPage() {
                   <Box sx={{ mt: 1 }}>
                     <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 0.5 }}>
                       <Typography variant="caption" color="text.secondary">
-                        Overall Progress
+                        {t('overallProgress', 'Overall Progress')}
                       </Typography>
                       <Typography variant="caption" sx={{ fontWeight: 600 }}>
                         {projectProgress.value}%
@@ -844,7 +886,7 @@ export default function CustomerDetailsPage() {
                   </Box>
 
                   <Typography variant="caption" color="text.secondary" sx={{ mt: 1 }}>
-                    Project Description
+                    {t('projectDescription')}
                   </Typography>
                   <Typography
                     variant="body2"
@@ -857,7 +899,7 @@ export default function CustomerDetailsPage() {
                       whiteSpace: 'pre-wrap',
                     }}
                   >
-                    {customer.projectDescription || 'No description provided.'}
+                    {customer.projectDescription || t('noDescription', 'No description provided.')}
                   </Typography>
 
                   {/* Approve Action button */}
@@ -870,7 +912,7 @@ export default function CustomerDetailsPage() {
                       sx={{ mt: 1.5, fontWeight: 'bold' }}
                       onClick={handleApprove}
                     >
-                      Approve Project Lead
+                      {t('approveProject')}
                     </Button>
                   )}
                 </Box>
@@ -896,22 +938,24 @@ export default function CustomerDetailsPage() {
                   }}
                 >
                   <Typography variant="h6" sx={{ fontWeight: 600 }}>
-                    Assigned Project Tasks
+                    {t('tasksTimeline')}
                   </Typography>
-                  <Button
-                    size="small"
-                    variant="outlined"
-                    startIcon={<AddRoundedIcon />}
-                    onClick={() => setIsTaskOpen(true)}
-                  >
-                    Assign Task
-                  </Button>
+                  {!isReadOnly && (
+                    <Button
+                      size="small"
+                      variant="outlined"
+                      startIcon={<AddRoundedIcon />}
+                      onClick={() => setIsTaskOpen(true)}
+                    >
+                      {t('addNew')}
+                    </Button>
+                  )}
                 </Box>
 
                 <List sx={{ maxHeight: 300, overflow: 'auto', p: 0 }}>
                   {tasks.length === 0 ? (
                     <Box sx={{ py: 4, textAlign: 'center', color: 'text.secondary' }}>
-                      No tasks assigned for this customer.
+                      {t('noTasks')}
                     </Box>
                   ) : (
                     tasks.map((task) => (
@@ -990,13 +1034,15 @@ export default function CustomerDetailsPage() {
                   }}
                 >
                   <Typography variant="h6" sx={{ fontWeight: 600 }}>
-                    Financial Summary
+                    {t('financialSummary')}
                   </Typography>
                   <Box sx={{ display: 'flex', gap: 1, alignItems: 'center' }}>
                     {paymentStatusChip}
-                    <IconButton size="small" onClick={() => setIsPaymentOpen(true)}>
-                      <PaymentRoundedIcon fontSize="small" color="primary" />
-                    </IconButton>
+                    {!isReadOnly && (
+                      <IconButton size="small" onClick={() => setIsPaymentOpen(true)}>
+                        <PaymentRoundedIcon fontSize="small" color="primary" />
+                      </IconButton>
+                    )}
                   </Box>
                 </Box>
 
@@ -1004,7 +1050,7 @@ export default function CustomerDetailsPage() {
                   <Grid container spacing={2}>
                     <Grid size={{ xs: 6 }}>
                       <Typography variant="caption" color="text.secondary">
-                        Contract Value
+                        {t('totalContractValue')}
                       </Typography>
                       <Typography variant="body1" sx={{ fontWeight: 600 }}>
                         ₹{(Number(customer.totalAmount) || 0).toLocaleString('en-IN')}
@@ -1012,7 +1058,7 @@ export default function CustomerDetailsPage() {
                     </Grid>
                     <Grid size={{ xs: 6 }}>
                       <Typography variant="caption" color="text.secondary">
-                        Amount Paid
+                        {t('amountPaid')}
                       </Typography>
                       <Typography variant="body1" sx={{ fontWeight: 600, color: 'success.main' }}>
                         ₹{(Number(customer.paidAmount) || 0).toLocaleString('en-IN')}
@@ -1029,7 +1075,7 @@ export default function CustomerDetailsPage() {
                     }}
                   >
                     <Typography variant="caption" color="error.main" sx={{ fontWeight: 500 }}>
-                      Outstanding Balance
+                      {t('outstandingBalance')}
                     </Typography>
                     <Typography variant="h6" sx={{ fontWeight: 700, color: 'error.main' }}>
                       ₹{(Number(customer.balanceAmount) || 0).toLocaleString('en-IN')}
@@ -1039,7 +1085,7 @@ export default function CustomerDetailsPage() {
                   <Box>
                     <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 0.5 }}>
                       <Typography variant="caption" color="text.secondary">
-                        Payment Realization
+                        {t('paymentRealization', 'Payment Realization')}
                       </Typography>
                       <Typography variant="caption" sx={{ fontWeight: 600 }}>
                         {paymentProgressPercent}%
@@ -1158,6 +1204,87 @@ export default function CustomerDetailsPage() {
           </Box>
         </DialogContent>
       </Dialog>
+
+      {/* 6. Deactivation Confirmation Dialog */}
+      <Dialog open={isDeactivateOpen} onClose={() => setIsDeactivateOpen(false)} maxWidth="sm" fullWidth>
+        <DialogTitle sx={{ fontWeight: 700, color: 'error.main' }}>
+          ⚠️ Deactivate Customer
+        </DialogTitle>
+        <DialogContent>
+          <Typography variant="body2" sx={{ mb: 2 }}>
+            You are about to deactivate <strong>{customer?.companyName}</strong>. Their service will be marked as ended.
+            All historical records (tickets, payments, tasks) are preserved.
+          </Typography>
+          <Box
+            sx={{
+              display: 'grid',
+              gridTemplateColumns: '1fr 1fr',
+              gap: 1.5,
+              mb: 2,
+              p: 2,
+              bgcolor: '#fff3cd',
+              borderRadius: 1,
+              border: '1px solid #ffd54f',
+            }}
+          >
+            <Box>
+              <Typography variant="caption" color="text.secondary" sx={{ fontWeight: 600 }}>
+                Open Tickets
+              </Typography>
+              <Typography variant="h6" sx={{ fontWeight: 700 }}>
+                {customerTickets.filter((t) => t.status !== 'completed').length}
+              </Typography>
+            </Box>
+            <Box>
+              <Typography variant="caption" color="text.secondary" sx={{ fontWeight: 600 }}>
+                Pending Balance
+              </Typography>
+              <Typography variant="h6" sx={{ fontWeight: 700, color: 'error.main' }}>
+                ₹{(Number(customer?.balanceAmount) || 0).toLocaleString('en-IN')}
+              </Typography>
+            </Box>
+            <Box>
+              <Typography variant="caption" color="text.secondary" sx={{ fontWeight: 600 }}>
+                Total Tasks
+              </Typography>
+              <Typography variant="h6" sx={{ fontWeight: 700 }}>
+                {tasks.length}
+              </Typography>
+            </Box>
+            <Box>
+              <Typography variant="caption" color="text.secondary" sx={{ fontWeight: 600 }}>
+                Total Tickets
+              </Typography>
+              <Typography variant="h6" sx={{ fontWeight: 700 }}>
+                {customerTickets.length}
+              </Typography>
+            </Box>
+          </Box>
+          <TextField
+            label="Reason for Deactivation *"
+            multiline
+            rows={3}
+            fullWidth
+            value={deactivationReason}
+            onChange={(e) => setDeactivationReason(e.target.value)}
+            placeholder="e.g. Contract ended, Business closure, Service discontinued"
+          />
+        </DialogContent>
+        <DialogActions sx={{ px: 3, pb: 2 }}>
+          <Button onClick={() => setIsDeactivateOpen(false)} disabled={isDeactivating}>
+            Cancel
+          </Button>
+          <Button
+            variant="contained"
+            color="error"
+            onClick={handleDeactivate}
+            disabled={isDeactivating || !deactivationReason.trim()}
+          >
+            {isDeactivating ? 'Deactivating...' : 'Confirm Deactivate'}
+          </Button>
+        </DialogActions>
+      </Dialog>
     </AppLayout>
   );
 }
+

@@ -4,10 +4,7 @@ import { PageTitle } from '../atoms/PageTitle';
 import { FormContainer } from '../atoms/FormContainer';
 import CustomForm from './CustomForm';
 
-
 const FormPanel = ({ title, config, handleSubmit, submitLabel }) => {
-
-
   return (
     <>
       <FormContainer>

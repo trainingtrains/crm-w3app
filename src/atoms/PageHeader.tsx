@@ -5,7 +5,7 @@ export const PageHeader = styled(Box)(({ theme }) => ({
   alignItems: 'center',
   justifyContent: 'space-between',
   width: '100%',
-  marginBottom: theme.spacing(3),
+  marginBottom: theme.spacing(1),
   gap: theme.spacing(2),
   flexWrap: 'wrap',
 }));

@@ -1,5 +1,5 @@
-import { Box, type BoxProps } from "@mui/material";
-import type { ReactNode } from "react";
+import { Box, type BoxProps } from '@mui/material';
+import type { ReactNode } from 'react';
 
 export interface DynamicColumnsProps extends BoxProps {
   children: ReactNode[];
@@ -28,11 +28,11 @@ const GridPatternDesign = ({
   return (
     <Box
       sx={{
-        display: "grid",
-        gridTemplateColumns: "repeat(12, 1fr)",
+        display: 'grid',
+        gridTemplateColumns: 'repeat(12, 1fr)',
         gap: spacing,
-        width: "100%",
-        minHeight: "100vh",
+        width: '100%',
+        minHeight: '100vh',
         ...sx,
       }}
       {...props}
@@ -42,10 +42,10 @@ const GridPatternDesign = ({
           key={index}
           sx={{
             gridColumn: {
-              xs: "1 / -1",
+              xs: '1 / -1',
               md: `span ${columns?.[index] ?? defaultSpan}`,
             },
-            display: "flex",
+            display: 'flex',
           }}
         >
           {child}

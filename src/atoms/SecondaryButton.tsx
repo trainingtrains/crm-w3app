@@ -1,22 +1,21 @@
+/* =============================================================
+   SECONDARY BUTTON — BLUE
+   Use for: Back · Cancel · Navigate · View · Download
+   ============================================================= */
+
 import { styled } from '@mui/material/styles';
 import { BaseButton } from './BaseButton';
 
-/* =========================
-   SECONDARY BUTTON
-========================= */
-
 export const SecondaryButton = styled(BaseButton)({
-  color: 'var(--text)',
-
-  backgroundColor: 'var(--surface)',
-
-  border: '1px solid var(--border)',
+  color:           'var(--clr-blue)',
+  backgroundColor: 'transparent',
+  border:          '1px solid var(--clr-blue)',
 
   '&:hover': {
-    backgroundColor: 'var(--background)',
-    borderColor: 'var(--primary)',
-    color: 'var(--primary)',
-    boxShadow: 'var(--shadow-sm)',
+    backgroundColor: 'var(--clr-blue-light)',
+    borderColor:     'var(--clr-blue-hover)',
+    color:           'var(--clr-blue-hover)',
+    boxShadow:       'var(--shadow-sm)',
   },
 
   '&:active': {
@@ -24,8 +23,8 @@ export const SecondaryButton = styled(BaseButton)({
   },
 
   '&:disabled': {
-    opacity: 0.6,
-    cursor: 'not-allowed',
+    opacity:   0.55,
+    cursor:    'not-allowed',
     boxShadow: 'none',
   },
 });

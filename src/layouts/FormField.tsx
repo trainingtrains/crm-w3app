@@ -1,5 +1,7 @@
 import MenuItem from '@mui/material/MenuItem';
-import TextField from '@mui/material/TextField';
+import Box from '@mui/material/Box';
+import IconButton from '@mui/material/IconButton';
+import AddRoundedIcon from '@mui/icons-material/AddRounded';
 
 import {
   Controller,
@@ -9,13 +11,14 @@ import {
   type UseFormRegister,
 } from 'react-hook-form';
 
-import type { Field } from './types/form';
-
-import { StyledAutocomplete } from '../atoms/StyledAutoComplete';
+import type { FormField as Field } from './types/form';
 import { StyledCheckbox } from '../atoms/StyledCheckbox';
 import { StyledFormControlLabel } from '../atoms/StyledFormControlLabel';
 import { StyledSwitch } from '../atoms/StyledSwitch';
 import { StyledTextField } from '../atoms/StyledTextField';
+import { StyledAutocomplete } from '../atoms/StyledAutoComplete';
+import FormHelperText from '@mui/material/FormHelperText';
+import { useLanguage } from '../context/LanguageContext';
 
 type FormFieldProps = {
   field: Field;
@@ -30,16 +33,29 @@ const COMMON_TEXTFIELD_PROPS = {
   autoComplete: 'off',
 };
 
-export const FormField = ({ field, register, control, errors }: FormFieldProps) => {
-  const { type, label, name } = field;
+import { usePermission } from '../auth/usePermission';
 
+export const FormField = ({ field, control, errors }: FormFieldProps) => {
+  const {
+    type,
+    label: mlabel,
+    name,
+    rules = {},
+    isNumeric = false,
+    fixedLength,
+    disabled,
+    placeholder: mplaceholder,
+  } = field;
   const error = errors?.[name];
+  const { t } = useLanguage();
+  const { isReadOnly } = usePermission();
 
   const helperText = error?.message?.toString();
 
-  const rules = {
-    required: field.required ? `${label} is required` : false,
-  };
+  const translatedLabel = t(name, mlabel);
+  const label = rules?.required ? `${translatedLabel}*` : translatedLabel;
+  const placeholder = mplaceholder ? t(mplaceholder) : undefined;
+  const isDisabled = disabled || isReadOnly;
 
   switch (type) {
     //====================================================
@@ -51,44 +67,46 @@ export const FormField = ({ field, register, control, errors }: FormFieldProps) 
     case 'number':
     case 'password':
     case 'textarea':
+    case 'date':
       return (
         <Controller
           name={name}
           control={control}
           rules={rules}
-          render={({ field: rhfField }) => {
-            const isTextarea = type === 'textarea';
+          render={({ field, fieldState: { error } }) => (
+            <StyledTextField
+              {...COMMON_TEXTFIELD_PROPS}
+              {...field}
+              placeholder={placeholder}
+              type={type}
+              disabled={isDisabled}
+              value={field.value ?? ''}
+              label={label}
+              error={!!error}
+              onChange={(e) => {
+                let value = e.target.value;
 
-            return (
-              <StyledTextField
-                {...COMMON_TEXTFIELD_PROPS}
-                name={rhfField.name}
-                onBlur={rhfField.onBlur}
-                onChange={rhfField.onChange}
-                value={rhfField.value ?? ''}
-                label={label}
-                placeholder={field.placeholder}
-                multiline={isTextarea}
-                rows={isTextarea ? (field.rows ?? 4) : undefined}
-                // Don't pass `type` at all when multiline — MUI renders a <textarea>
-                // and warns if `type` is set alongside `multiline`.
-                type={isTextarea ? undefined : type}
-                error={Boolean(error)}
-                helperText={helperText}
-                slotProps={{
-                  htmlInput: {
-                    ref: rhfField.ref, // attaches to the real <input> or <textarea> node
-                  },
-                  inputLabel: {
-                    shrink: !!rhfField.value || !!field.placeholder,
-                  },
-                }}
-              />
-            );
-          }}
+                if (isNumeric) {
+                  value = value.replace(/\D/g, '');
+                }
+
+                field.onChange(value);
+              }}
+              helperText={error?.message ?? helperText}
+              slotProps={{
+                htmlInput: {
+                  ref: field.ref,
+                  pattern: isNumeric ? '[0-9]*' : undefined,
+                  maxLength: fixedLength,
+                },
+                inputLabel: {
+                  shrink: type === 'date' ? true : undefined,
+                },
+              }}
+            />
+          )}
         />
       );
-
     //====================================================
     // SELECT
     //====================================================
@@ -107,6 +125,7 @@ export const FormField = ({ field, register, control, errors }: FormFieldProps) 
               onChange={rhfField.onChange}
               value={rhfField.value ?? ''}
               select
+              disabled={isDisabled}
               label={label}
               error={Boolean(error)}
               helperText={helperText}
@@ -139,88 +158,131 @@ export const FormField = ({ field, register, control, errors }: FormFieldProps) 
     // AUTOCOMPLETE
     //====================================================
 
-    case 'autocomplete':
-      return (
+    case 'autocomplete': {
+      const onAddCity = (field as any).onAddCity;
+      const inputField = (
         <Controller
           name={name}
           control={control}
           rules={rules}
-          render={({ field: rhfField }) => (
-            <StyledAutocomplete
-              options={field.options ?? []}
-              value={rhfField.value ?? null}
-              onChange={(_, value) => rhfField.onChange(value)}
-              getOptionLabel={(option) => (option as any)?.label ?? ''}
-              isOptionEqualToValue={(option, value) =>
-                (option as any)?.value === (value as any)?.value
-              }
-              renderInput={(params) => {
-                // v9: params.InputProps is gone — everything lives under params.slotProps
-                const { slotProps, ...restParams } = params;
+          render={({ field: { onChange, value, ref }, fieldState: { error } }) => {
+            const options = field.options ?? [];
+            const valueId = value && typeof value === 'object' ? (value as any).value : value;
+            const selectedOption =
+              options.find((opt) => String(opt.value) === String(valueId)) || null;
 
-                return (
-                  <TextField
-                    {...restParams}
+            return (
+              <StyledAutocomplete
+                options={options}
+                getOptionLabel={(option: any) => option.label || ''}
+                value={selectedOption}
+                isOptionEqualToValue={(option: any, val: any) =>
+                  String(option.value) === String(val.value)
+                }
+                onChange={(_, newValue: any) => {
+                  onChange(newValue ? newValue.value : '');
+                }}
+                disabled={isDisabled}
+                renderInput={(params) => (
+                  <StyledTextField
+                    {...params}
                     {...COMMON_TEXTFIELD_PROPS}
+                    placeholder={placeholder}
                     label={label}
-                    placeholder={field.placeholder}
-                    error={Boolean(error)}
-                    helperText={helperText}
+                    error={!!error}
+                    helperText={error?.message ?? helperText}
                     slotProps={{
-                      ...slotProps,
-                      // input slot = old InputProps (adornments, anchor tracking, etc.)
-                      input: {
-                        ...slotProps?.input,
-                      },
-                      // htmlInput slot = old inputProps, this is where the real <input> ref lives
+                      ...params.slotProps,
                       htmlInput: {
-                        ...slotProps?.htmlInput,
-                        ref: (node: HTMLInputElement | null) => {
-                          // 1. Preserve MUI's own ref on the native input (needed for the listbox anchor)
-                          const muiRef = slotProps?.htmlInput?.ref;
-                          if (typeof muiRef === 'function') {
-                            muiRef(node);
-                          } else if (muiRef) {
-                            (muiRef as React.MutableRefObject<HTMLInputElement | null>).current =
-                              node;
-                          }
-                          // 2. Register the same node with React Hook Form
-                          rhfField.ref(node);
-                        },
-                      },
-                      inputLabel: {
-                        ...slotProps?.inputLabel,
-                        shrink: !!rhfField.value || !!field.placeholder,
+                        ...(params as any).inputProps,
+                        ref,
                       },
                     }}
                   />
-                );
-              }}
-            />
-          )}
+                )}
+              />
+            );
+          }}
         />
       );
+
+      if (onAddCity) {
+        return (
+          <Box sx={{ display: 'flex', alignItems: 'flex-start', gap: 1 }}>
+            <Box sx={{ flex: 1 }}>{inputField}</Box>
+            <IconButton
+              color="primary"
+              onClick={onAddCity}
+              disabled={isDisabled}
+              sx={{
+                mt: 0.5,
+                border: '1px solid var(--border)',
+                borderRadius: 'var(--radius-sm)',
+                height: 40,
+                width: 40,
+              }}
+              title="Add New City"
+            >
+              <AddRoundedIcon fontSize="small" />
+            </IconButton>
+          </Box>
+        );
+      }
+      return inputField;
+    }
     //====================================================
     // CHECKBOX
     //====================================================
 
     case 'checkbox':
       return (
-        <StyledFormControlLabel
-          control={<StyledCheckbox {...register(name, rules)} />}
-          label={label}
+        <Controller
+          name={name}
+          control={control}
+          rules={rules}
+          render={({ field, fieldState: { error } }) => (
+            <>
+              <StyledFormControlLabel
+                control={
+                  <StyledCheckbox
+                    checked={!!field.value}
+                    onChange={(e) => field.onChange(e.target.checked)}
+                    onBlur={field.onBlur}
+                    disabled={isDisabled}
+                  />
+                }
+                label={label}
+              />
+              {error && <FormHelperText error>{error.message}</FormHelperText>}
+            </>
+          )}
         />
       );
-
     //====================================================
     // SWITCH
     //====================================================
-
     case 'switch':
       return (
-        <StyledFormControlLabel
-          control={<StyledSwitch {...register(name, rules)} />}
-          label={label}
+        <Controller
+          name={name}
+          control={control}
+          rules={rules}
+          render={({ field, fieldState: { error } }) => (
+            <>
+              <StyledFormControlLabel
+                control={
+                  <StyledSwitch
+                    checked={!!field.value}
+                    onChange={(e) => field.onChange(e.target.checked)}
+                    onBlur={field.onBlur}
+                    disabled={isDisabled}
+                  />
+                }
+                label={label}
+              />
+              {error && <FormHelperText error>{error.message}</FormHelperText>}
+            </>
+          )}
         />
       );
 

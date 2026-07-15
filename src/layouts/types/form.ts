@@ -3,55 +3,34 @@ export type SelectOption = {
   value: string;
 };
 
-export type Field =
-  | {
-      type: 'text' | 'email' | 'number' | 'password';
-      name: string;
-      label: string;
-      placeholder?: string;
-      grid?: number;
-      defaultValue?: string;
-      required?: boolean;
-      disabled?: boolean;
-    }
-  | {
+export type FormFieldBase = {
+  name: string;
+  label: string;
+  grid?: number;
+  placeholder?: string;
+  rules?: Record<string, any>;
+  disabled?: boolean;
+  defaultValue?: any;
+  isNumeric?: boolean;
+  fixedLength?: number;
+};
+
+export type FormField =
+  | (FormFieldBase & {
+      type: 'text' | 'email' | 'number' | 'password' | 'date';
+    })
+  | (FormFieldBase & {
       type: 'textarea';
-      name: string;
-      label: string;
-      placeholder?: string;
       rows?: number;
-      grid?: number;
-      required?: boolean;
-      disabled?: boolean;
-      defaultValue?: string;
-    }
-  | {
+    })
+  | (FormFieldBase & {
       type: 'select';
-      name: string;
-      label: string;
       options: SelectOption[];
-      grid?: number;
-      required?: boolean;
-      disabled?: boolean;
-      defaultValue?: string;
-    }
-  | {
+    })
+  | (FormFieldBase & {
       type: 'checkbox' | 'switch';
-      name: string;
-      label: string;
-      grid?: number;
-      required?: boolean;
-      disabled?: boolean;
-      defaultValue?: string;
-    }
-  | {
+    })
+  | (FormFieldBase & {
       type: 'autocomplete';
-      name: string;
-      label: string;
       options: SelectOption[];
-      grid?: number;
-      placeholder?: string;
-      required?: boolean;
-      disabled?: boolean;
-      defaultValue?: string;
-    };
+    });

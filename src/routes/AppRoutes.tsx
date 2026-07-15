@@ -4,13 +4,23 @@ import { Routes, Route } from 'react-router-dom';
 import ProtectedRoute from '../components/ProtectedRoute';
 import PublicRoute from '../components/PublicRoute';
 import LazyLoader from '../components/LazyLoader';
+import AdminSrchPage from '../pages/admin/AdminPanel';
+import NewUserRegistration from '../pages/admin/NewUserRegister';
+
+import DashboardPage from '../pages/dashboard/Dashboard';
+import UserDetailsPage from '../pages/admin/UserDetailsPage';
+import UserEditPage from '../pages/admin/UserEditPage';
+import ProfilePage from '../pages/admin/ProfilePage';
+import RouteGuard from '../components/RouteGuard';
+import AccessDenied from '../pages/error/AccessDenied';
 
 const LoginPage = lazy(() => import('../pages/loginpage/LoginPage'));
 const CustomerSrchPage = lazy(() => import('../pages/customer/CustomerSrchPage'));
 const NewCustomer = lazy(() => import('../pages/customer/NewCustomer'));
 const CustomerDetailsPage = lazy(() => import('../pages/customer/CustomerDetailsPage'));
 const EditCustomerPage = lazy(() => import('../pages/customer/CustomerEditPage'));
-
+const TicketsPage = lazy(() => import('../pages/tickets/TicketsPage'));
+const ReportsPage = lazy(() => import('../pages/reports/ReportsPage'));
 
 export default function AppRoutes() {
   return (
@@ -29,7 +39,70 @@ export default function AppRoutes() {
           path="/crm"
           element={
             <ProtectedRoute>
-              <CustomerSrchPage />
+              <RouteGuard permission="CUSTOMER_VIEW">
+                <CustomerSrchPage />
+              </RouteGuard>
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/dashboard"
+          element={
+            <ProtectedRoute>
+              <RouteGuard permission="CUSTOMER_VIEW">
+                <DashboardPage />
+              </RouteGuard>
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/admin"
+          element={
+            <ProtectedRoute>
+              <RouteGuard permission="USER_VIEW">
+                <AdminSrchPage />
+              </RouteGuard>
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/admin/nUser"
+          element={
+            <ProtectedRoute>
+              <RouteGuard permission="USER_CREATE">
+                <NewUserRegistration />
+              </RouteGuard>
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/admin/nuserview/:id"
+          element={
+            <ProtectedRoute>
+              <RouteGuard permission="USER_VIEW">
+                <UserDetailsPage />
+              </RouteGuard>
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/admin/nedituser/:id"
+          element={
+            <ProtectedRoute>
+              <RouteGuard permission="USER_EDIT">
+                <UserEditPage />
+              </RouteGuard>
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/admin/profile"
+          element={
+            <ProtectedRoute>
+              <ProfilePage />
             </ProtectedRoute>
           }
         />
@@ -38,7 +111,9 @@ export default function AppRoutes() {
           path="/newCust"
           element={
             <ProtectedRoute>
-              <NewCustomer />
+              <RouteGuard permission="CUSTOMER_CREATE">
+                <NewCustomer />
+              </RouteGuard>
             </ProtectedRoute>
           }
         />
@@ -47,7 +122,9 @@ export default function AppRoutes() {
           path="/custDetails/:id"
           element={
             <ProtectedRoute>
-              <CustomerDetailsPage />
+              <RouteGuard permission="CUSTOMER_VIEW">
+                <CustomerDetailsPage />
+              </RouteGuard>
             </ProtectedRoute>
           }
         />
@@ -56,10 +133,36 @@ export default function AppRoutes() {
           path="/custEdit/:id"
           element={
             <ProtectedRoute>
-              <EditCustomerPage />
+              <RouteGuard permission="CUSTOMER_EDIT">
+                <EditCustomerPage />
+              </RouteGuard>
             </ProtectedRoute>
           }
         />
+
+        <Route
+          path="/tickets"
+          element={
+            <ProtectedRoute>
+              <RouteGuard permission="TICKET_VIEW">
+                <TicketsPage />
+              </RouteGuard>
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/reports"
+          element={
+            <ProtectedRoute>
+              <RouteGuard permission="REPORT_VIEW">
+                <ReportsPage />
+              </RouteGuard>
+            </ProtectedRoute>
+          }
+        />
+
+        <Route path="/access-denied" element={<AccessDenied />} />
       </Routes>
     </Suspense>
   );

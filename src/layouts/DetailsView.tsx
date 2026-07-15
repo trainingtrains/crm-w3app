@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 
 import Grid from '@mui/material/Grid';
 import TextField from '@mui/material/TextField';
+import { useLanguage } from '../context/LanguageContext';
 
 import { ActionContainer } from '../atoms/ActionContainer';
 import { FormContainer } from '../atoms/FormContainer';
@@ -27,6 +28,8 @@ export interface DetailsViewProps {
 
   onActionClick?: () => void;
   onNegativeClick?: () => void;
+  hideActions?: boolean;
+  plain?: boolean;
 }
 
 const DetailsView = ({
@@ -36,65 +39,73 @@ const DetailsView = ({
   onActionClick,
   negativeLabel,
   onNegativeClick,
+  hideActions = false,
+  plain = false,
 }: DetailsViewProps) => {
   const navigate = useNavigate();
+  const { t } = useLanguage();
 
   const handleBack = useCallback(() => {
     navigate(-1);
   }, [navigate]);
 
+  const gridContent = (
+    <Grid container spacing={2}>
+      {config.map((field) => {
+        const translatedLabel = t(field.name, field.label);
+        return (
+          <Grid
+            key={field.name}
+            size={{
+              xs: 12,
+              sm: 6,
+              md: field.grid ?? 4,
+              lg: field.grid ?? 3,
+              xl: field.grid ?? 3,
+            }}
+          >
+            <TextField
+              fullWidth
+              size="small"
+              label={translatedLabel}
+              value={
+                field.render ? field.render(data[field.name], data) : String(data[field.name] ?? '')
+              }
+              slotProps={{
+                input: {
+                  readOnly: true,
+                },
+              }}
+            />
+          </Grid>
+        );
+      })}
+    </Grid>
+  );
+
   return (
     <>
-      <ActionContainer>
-        <SecondaryButton type="button" variant="outlined" onClick={handleBack}>
-          Back
-        </SecondaryButton>
+      {!hideActions && (
+        <ActionContainer>
+          <SecondaryButton type="button" variant="outlined" onClick={handleBack}>
+            Back
+          </SecondaryButton>
 
-        {negativeLabel && (
-          <NegativeButton type="button" variant="outlined" onClick={onNegativeClick}>
-            {negativeLabel}
-          </NegativeButton>
-        )}
+          {negativeLabel && (
+            <NegativeButton type="button" variant="outlined" onClick={onNegativeClick}>
+              {negativeLabel}
+            </NegativeButton>
+          )}
 
-        {actionLabel && (
-          <PrimaryButton type="button" variant="contained" onClick={onActionClick}>
-            {actionLabel}
-          </PrimaryButton>
-        )}
-      </ActionContainer>
+          {actionLabel && (
+            <PrimaryButton type="button" variant="contained" onClick={onActionClick}>
+              {actionLabel}
+            </PrimaryButton>
+          )}
+        </ActionContainer>
+      )}
 
-      <FormContainer>
-        <Grid container spacing={2}>
-          {config.map((field) => (
-            <Grid
-              key={field.name}
-              size={{
-                xs: 12,
-                sm: 6,
-                md: field.grid ?? 4,
-                lg: field.grid ?? 3,
-                xl: field.grid ?? 3,
-              }}
-            >
-              <TextField
-                fullWidth
-                size="small"
-                label={field.label}
-                value={
-                  field.render
-                    ? field.render(data[field.name], data)
-                    : String(data[field.name] ?? '')
-                }
-                slotProps={{
-                  input: {
-                    readOnly: true,
-                  },
-                }}
-              />
-            </Grid>
-          ))}
-        </Grid>
-      </FormContainer>
+      {plain ? gridContent : <FormContainer>{gridContent}</FormContainer>}
     </>
   );
 };
